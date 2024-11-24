@@ -8,6 +8,7 @@ const cors = require('cors');
 // Route Imports
 const emissionRoute = require("./routes/emissionRoute");
 const sinkRoute = require("./routes/sinkRoute");
+const dataRoute=require("./routes/datafetchingRoute")
 // Add other routes similarly
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(cors({
 // Register routes
 app.use("/api",emissionRoute );
 app.use("/api", sinkRoute);
+app.use("/api",dataRoute)
 // Add other routes similarly
 
 const PORT =  5000;

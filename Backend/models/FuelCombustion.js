@@ -13,7 +13,7 @@ const fuelCombustionSchema = new mongoose.Schema({
     type: Object,
     required: true
   },
-  date: {
+  createdAt: {
     type: Date,
     default: Date.now
   }

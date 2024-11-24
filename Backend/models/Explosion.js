@@ -11,6 +11,10 @@ const explosionSchema = new mongoose.Schema({
     H2S: { type: String, required: true },
     SO2: { type: String, required: true },
     CO2: { type: String, required: true } // Added CO2 field
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 });
 
