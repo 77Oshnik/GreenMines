@@ -17,6 +17,7 @@ import AboutUsPage from './Components/AboutUsPage';
 import ContactUs from './Components/ContactUs';
 import GraphPage from './Components/GraphPage';
 import DashBoard from './Components/DashBoard';
+import Renewable from './Components/RenewableSource';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/graphpage" element={<GraphPage />} />
         <Route path="/dashboard" element={<DashBoard />} />
+        <Route path="/renewable" element={<Renewable />} />
       </Routes>
       
     </div>
