@@ -49,7 +49,7 @@ function Header() {
           <div className="mt-6">
             <button
               onClick={() => {
-                navigate("/emission");
+                navigate("/dashboard");
                 console.log("Button clicked!");
               }}
               className="rounded px-7 py-3 bg-[#009688] text-white relative group hover:text-white overflow-hidden tracking-wider"

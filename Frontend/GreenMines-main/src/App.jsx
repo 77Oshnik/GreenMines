@@ -16,6 +16,7 @@ import AboutUs from './Components/AboutUs';
 import AboutUsPage from './Components/AboutUsPage';
 import ContactUs from './Components/ContactUs';
 import GraphPage from './Components/GraphPage';
+import DashBoard from './Components/DashBoard';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
         <Route path="/aboutus" element={<AboutUsPage />} />
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/graphpage" element={<GraphPage />} />
+        <Route path="/dashboard" element={<DashBoard />} />
       </Routes>
       
     </div>
