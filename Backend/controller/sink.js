@@ -1,5 +1,6 @@
 const Sink = require("../models/Sink");
 const ExistingSink = require("../models/ExistingSink");
+const Renewable = require("../models/Renewable");
 
 exports.createSink = async (req, res) => {
     try {
@@ -97,3 +98,91 @@ exports.createSink = async (req, res) => {
       res.status(500).json({ message: "Server error", error });
     }
   };
+
+  exports.calculateRenewableImpact = async (req, res) => {
+    try {
+      const { solutionName, co2EmissionsPerDay, selectedRenewable, desiredReductionPercentage, availableLand } = req.body;
+  
+      if (!solutionName || !co2EmissionsPerDay || !selectedRenewable || !desiredReductionPercentage || !availableLand) {
+        return res.status(400).json({ error: 'All fields are required.' });
+      }
+  
+      const co2EmissionsPerDayNum = Number(co2EmissionsPerDay);
+      const desiredReductionPercentageNum = Number(desiredReductionPercentage);
+      const availableLandNum = Number(availableLand);
+  
+      if (isNaN(co2EmissionsPerDayNum) || isNaN(desiredReductionPercentageNum) || isNaN(availableLandNum)) {
+        return res.status(400).json({ error: 'Inputs must be valid numbers.' });
+      }
+  
+      if (co2EmissionsPerDayNum <= 0 || desiredReductionPercentageNum <= 0 || availableLandNum <= 0) {
+        return res.status(400).json({ error: 'Inputs must be positive values.' });
+      }
+  
+      const renewableOptions = {
+        Solar: {
+          co2ReductionPerUnit: 0.4,
+          landRequirementPerUnit: 0.01,
+          costPerUnit: 8000,
+          timeMultiplier: 1.5,
+        },
+        Wind: {
+          co2ReductionPerUnit: 1.5,
+          landRequirementPerUnit: 0.05,
+          costPerUnit: 300000,
+          timeMultiplier: 2,
+        },
+        Hydropower: {
+          co2ReductionPerUnit: 5,
+          landRequirementPerUnit: 2,
+          costPerUnit: 5000000,
+          timeMultiplier: 3, // Used for scaling larger projects if needed
+        },
+        HydrogenElectric: {
+          co2ReductionPerUnit: 3,
+          landRequirementPerUnit: 1,
+          costPerUnit: 2000000,
+          timeMultiplier: 2.5,
+        },
+      };
+  
+      const renewable = renewableOptions[selectedRenewable];
+      if (!renewable) {
+        return res.status(404).json({ error: 'Selected renewable energy source not found.' });
+      }
+  
+      const targetCo2Reduction = (co2EmissionsPerDayNum * desiredReductionPercentageNum) / 100;
+      const requiredUnits = Math.ceil(targetCo2Reduction / renewable.co2ReductionPerUnit);
+      const landRequired = requiredUnits * renewable.landRequirementPerUnit;
+  
+      // Time Calculation in Days:
+      let timeToAchieveNeutrality;
+      const totalReductionPerDay = requiredUnits * renewable.co2ReductionPerUnit;
+  
+      if (availableLandNum >= landRequired) {
+        timeToAchieveNeutrality = Math.ceil((targetCo2Reduction / totalReductionPerDay) * 1); // Normal case
+      } else {
+        const landFactor = availableLandNum / landRequired;
+        timeToAchieveNeutrality = Math.ceil((targetCo2Reduction / totalReductionPerDay) / landFactor); // Adjusted for land shortage
+      }
+  
+      // Convert time to days (if it's less than 1 day, it'll round up to 1 day)
+      timeToAchieveNeutrality = Math.max(1, timeToAchieveNeutrality);
+  
+      const implementationCost = requiredUnits * renewable.costPerUnit;
+  
+      res.json({
+        solutionName,
+        selectedRenewable,
+        implementationCost: `₹${implementationCost.toLocaleString()}`,
+        targetCo2Reduction: targetCo2Reduction.toFixed(2),
+        totalCo2ReductionPerDay: totalReductionPerDay.toFixed(2),
+        landProvided: availableLandNum.toFixed(2),
+        timeToAchieveNeutrality: `${timeToAchieveNeutrality} day${timeToAchieveNeutrality > 1 ? 's' : ''}`,
+      });
+    } catch (error) {
+      console.error('Error calculating renewable impact:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
