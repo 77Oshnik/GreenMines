@@ -15,6 +15,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet"; // Import Leaflet for custom marker
 import "leaflet/dist/leaflet.css";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 ChartJS.register(
   CategoryScale,
@@ -39,7 +40,7 @@ const customMarker = L.icon({
 
 
 
-const DashBoars = () => {
+function DashBoard() {
  // State for user location
  const [location, setLocation] = useState(""); // To capture the user input location
  const [mapLocation, setMapLocation] = useState([19.076, 72.8777]); // Default to Mumbai
@@ -199,26 +200,25 @@ const DashBoars = () => {
 
 
   return (
-    <div className="p-8 bg-gray-900 text-white min-h-screen">
-        <Navbar className="z-50 mb-8" />
-      {/* Dashboard Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-  <div className="flex gap-8 xl:col-span-3">
-    {/* Total Sales Card */}
-    <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 max-w-xs min-w-[550px] mt-6">
-      <h2 className="text-lg font-bold mb-4">Total Emission</h2>
-      <div className="flex justify-between items-center mb-6">
-      </div>
-      {/* Doughnut Chart */}
-      <div className="flex justify-center p-4">
-        <div className="w-full h-full max-w-[400px] max-h-[400px]">
-          <Doughnut data={doughnutData} />
+    <div className="bg-gray-900 text-white min-h-screen w-full overflow-x-hidden">
+  <Navbar className="mb-2 pt-4" />
+  
+  {/* Dashboard Grid Layout */}
+  <div className="grid grid-cols-1 gap-8 px-4 sm:px-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+    <div className="flex flex-col xl:flex-row gap-8 xl:col-span-3 p-4">
+      {/* Total Emission Card */}
+      <div className="bg-gray-800 rounded-lg shadow-md p-6 mt-6 w-full max-w-full xl:max-w-none xl:flex-1">
+        <h2 className="text-lg font-bold mb-4">Total Emission</h2>
+        <div className="flex justify-between items-center mb-6"></div>
+        <div className="flex justify-center p-4">
+          <div className="w-full max-w-[400px] sm:max-w-[400px]">
+            <Doughnut data={doughnutData} />
+          </div>
         </div>
       </div>
-    </div>
 
-    {/* Data Entries Table */}
-    <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 max-w-xs min-w-[700px]">
+      {/* Data Entries Table */}
+      <div className="bg-gray-800 rounded-lg shadow-md p-6 mt-6 w-full max-w-full xl:max-w-none xl:flex-1 overflow-auto">
       <h2 className="text-lg font-bold mb-4">Emission Data Entries</h2>
       <div className="flex justify-end mb-4"></div>
       <table className="table-auto w-full text-left">
@@ -267,8 +267,8 @@ const DashBoars = () => {
         </tbody>
       </table>
     </div>
-
-    {/* User Profile Div (Squarish and fits beside the data entries) */}
+      
+        {/* User Profile Div (Squarish and fits beside the data entries) */}
 <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 w-full max-w-xs h-[580px] xl:max-w-sm">
   {/* Profile Picture */}
   <div className="flex justify-center mb-6">
@@ -307,17 +307,11 @@ const DashBoars = () => {
     </button>
   </div>
 </div>
+    </div>
 
-
-  </div>
-</div>
-
-
-
-
-
+   
         {/* Emission Line Chart Below Doughnut and Data Entries */}
-        <div className="flex gap-8 xl:col-span-3 p-4">
+        <div className="flex gap-8 xl:col-span-3 p-2 ml-3">
           <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-full lg:min-w-[1720px] max-w-[1000px] max-h-[1000px] mt-6">
             <h2 className="text-lg font-bold mb-4">Emission Line Chart</h2>
             <div className="flex justify-between items-center mb-6">
@@ -329,51 +323,47 @@ const DashBoars = () => {
           </div>
         </div>
 
-        {/* Tabs */}
-<div className="flex gap-4 p-4 justify-between xl:col-span-3">
-  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
-    <h2 className="text-lg font-bold mb-2">Electricity</h2>
-    <p className="text-3xl font-semibold mb-2">60 MWh</p>
-    <p className="text-red-500">+15% from last week</p>
-  </div>
+    {/* Tabs */}
+    <div className="flex flex-wrap gap-8 p-1 justify-between xl:col-span-3">
+      <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
+        <h2 className="text-lg font-bold mb-2">Electricity</h2>
+        <p className="text-3xl font-semibold mb-2">60 MWh</p>
+        <p className="text-red-500">+15% from last week</p>
+      </div>
 
-  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
-    <h2 className="text-lg font-bold mb-2">Explosion</h2>
-    <p className="text-3xl font-semibold mb-2">40 tCO2e</p>
-    <p className="text-green-500">-5% from last week</p>
-  </div>
+      <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
+        <h2 className="text-lg font-bold mb-2">Explosion</h2>
+        <p className="text-3xl font-semibold mb-2">40 tCO2e</p>
+        <p className="text-green-500">-5% from last week</p>
+      </div>
 
-  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
-    <h2 className="text-lg font-bold mb-2">Fuel</h2>
-    <p className="text-3xl font-semibold mb-2">50 tCO2e</p>
-    <p className="text-red-500">+10% from last week</p>
-  </div>
+      <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
+        <h2 className="text-lg font-bold mb-2">Fuel</h2>
+        <p className="text-3xl font-semibold mb-2">50 tCO2e</p>
+        <p className="text-red-500">+10% from last week</p>
+      </div>
 
-  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
-    <h2 className="text-lg font-bold mb-2">Shipping</h2>
-    <p className="text-3xl font-semibold mb-2">35 tCO2e</p>
-    <p className="text-green-500">-8% from last week</p>
-  </div>
-</div>
+      <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
+        <h2 className="text-lg font-bold mb-2">Shipping</h2>
+        <p className="text-3xl font-semibold mb-2">35 tCO2e</p>
+        <p className="text-green-500">-8% from last week</p>
+      </div>
+    </div>
 
-        <div className="flex gap-8 xl:col-span-3 p-4">
- {/* Sink Graph */}
-<div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 flex-1">
-  <h2 className="text-lg font-bold mb-4">Sink Status</h2>
-  <div className="flex justify-center items-center h-full">
-    {/* Ensure the graph takes up all available space */}
-    <div className="w-full h-full">
-        
-          <Line data={profitData} options={profitOptions} />
+    <div className="flex gap-8 xl:col-span-3 p-1 mb-6">
+      {/* Sink Graph */}
+      <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 flex-1">
+        <h2 className="text-lg font-bold mb-4">Sink Status</h2>
+        <div className="flex justify-center items-center h-full">
+          {/* Ensure the graph takes up all available space */}
+          <div className="w-full h-full">
+            <Line data={profitData} options={profitOptions} />
+          </div>
         </div>
-  </div>
-</div>
+      </div>
 
-
-
-
-        {/* Real-Time Map Section */}
-        <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 flex-1 max-w-xs min-w-[550px]">
+      {/* Real-Time Map Section */}
+      <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 flex-1 max-w-xs min-w-[550px]">
           <h2 className="text-lg font-bold mb-4">Real-Time Map</h2>
           <MapContainer
             center={mapLocation}
@@ -406,15 +396,16 @@ const DashBoars = () => {
             Go to Location
           </button>
         </div>
-        
-      </div>
+      
+    </div>
+
+  </div>
+  <Footer className="w-full bg-gray-800 text-white py-4 text-center"/>
 </div>
 
-    
-  
 
 
   );
 };
 
-export default DashBoars;
+export default DashBoard;
