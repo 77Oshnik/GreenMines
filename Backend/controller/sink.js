@@ -1,6 +1,8 @@
 const Sink = require("../models/Sink");
 const ExistingSink = require("../models/ExistingSink");
 const Renewable = require("../models/Renewable");
+const CCS = require('../models/ccs');
+
 
 exports.createSink = async (req, res) => {
     try {
@@ -186,3 +188,108 @@ exports.createSink = async (req, res) => {
     }
   };
   
+
+
+// Predefined capture efficiencies based on CCS technology
+const captureEfficiencyMap = {
+  "Post-combustion": 0.85,  // 85% efficiency for post-combustion
+  "Pre-combustion": 0.90,   // 90% efficiency for pre-combustion
+  "Oxy-fuel combustion": 0.95 // 95% efficiency for oxy-fuel combustion
+};
+
+// Controller to calculate CCS results based on inputs
+exports.calculateCCS = async (req, res) => {
+  try {
+    const { 
+      mineName, 
+      annualEmissions, 
+      mineSize, 
+      ccsTechnology, 
+      installationCostPerTon, // Optional
+      annualMaintenanceCost // Optional
+    } = req.body;
+
+    // Default values if not provided
+    const defaultInstallationCostPerTon = 2000; // ₹2000 per ton
+    const defaultAnnualMaintenanceCost = 10000000; // ₹10 million/year
+    const carbonCreditPrice = 1500; // ₹1500 per ton
+
+    // Get the capture efficiency based on the CCS technology
+    const captureEfficiency = captureEfficiencyMap[ccsTechnology] || 0.85; // Default to 85% if technology is unknown
+
+    // Use user input values or default if not provided
+    const costPerTon = installationCostPerTon || defaultInstallationCostPerTon;
+    const maintenanceCost = annualMaintenanceCost || defaultAnnualMaintenanceCost;
+
+    // Calculate captured CO₂ (tons)
+    const capturedCO2 = annualEmissions * captureEfficiency;  // in tons of CO₂
+
+    // Calculate installation cost (₹)
+    const installationCost = capturedCO2 * costPerTon; // ₹
+
+    // Calculate potential carbon credit revenue (₹)
+    const carbonCreditRevenue = capturedCO2 * carbonCreditPrice; // ₹
+
+    // Calculate the total cost for the first year (₹)
+    const totalCostForFirstYear = installationCost + maintenanceCost; // ₹
+
+    // Calculate the total revenue for the first year (₹)
+    const totalRevenueForFirstYear = carbonCreditRevenue; // ₹
+
+    // Net profit for the first year (installation + maintenance + revenue)
+    const netProfitForFirstYear = totalRevenueForFirstYear - totalCostForFirstYear; // ₹
+
+    // Calculate the net profit for the following 9 years
+    const annualNetProfit = carbonCreditRevenue - maintenanceCost; // ₹
+
+    // Total profit for 10 years
+    const totalProfitForTenYears = netProfitForFirstYear + (annualNetProfit * 9); // ₹
+
+    // Save the data to the database
+    const ccsData = new CCS({
+      mineName,
+      annualEmissions,
+      mineSize,
+      ccsTechnology,
+      installationCostPerTon: costPerTon,
+      annualMaintenanceCost: maintenanceCost,
+      captureEfficiency,
+      capturedCO2,
+      installationCost,
+      maintenanceCost,
+      carbonCreditRevenue,
+      totalCostForFirstYear,
+      totalRevenueForFirstYear,
+      netProfitForFirstYear,
+      annualNetProfit,
+      totalProfitForTenYears
+    });
+
+    await ccsData.save();
+
+    // Send the response with results for both 1 year and 10 years and proper units
+    res.status(200).json({
+      message: "CCS calculation successful for 1 year and 10 years",
+      data: {
+        mineName,
+        annualEmissions,
+        mineSize,
+        ccsTechnology,
+        captureEfficiency: `${(captureEfficiency * 100).toFixed(2)}%`,  // in percentage
+        capturedCO2: `${capturedCO2.toFixed(2)} tons`,  // in tons of CO₂
+        installationCost: `₹${installationCost.toFixed(2)}`,  // in ₹
+        maintenanceCost: `₹${maintenanceCost.toFixed(2)}`,  // in ₹
+        carbonCreditRevenue: `₹${carbonCreditRevenue.toFixed(2)}`,  // in ₹
+        totalCostForFirstYear: `₹${totalCostForFirstYear.toFixed(2)}`,  // in ₹
+        totalRevenueForFirstYear: `₹${totalRevenueForFirstYear.toFixed(2)}`,  // in ₹
+        netProfitForFirstYear: `₹${netProfitForFirstYear.toFixed(2)}`,  // in ₹
+        annualNetProfit: `₹${annualNetProfit.toFixed(2)}`,  // in ₹ per year
+        totalProfitForTenYears: `₹${totalProfitForTenYears.toFixed(2)}`  // in ₹ for 10 years
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};

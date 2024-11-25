@@ -8,5 +8,6 @@ const renwableController = require("../controller/sink");
 router.post("/sinks", sinkController.createSink);
 router.post("/existing-sinks", existingSinkController.createExistingSink);
 router.post("/renewable",renwableController.calculateRenewableImpact)
+router.post("/ccs",sinkController.calculateCCS)
 
 module.exports = router;
