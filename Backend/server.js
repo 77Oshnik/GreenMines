@@ -9,6 +9,7 @@ const cors = require('cors');
 const emissionRoute = require("./routes/emissionRoute");
 const sinkRoute = require("./routes/sinkRoute");
 const dataRoute=require("./routes/datafetchingRoute")
+const chatbotRoute=require("./routes/chatbotRoute")
 // Add other routes similarly
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use(cors({
 app.use("/api",emissionRoute );
 app.use("/api", sinkRoute);
 app.use("/api",dataRoute)
+app.use("/api",chatbotRoute)
 // Add other routes similarly
 
 const PORT =  5000;
