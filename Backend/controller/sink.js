@@ -136,7 +136,7 @@ exports.createSink = async (req, res) => {
           co2ReductionPerUnit: 5,
           landRequirementPerUnit: 2,
           costPerUnit: 5000000,
-          timeMultiplier: 3, // Used for scaling larger projects if needed
+          timeMultiplier: 3,
         },
         HydrogenElectric: {
           co2ReductionPerUnit: 3,
@@ -152,29 +152,26 @@ exports.createSink = async (req, res) => {
       }
   
       const targetCo2Reduction = (co2EmissionsPerDayNum * desiredReductionPercentageNum) / 100;
-      const requiredUnits = Math.ceil(targetCo2Reduction / renewable.co2ReductionPerUnit);
-      const landRequired = requiredUnits * renewable.landRequirementPerUnit;
   
-      // Time Calculation in Days:
+      // Calculate maximum deployable units based on available land
+      const maxUnitsDeployable = availableLandNum / renewable.landRequirementPerUnit;
+  
+      // Calculate reduction and cost based on deployable units
+      const totalReductionPerDay = maxUnitsDeployable * renewable.co2ReductionPerUnit;
+      const implementationCost = maxUnitsDeployable * renewable.costPerUnit;
+  
       let timeToAchieveNeutrality;
-      const totalReductionPerDay = requiredUnits * renewable.co2ReductionPerUnit;
-  
-      if (availableLandNum >= landRequired) {
-        timeToAchieveNeutrality = Math.ceil((targetCo2Reduction / totalReductionPerDay) * 1); // Normal case
-      } else {
-        const landFactor = availableLandNum / landRequired;
-        timeToAchieveNeutrality = Math.ceil((targetCo2Reduction / totalReductionPerDay) / landFactor); // Adjusted for land shortage
-      }
-  
-      // Convert time to days (if it's less than 1 day, it'll round up to 1 day)
-      timeToAchieveNeutrality = Math.max(1, timeToAchieveNeutrality);
-  
-      const implementationCost = requiredUnits * renewable.costPerUnit;
-  
+if (totalReductionPerDay > 0) {
+  timeToAchieveNeutrality = Math.ceil(targetCo2Reduction / totalReductionPerDay);
+} else {
+  // Even with minimal land, calculate fractional reduction and adjust time
+  timeToAchieveNeutrality = Math.ceil(targetCo2Reduction / (availableLandNum * (renewable.co2ReductionPerUnit / renewable.landRequirementPerUnit)));
+}
+
       res.json({
         solutionName,
         selectedRenewable,
-        implementationCost: `₹${implementationCost.toLocaleString()}`,
+        implementationCost: `₹${implementationCost.toFixed(0).toLocaleString()}`,
         targetCo2Reduction: targetCo2Reduction.toFixed(2),
         totalCo2ReductionPerDay: totalReductionPerDay.toFixed(2),
         landProvided: availableLandNum.toFixed(2),
