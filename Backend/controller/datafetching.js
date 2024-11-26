@@ -47,11 +47,14 @@ exports.fetchDateData = async (req, res) => {
         endDate.setHours(23, 59, 59, 999);
 
         const [electricityData, fuelData, shippingData, explosionData] = await Promise.all([
-            fetchModelData(Electricity, startDate, endDate),
-            fetchModelData(FuelCombustion, startDate, endDate),
-            fetchModelData(Shipping, startDate, endDate),
-            fetchModelData(Explosion, startDate, endDate)
+            fetchModelData(Electricity, start, end),
+            fetchModelData(FuelCombustion, start, end),
+            fetchModelData(Shipping, start, end),
+            fetchModelData(Explosion, start, end)
         ]);
+        
+        console.log({ electricityData, fuelData, shippingData, explosionData }); // Log fetched data
+        
 
         res.json({
             date,
@@ -68,47 +71,49 @@ exports.fetchDateData = async (req, res) => {
 };
 
 //Function to fetch the data on date range
-exports.fetchDateRangeData=async(req,res)=>{
+// Modify fetchDateRangeData to return a Promise that resolves with data
+exports.fetchDateRangeData = async (req, res) => {
     try {
-        const { startDate, endDate } = req.params;
+        const { startDate, endDate } = req.body || req.params;
 
         if (!isValidDate(startDate) || !isValidDate(endDate)) {
-            return res.status(400).json({ error: 'Invalid date format. Please use YYYY-MM-DD format.' });
+            return res.status(400).json({ error: "Invalid date format. Please use YYYY-MM-DD." });
         }
 
         const start = new Date(startDate);
         start.setHours(0, 0, 0, 0);
-        
+
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
 
         if (start > end) {
-            return res.status(400).json({ error: 'Start date must be before or equal to end date' });
+            return res.status(400).json({ error: "Start date must be before or equal to end date." });
         }
 
+        // Fetch data across all models for the given date range
         const [electricityData, fuelData, shippingData, explosionData] = await Promise.all([
-            fetchModelData(Electricity, start, end),
-            fetchModelData(FuelCombustion, start, end),
-            fetchModelData(Shipping, start, end),
-            fetchModelData(Explosion, start, end)
+            Electricity.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
+            FuelCombustion.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
+            Shipping.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
+            Explosion.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
         ]);
 
-        res.json({
-            dateRange: {
-                startDate,
-                endDate
-            },
+        // Log the response before sending it
+        console.log("Fetched emissions data:", { electricityData, fuelData, shippingData, explosionData });
+
+        return {
             electricity: electricityData,
             fuelCombustion: fuelData,
             shipping: shippingData,
-            explosion: explosionData
-        });
-
+            explosion: explosionData,
+        }; // Return the response object
     } catch (error) {
-        console.error('Error fetching data:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error fetching data:", error.message);
+        throw new Error("Error fetching data");
     }
-}
+};
+
+
 
 
 
