@@ -18,6 +18,7 @@ import ContactUs from './Components/ContactUs';
 import GraphPage from './Components/GraphPage';
 import DashBoard from './Components/DashBoard';
 import Renewable from './Components/RenewableSource';
+import ChatBot from './Components/Chatbot';
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
         <Route path="/graphpage" element={<GraphPage />} />
         <Route path="/dashboard" element={<DashBoard />} />
         <Route path="/renewable" element={<Renewable />} />
+        <Route path="/chatbot" element={<ChatBot/>} />
       </Routes>
       
     </div>

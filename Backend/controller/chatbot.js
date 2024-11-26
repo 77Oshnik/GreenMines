@@ -8,20 +8,7 @@ const GEMINI_API_URL = "https://gemini-ai-api-url/v1/chat"; // Replace with actu
 
 
   
-const carbonKnowledgeContext = {
-    expertise: [
-        'Carbon emissions in coal mining',
-        'Carbon sequestration strategies',
-        'Carbon neutrality frameworks',
-        'Carbon credit mechanisms'
-    ],
-    definitionFramework: {
-        carbonEmissions: 'Greenhouse gases released during coal extraction, processing, and transportation',
-        carbonSequestration: 'Process of capturing and storing atmospheric carbon dioxide',
-        carbonNeutrality: 'Balancing carbon emissions with carbon removal or offsetting',
-        carbonCredits: 'Tradable permits representing reduction of greenhouse gas emissions'
-    }
-};
+
 
   // Universal Chat Endpoint
   exports.chatBot = async (req, res) => {
@@ -37,22 +24,24 @@ const carbonKnowledgeContext = {
     try {
         // Construct professional, context-rich prompt
         const professionalPrompt = `
-            Professional Context:
-            - You are an expert in coal mining environmental sustainability
-            - Provide precise, actionable insights
-            - Use industry-standard terminology
-            - Focus on practical applications
-
-            Knowledge Framework: ${JSON.stringify(carbonKnowledgeContext)}
-
-            Professional Query: ${userInput}
-
-            Response Guidelines:
-            1. Define key technical terms
-            2. Provide quantitative insights
-            3. Suggest practical mitigation strategies
-            4. Reference industry best practices
-        `;
+        Professional Context:
+        - You are an expert in coal mining environmental sustainability.
+        - Provide precise, actionable insights tailored to the user's needs.
+        - Use industry-standard terminology and best practices.
+        - Focus on practical applications and real-world examples.
+    
+        User Intent:
+        - Understand the user's specific query regarding emissions calculation, reduction strategies, or carbon neutrality pathways.
+        - Clarify any ambiguous terms or concepts to ensure accurate responses.
+    
+        Response Guidelines:
+        - Start with a brief summary of the user's query.
+        - Provide detailed insights and recommendations based on current industry standards.
+        - Include relevant calculations or methodologies if applicable.
+        - Suggest actionable next steps or resources for further exploration.
+    
+        Professional Query: ${userInput}
+    `;
 
         // Gemini AI Processing
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
