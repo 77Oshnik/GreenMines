@@ -19,6 +19,7 @@ import GraphPage from './Components/GraphPage';
 import DashBoard from './Components/DashBoard';
 import Renewable from './Components/RenewableSource';
 import ChatBot from './Components/Chatbot';
+import CCSCalculator from './Components/CCS';
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
         <Route path="/dashboard" element={<DashBoard />} />
         <Route path="/renewable" element={<Renewable />} />
         <Route path="/chatbot" element={<ChatBot/>} />
+        <Route path="/CCS" element={<CCSCalculator/>}/>
       </Routes>
       
     </div>

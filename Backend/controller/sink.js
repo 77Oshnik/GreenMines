@@ -234,15 +234,22 @@ exports.calculateCCS = async (req, res) => {
     const defaultAnnualMaintenanceCost = 10000000; // ₹10 million/year
     const carbonCreditPrice = 1500; // ₹1500 per ton
 
+    // Ensure numeric conversion
+    const convertToNumber = (value, defaultValue) => {
+      const num = Number(value);
+      return isNaN(num) ? defaultValue : num;
+    };
+
     // Get the capture efficiency based on the CCS technology
     const captureEfficiency = captureEfficiencyMap[ccsTechnology] || 0.85; // Default to 85% if technology is unknown
 
-    // Use user input values or default if not provided
-    const costPerTon = installationCostPerTon || defaultInstallationCostPerTon;
-    const maintenanceCost = annualMaintenanceCost || defaultAnnualMaintenanceCost;
+    // Numeric conversions with default values
+    const annualEmissionsNum = convertToNumber(annualEmissions, 0);
+    const costPerTon = convertToNumber(installationCostPerTon, defaultInstallationCostPerTon);
+    const maintenanceCost = convertToNumber(annualMaintenanceCost, defaultAnnualMaintenanceCost);
 
     // Calculate captured CO₂ (tons)
-    const capturedCO2 = annualEmissions * captureEfficiency;  // in tons of CO₂
+    const capturedCO2 = annualEmissionsNum * captureEfficiency;  // in tons of CO₂
 
     // Calculate installation cost (₹)
     const installationCost = capturedCO2 * costPerTon; // ₹
@@ -268,7 +275,7 @@ exports.calculateCCS = async (req, res) => {
     // Save the data to the database
     const ccsData = new CCS({
       mineName,
-      annualEmissions,
+      annualEmissions: annualEmissionsNum,
       mineSize,
       ccsTechnology,
       installationCostPerTon: costPerTon,
@@ -292,7 +299,7 @@ exports.calculateCCS = async (req, res) => {
       message: "CCS calculation successful for 1 year and 10 years",
       data: {
         mineName,
-        annualEmissions,
+        annualEmissions: annualEmissionsNum,
         mineSize,
         ccsTechnology,
         captureEfficiency: `${(captureEfficiency * 100).toFixed(2)}%`,  // in percentage
@@ -310,6 +317,6 @@ exports.calculateCCS = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: 'Server Error', error: error.toString() });
   }
 };
