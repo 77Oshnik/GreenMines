@@ -1,0 +1,5 @@
+Backend/ML/Transport/transport_label_encoder.pkl
+Backend/ML/Transport/carbon_emission_model.pkl
+Backend/ML/Explosives/scaler.pkl
+Backend/ML/Explosives/random_forest_model.pkl
+Backend/ML/Explosives/label_encoder.pkl
