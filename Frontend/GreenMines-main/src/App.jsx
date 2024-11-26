@@ -20,6 +20,7 @@ import DashBoard from './Components/DashBoard';
 import Renewable from './Components/RenewableSource';
 import ChatBot from './Components/Chatbot';
 import CCSCalculator from './Components/CCS';
+import EmissionsAnalysisPage from "./Components/EmissionsAnalysisPage";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
         <Route path="/renewable" element={<Renewable />} />
         <Route path="/chatbot" element={<ChatBot/>} />
         <Route path="/CCS" element={<CCSCalculator/>}/>
+        <Route path="/emissions-analysis" element={<EmissionsAnalysisPage />} />
       </Routes>
       
     </div>

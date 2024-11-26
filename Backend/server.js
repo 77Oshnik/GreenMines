@@ -8,6 +8,7 @@ const cors = require('cors');
 // Route Imports
 const emissionRoute = require("./routes/emissionRoute");
 const sinkRoute = require("./routes/sinkRoute");
+const genaiRoute = require("./routes/genaiRoute");
 const dataRoute=require("./routes/datafetchingRoute")
 const chatbotRoute=require("./routes/chatbotRoute")
 // Add other routes similarly
@@ -27,6 +28,7 @@ app.use(cors({
 // Register routes
 app.use("/api",emissionRoute );
 app.use("/api", sinkRoute);
+app.use("/api", genaiRoute);
 app.use("/api",dataRoute)
 app.use("/api",chatbotRoute)
 // Add other routes similarly
