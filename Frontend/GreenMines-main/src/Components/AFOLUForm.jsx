@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import DOMPurify from 'dompurify';
 
 const AFOLUForm = () => {
   const [landSize, setLandSize] = useState('');
@@ -10,6 +11,44 @@ const AFOLUForm = () => {
   const [newLandUse, setNewLandUse] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
   const [error, setError] = useState('');
+
+  // Inline styles for the formatted response
+  const htmlStyles = `
+    .parsed-html-content h3 {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      color: #1a202c;
+    }
+    .parsed-html-content ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .parsed-html-content li {
+      margin-bottom: 0.5rem;
+      color: #2d3748;
+    }
+    .parsed-html-content p {
+      margin-bottom: 0.75rem;
+    }
+  `;
+
+  const renderHTMLContent = (htmlContent) => {
+    // Sanitize the HTML content
+    const cleanHTML = DOMPurify.sanitize(htmlContent);
+    
+    return (
+      <>
+        <style>{htmlStyles}</style>
+        <div 
+          dangerouslySetInnerHTML={{ __html: cleanHTML }}
+          className="parsed-html-content"
+        />
+      </>
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -130,9 +169,11 @@ const AFOLUForm = () => {
       {responseMessage && (
         <div className="mt-4 p-4 border rounded-md bg-green-50">
           <h3 className="text-lg font-semibold">Environmental Impact Analysis:</h3>
-          <p className="whitespace-pre-wrap">{responseMessage}</p>
+          {renderHTMLContent(responseMessage)}
+          {/* <p className="whitespace-pre-wrap">{responseMessage}</p> */}
         </div>
       )}
+
     </div>
   );
 };
