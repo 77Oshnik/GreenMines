@@ -29,47 +29,47 @@ function DateRangeForm({ onAnalysisComplete }) {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 border rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">Select Date Range</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="startDate" className="block text-sm font-semibold">
-            Start Date
-          </label>
-          <input
-            type="date"
-            id="startDate"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg"
-          />
-        </div>
-        <div>
-          <label htmlFor="endDate" className="block text-sm font-semibold">
-            End Date
-          </label>
-          <input
-            type="date"
-            id="endDate"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg"
-          />
-        </div>
-        {error && <p className="text-red-500">{error}</p>}
-        <div className="flex justify-center">
-          <button
-            type="submit"
-            className={`px-4 py-2 bg-blue-500 text-white rounded-lg ${
-              loading ? "cursor-wait" : ""
-            }`}
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "Analyze Emissions"}
-          </button>
-        </div>
-      </form>
+<div className="w-full max-w-4xl mx-auto p-8 bg-[#231E3D] shadow-lg rounded-xl border border-[#66C5CC]">
+  <h2 className="text-3xl font-bold mb-8 text-[#66C5CC]">Select Date Range</h2>
+  <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-6">
+    <div className="flex-1 min-w-[200px]">
+      <label htmlFor="startDate" className="block text-lg font-bold text-white mb-2">
+        Start Date
+      </label>
+      <input
+        type="date"
+        id="startDate"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        className="w-full px-4 py-3 text-lg font-bold bg-[#342F49] text-white border border-[#66C5CC] rounded-md shadow-sm focus:ring-[#66C5CC] focus:border-[#66C5CC]"
+      />
     </div>
+    <div className="flex-1 min-w-[200px]">
+      <label htmlFor="endDate" className="block text-lg font-bold text-white mb-2">
+        End Date
+      </label>
+      <input
+        type="date"
+        id="endDate"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        className="w-full px-4 py-3 text-lg font-bold bg-[#342F49] text-white border border-[#66C5CC] rounded-md shadow-sm focus:ring-[#66C5CC] focus:border-[#66C5CC]"
+      />
+    </div>
+    <div className="flex-1 min-w-[200px]">
+      <button
+        type="submit"
+        className={`w-full px-6 py-3 text-xl font-bold text-[#342F49] bg-[#66C5CC] rounded-md shadow-sm hover:bg-[#4da5aa] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#66C5CC] ${
+          loading ? "opacity-50 cursor-wait" : ""
+        }`}
+        disabled={loading}
+      >
+        {loading ? "Analyzing..." : "Analyze Emissions"}
+      </button>
+    </div>
+  </form>
+  {error && <p className="mt-4 text-lg font-bold text-red-500">{error}</p>}
+</div>
   );
 }
 

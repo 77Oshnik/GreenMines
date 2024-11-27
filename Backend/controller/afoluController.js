@@ -41,6 +41,7 @@ exports.afolu = async (req, res) => {
         Response Format:
         - Summary of the estimated environmental impact.
         - Detailed explanation of emissions calculations and assumptions.
+        - Estimated Time for Land Recovery
         - Practical mitigation strategies and alternative clearing methods.
         - Actionable next steps or resources for implementing the recommendations.
         `;

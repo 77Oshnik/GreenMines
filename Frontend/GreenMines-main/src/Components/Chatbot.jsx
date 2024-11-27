@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { FaPaperPlane, FaUserCircle, FaRobot } from 'react-icons/fa';
 import DOMPurify from 'dompurify';
+import Navbar from './Navbar';
 
 export default function ChatBot() {
   const [messages, setMessages] = useState([
@@ -92,6 +93,7 @@ export default function ChatBot() {
   return (
     
     <div className="h-screen bg-[#342F49] flex items-center justify-center p-8">
+      {/*<Navbar />*/}
       <div className="flex flex-col h-screen w-3/4 mx-auto bg-[#231E3D] border-[#66C5CC] rounded-lg pt-2">
         {/* Messages Display */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 ml-2">
@@ -107,7 +109,7 @@ export default function ChatBot() {
   className={`w-auto max-w-full rounded-lg p-3 ${
     message.isUser
       ? 'bg-[#66C5CC] text-[#342F49] font-bold' // User message background with bold text
-      : 'bg-[#c8bce675] text-white font-bold' // Bot message background with bold text
+      : 'bg-[#7b6ba3cc] text-white font-bold' // Bot message background with bold text
   } shadow-md`}
 >
                 {/* Customizable font size for the message text */}
@@ -124,7 +126,7 @@ export default function ChatBot() {
         </div>
 
         {/* Input Section */}
-        <div className="bg-[#6c6199] border-t border-[#66C5CC] px-6 py-6 sm:px-8">
+        <div className="bg-[#3e3177] border-t border-[#66C5CC] px-6 py-6 sm:px-8">
           <div className="flex space-x-4">
             <input
               type="text"

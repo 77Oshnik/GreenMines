@@ -56,54 +56,51 @@ function EmissionsResult({ result }) {
   const emissionsData = parseEmissionsData(result.aiAnalysis);
 
   return (
-    <div className="mt-8 max-w-full mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
-      <h3 className="text-2xl font-medium mb-6 text-gray-800 col-span-2">
-        Emissions Impact Analysis
-      </h3>
+    <div className="w-full mx-auto mt-12 p-8 bg-[#231E3D] shadow-lg rounded-xl border border-[#66C5CC]">
+    <h3 className="text-4xl font-bold mb-8 text-[#66C5CC] border-b border-[#66C5CC] pb-4">
+      Emissions Impact Analysis
+    </h3>
 
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {emissionsData.map((item, sectionIndex) => (
         <div
           key={sectionIndex}
-          className="p-6 bg-white rounded-lg shadow-md transform transition duration-300 hover:scale-105 hover:shadow-xl"
+          className="p-6 bg-[#5f538a8f] rounded-lg shadow-md transition duration-300 hover:shadow-xl border border-[#66C5CC]"
         >
-          {/* Emission Type Title */}
-          <h4 className="text-xl font-semibold mb-4 text-gray-800">
-            {item.title} {/* Titles are now clean without stars */}
+          <h4 className="text-2xl font-bold mb-4 text-[#66C5CC] border-b border-[#66C5CC] pb-2">
+            {item.title}
           </h4>
 
-          {/* Emission Points */}
           <div className="space-y-4">
             {item.points.map((point, pointIndex) => (
               <div key={pointIndex} className="flex items-start space-x-2">
-                {/* Numbering for each point */}
-                <span className="font-medium text-gray-600">{pointIndex + 1}. </span>
-
-                {/* Render bold and non-bold parts separately */}
-                {point.boldParts.map((boldText, boldIndex) => (
-                  <span
-                    key={boldIndex}
-                    className="bg-gray-200 inline-block py-1 px-2 rounded text-gray-800 font-semibold"
-                  >
-                    {boldText}
-                  </span>
-                ))}
-
-                {/* Render non-bold text */}
-                {point.nonBoldParts.map((text, textIndex) => (
-                  <span
-                    key={textIndex}
-                    className="text-gray-700"
-                    dangerouslySetInnerHTML={{
-                      __html: applySemiBoldStyle(text),
-                    }}
-                  />
-                ))}
+                <span className="font-bold text-[#66C5CC] min-w-[2rem] text-xl">{pointIndex + 1}.</span>
+                <div>
+                  {point.boldParts.map((boldText, boldIndex) => (
+                    <span
+                      key={boldIndex}
+                      className="bg-[#66C5CC] inline-block py-1 px-2 rounded text-[#342F49] font-bold text-xl mr-1 mb-1"
+                    >
+                      {boldText}
+                    </span>
+                  ))}
+                  {point.nonBoldParts.map((text, textIndex) => (
+                    <span
+                      key={textIndex}
+                      className="text-white text-xl font-bold"
+                      dangerouslySetInnerHTML={{
+                        __html: applySemiBoldStyle(text),
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
             ))}
           </div>
         </div>
       ))}
     </div>
+  </div>
   );
 }
 

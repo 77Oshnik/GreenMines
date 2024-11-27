@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Navbar from './Navbar';
 
 export default function CCSCalculator() {
   // State for form data
@@ -45,6 +46,7 @@ export default function CCSCalculator() {
 
   return (
     <div className="min-h-screen bg-[#342F49] py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+     {/* <Navbar />*/}
       <div className="w-full max-w-4xl mx-auto bg-[#231E3D] rounded-2xl shadow-lg overflow-hidden border-2 border-[#66C5CC]">
         <div className="p-8 md:p-12">
           <h1 className="text-3xl md:text-4xl font-bold text-[#66C5CC] mb-8 text-center">
