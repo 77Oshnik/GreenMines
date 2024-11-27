@@ -72,131 +72,203 @@ function DashBoard() {
     ],
   };
 
-  // Data for the entries Line Chart (with days of the week as x-axis)
-  const lineData = {
+  const weekData = {
     labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     datasets: [
       {
         label: "Electricity",
-        data: [10, 20, 40, 30, 50, 60],
+        data: [15, 30, 25, 20, 50, 40],
         borderColor: "#0046b9",
         backgroundColor: "#0046b9",
         tension: 0.4,
       },
       {
         label: "Explosion",
-        data: [20, 10, 30, 50, 20, 40],
+        data: [10, 20, 15, 30, 40, 25],
         borderColor: "#11c610",
         backgroundColor: "#11c610",
         tension: 0.4,
       },
       {
         label: "Fuel",
-        data: [30, 40, 20, 10, 60, 50],
+        data: [20, 25, 35, 45, 50, 55],
         borderColor: "#d5d502",
         backgroundColor: "#d5d502",
         tension: 0.4,
       },
       {
         label: "Shipping",
-        data: [15, 40, 25, 20, 20, 35],
+        data: [5, 10, 15, 20, 25, 30],
         borderColor: "#6302d5",
         backgroundColor: "#6302d5",
         tension: 0.4,
       },
     ],
   };
-
-    // Data for sink
-    const profitData = {
-      labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      datasets: [
-        {
-          label: "Profit",
-          data: [80000, 50000, 75000, 65000, 70000, 100000],
-          fill: true,
-          backgroundColor: function (context) {
-            // Define midway mark (e.g., halfway between 0 and 1,000,000)
-            const midwayMark = 74000; // Midway mark to determine color
-            const value = context.dataset.data[context.dataIndex];
   
-            // Set the background color (fill area) based on the value relative to the midway mark
-            if (value > midwayMark) {
-              return "#ff0000"; // Red fill color if above midway mark
-            } else {
-              return "rgba(200, 200, 200, 0.2)"; // Neutral color if below midway mark
-            }
-          },
-          borderColor: function (context) {
-            const midwayMark = 74000; // Same midway mark for border color
-            const value = context.dataset.data[context.dataIndex];
-  
-            // Set the border color based on whether the value is above or below midway mark
-            if (value > midwayMark) {
-              return "#ff0000"; // Red if above midway mark
-            } else {
-              return "#cccccc"; // Light gray if below midway mark
-            }
-          },
-          tension: 0.4,
-        },
-      ],
-    };
-  
-    const profitOptions = {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: "top",
-          labels: {
-            font: {
-              size: 18, // Increased legend font size
-            },
-          },
-        },
-        tooltip: {
-          callbacks: {
-            label: function (tooltipItem) {
-              return "$" + tooltipItem.raw.toLocaleString();
-            },
-          },
-        },
+  const monthData = {
+    labels: Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`),
+    datasets: [
+      {
+        label: "Electricity",
+        data: [
+          50, 60, 55, 65, 70, 80, 85, 75, 90, 95, 100, 110, 120, 125, 130, 140,
+          135, 150, 145, 160, 165, 170, 175, 180, 185, 190, 195, 200, 205, 210,
+        ],
+        borderColor: "#0046b9",
+        backgroundColor: "#0046b9",
+        tension: 0.4,
       },
-    };
-  
-  const chartOptions = {
-    responsive: true,
-    scales: {
-      x: {
-        ticks: {
-          font: {
-            size: 16, // Increased x-axis label size
-          },
-        },
+      {
+        label: "Explosion",
+        data: [
+          20, 25, 30, 35, 40, 50, 60, 65, 70, 75, 80, 90, 85, 95, 100, 110, 115,
+          120, 125, 130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180,
+        ],
+        borderColor: "#11c610",
+        backgroundColor: "#11c610",
+        tension: 0.4,
       },
-      y: {
-        ticks: {
-          font: {
-            size: 16, // Increased y-axis label size
-          },
-        },
+      {
+        label: "Fuel",
+        data: [
+          40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 110, 115, 120, 125,
+          130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180, 185, 190, 195,
+        ],
+        borderColor: "#d5d502",
+        backgroundColor: "#d5d502",
+        tension: 0.4,
       },
-    },
-    plugins: {
-      legend: {
-        labels: {
-          font: {
-            size: 18, // Increased legend font size
-          },
-        },
+      {
+        label: "Shipping",
+        data: [
+          15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100,
+          105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160,
+        ],
+        borderColor: "#6302d5",
+        backgroundColor: "#6302d5",
+        tension: 0.4,
       },
-      tooltip: {
-        bodyFont: {
-          size: 14, // Increased tooltip font size
-        },
-      },
-    },
+    ],
   };
+  
+  const yearData = {
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
+    datasets: [
+      {
+        label: "Electricity",
+        data: [500, 600, 750, 800, 850, 900, 950, 1000, 1100, 1150, 1200, 1250],
+        borderColor: "#0046b9",
+        backgroundColor: "#0046b9",
+        tension: 0.4,
+      },
+      {
+        label: "Explosion",
+        data: [200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750],
+        borderColor: "#11c610",
+        backgroundColor: "#11c610",
+        tension: 0.4,
+      },
+      {
+        label: "Fuel",
+        data: [400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500],
+        borderColor: "#d5d502",
+        backgroundColor: "#d5d502",
+        tension: 0.4,
+      },
+      {
+        label: "Shipping",
+        data: [150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700],
+        borderColor: "#6302d5",
+        backgroundColor: "#6302d5",
+        tension: 0.4,
+      },
+    ],
+  };
+  
+  const [currentData, setCurrentData] = useState(weekData);
+
+  const weekProfitData = {
+    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    datasets: [
+      {
+        label: "Profit",
+        data: [80000, 50000, 75000, 65000, 70000, 100000],
+        fill: true,
+        backgroundColor: function (context) {
+          const midwayMark = 74000;
+          const value = context.dataset.data[context.dataIndex];
+          return value > midwayMark ? "#ff0000" : "rgba(200, 200, 200, 0.2)";
+        },
+        borderColor: function (context) {
+          const midwayMark = 74000;
+          const value = context.dataset.data[context.dataIndex];
+          return value > midwayMark ? "#ff0000" : "#cccccc";
+        },
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const monthProfitData = {
+    labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+    datasets: [
+      {
+        label: "Profit",
+        data: [320000, 250000, 300000, 275000],
+        fill: true,
+        backgroundColor: function (context) {
+          const midwayMark = 270000;
+          const value = context.dataset.data[context.dataIndex];
+          return value > midwayMark ? "#ff0000" : "rgba(200, 200, 200, 0.2)";
+        },
+        borderColor: function (context) {
+          const midwayMark = 270000;
+          const value = context.dataset.data[context.dataIndex];
+          return value > midwayMark ? "#ff0000" : "#cccccc";
+        },
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const yearProfitData = {
+    labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    datasets: [
+      {
+        label: "Profit",
+        data: [300000, 400000, 350000, 500000, 450000, 480000, 530000, 600000, 550000, 590000, 620000, 700000],
+        fill: true,
+        backgroundColor: function (context) {
+          const midwayMark = 500000;
+          const value = context.dataset.data[context.dataIndex];
+          return value > midwayMark ? "#ff0000" : "rgba(200, 200, 200, 0.2)";
+        },
+        borderColor: function (context) {
+          const midwayMark = 500000;
+          const value = context.dataset.data[context.dataIndex];
+          return value > midwayMark ? "#ff0000" : "#cccccc";
+        },
+        tension: 0.4,
+      },
+    ],
+  };
+
+  // State for the current data displayed on the graph
+  const [selectedProfitData, setSelectedProfitData] = useState(weekProfitData);
 
 
   return (
@@ -312,16 +384,46 @@ function DashBoard() {
    
         {/* Emission Line Chart Below Doughnut and Data Entries */}
         <div className="flex gap-8 xl:col-span-3 p-2 ml-3">
-          <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-full lg:min-w-[1720px] max-w-[1000px] max-h-[1000px] mt-6">
-            <h2 className="text-lg font-bold mb-4">Emission Line Chart</h2>
-            <div className="flex justify-between items-center mb-6">
-              <span className="text-gray-400">Emission and Global warming trend in Emissions</span>
-              <span className="text-3xl font-bold">Analysis</span>
-            </div>
-            {/* Line Chart */}
-            <Line data={lineData} options={chartOptions} />
-          </div>
-        </div>
+  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[100%] max-h-[1800px] mt-6">
+    <h2 className="text-lg font-bold mb-4">Emission Line Chart</h2>
+    <div className="flex justify-between items-center mb-6">
+      <span className="text-gray-400">Emission and Global warming trend in Emissions</span>
+      <span className="text-3xl font-bold">Analysis</span>
+    </div>
+
+    {/* Time Range Filters */}
+    <div className="flex space-x-4 mb-4">
+      <button
+        onClick={() => setCurrentData(weekData)}
+        className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
+      >
+        Past Week
+      </button>
+      <button
+        onClick={() => setCurrentData(monthData)}
+        className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
+      >
+        Past Month
+      </button>
+      <button
+        onClick={() => setCurrentData(yearData)}
+        className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
+      >
+        Past Year
+      </button>
+    </div>
+
+    {/* Line Chart */}
+    {/* Adjust the height below to customize the chart size */}
+    <div className="h-[500px] overflow-hidden">
+      <Line
+        data={currentData}
+        options={{ responsive: true, maintainAspectRatio: false }}
+      />
+    </div>
+  </div>
+</div>
+
 
     {/* Tabs */}
     <div className="flex flex-wrap gap-8 p-1 justify-between xl:col-span-3">
@@ -352,15 +454,68 @@ function DashBoard() {
 
     <div className="flex gap-8 xl:col-span-3 p-1 mb-6">
       {/* Sink Graph */}
-      <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 flex-1">
-        <h2 className="text-lg font-bold mb-4">Sink Status</h2>
-        <div className="flex justify-center items-center h-full">
-          {/* Ensure the graph takes up all available space */}
-          <div className="w-full h-full">
-            <Line data={profitData} options={profitOptions} />
-          </div>
-        </div>
-      </div>
+<div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 flex-1">
+  <h2 className="text-lg font-bold text-gray-300 mb-4">Sink Status</h2>
+
+  {/* Time Range Filters */}
+  <div className="flex space-x-4 mb-4">
+    <button
+      onClick={() => setSelectedProfitData(weekProfitData)}
+      className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition"
+    >
+      Past Week
+    </button>
+    <button
+      onClick={() => setSelectedProfitData(monthProfitData)}
+      className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition"
+    >
+      Past Month
+    </button>
+    <button
+      onClick={() => setSelectedProfitData(yearProfitData)}
+      className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition"
+    >
+      Past Year
+    </button>
+  </div>
+
+  {/* Line Chart */}
+  <div className="w-full h-[400px]">
+    <Line 
+      data={selectedProfitData} 
+      options={{
+        responsive: true,
+        maintainAspectRatio: false, // Ensure the chart adapts to container dimensions
+        scales: {
+          x: {
+            grid: {
+              color: '#4A5568', // Optional grid customization
+            },
+            ticks: {
+              color: '#E2E8F0', // Optional tick customization
+            },
+          },
+          y: {
+            grid: {
+              color: '#4A5568',
+            },
+            ticks: {
+              color: '#E2E8F0',
+            },
+          },
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#E2E8F0', // Adjust legend text color
+            },
+          },
+        },
+      }}
+    />
+  </div>
+</div>
+
 
       {/* Real-Time Map Section */}
       <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 flex-1 max-w-xs min-w-[550px]">
