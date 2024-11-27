@@ -23,7 +23,7 @@ le = joblib.load(label_encoder_path)
 scaler = joblib.load(scaler_path)
 model = joblib.load(model_path)
 # Now, 'le' is correctly loaded as an instance of LabelEncoder
-print(f"Type of le after loading: {type(model)}")  # Should print <class 'sklearn.preprocessing._label.LabelEncoder'>
+
 
 
 # Function to handle unseen explosive types

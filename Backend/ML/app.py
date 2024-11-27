@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 # Import model prediction functions from individual model files
 from Transport.transport import predict_emissions_and_risk as predict_transport_emissions
-# from fuel_model import predict_emissions_and_risk as predict_fuel_emissions  # Import the appropriate function
+from Fuel.fuel import predict_emissions_and_risk as predict_fuel_emissions  # Import the fuel model's prediction function
 from Electricity.electricity import predict_emissions_and_risk as predict_emissions_and_risk  # Import the appropriate function
 from Explosives.explosive import predict_7_days_multiple_explosives as predict_7_days_multiple_explosives  # Import the appropriate function
 
@@ -32,15 +32,49 @@ def ml_explosive():
     return jsonify(predictions)  # Return the predictions as a JSON response
  
 
-# @app.route('/ml/fuel', methods=['POST'])
-# def ml_fuel():
-#     """
-#     Flask route for the fuel model that accepts input data,
-#     processes it, and returns predictions with risk levels.
-#     """
-#     data = request.get_json()  # Get the JSON data from the request
-#     predictions = predict_fuel_emissions(data['days_data'])  # Call the fuel model's prediction function
-#     return jsonify(predictions)  # Return the predictions as a JSON response
+@app.route('/ml/fuel', methods=['POST'])
+def ml_fuel():
+    """
+    Flask route for the fuel model that accepts input data,
+    processes it, and returns predictions with risk levels.
+    """
+    try:
+        # Parse the JSON data from the POST request
+        data = request.get_json()
+        
+        # Validate incoming data
+        if 'days_data' not in data:
+            return jsonify({
+                'status': 'error',
+                'message': 'Missing required field: days_data.'
+            }), 400
+        
+        # Extract the necessary fields
+        daily_fuel_data = data['days_data']
+
+        # Call the fuel model's prediction function
+        predictions = predict_fuel_emissions(daily_fuel_data)
+
+        # Return the predictions as a JSON response
+        response = {
+            'status': 'success',
+            'predictions': predictions  # Convert the JSON string into an object
+        }
+
+        return jsonify(response), 200
+
+    except ValueError as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 400
+
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': f"An unexpected error occurred: {str(e)}"
+        }), 500
+
 
 @app.route('/ml/electricity', methods=['POST'])
 def ml_electricity():
