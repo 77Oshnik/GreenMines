@@ -11,6 +11,7 @@ const sinkRoute = require("./routes/sinkRoute");
 const genaiRoute = require("./routes/genaiRoute");
 const dataRoute=require("./routes/datafetchingRoute")
 const chatbotRoute=require("./routes/chatbotRoute")
+const afoluRoute = require("./routes/afoluRoute");
 // Add other routes similarly
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use("/api", sinkRoute);
 app.use("/api", genaiRoute);
 app.use("/api",dataRoute)
 app.use("/api",chatbotRoute)
+app.use("/api", afoluRoute);
 // Add other routes similarly
 
 const PORT =  5000;

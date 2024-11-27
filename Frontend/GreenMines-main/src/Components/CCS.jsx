@@ -44,17 +44,17 @@ export default function CCSCalculator() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
-        <div className="md:flex">
-          <div className="p-8 w-full">
-            <div className="uppercase tracking-wide text-indigo-500 font-semibold text-2xl mb-1">
-              Carbon Capture and Storage (CCS)
-            </div>
-            <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="min-h-screen bg-[#342F49] py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+      <div className="w-full max-w-4xl mx-auto bg-[#231E3D] rounded-2xl shadow-lg overflow-hidden border-2 border-[#66C5CC]">
+        <div className="p-8 md:p-12">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#66C5CC] mb-8 text-center">
+            Carbon Capture and Storage (CCS) Calculator
+          </h1>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Mine Name */}
               <div>
-                <label htmlFor="mineName" className="block text-lg font-medium text-gray-700">
+                <label htmlFor="mineName" className="block text-xl font-medium text-[#66C5CC] mb-2">
                   Mine Name
                 </label>
                 <input
@@ -62,7 +62,7 @@ export default function CCSCalculator() {
                   name="mineName"
                   id="mineName"
                   required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="w-full border-2 border-[#4da5aa] rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[#66C5CC] focus:border-transparent text-lg bg-[#342F49] text-white"
                   placeholder="Enter the mine name"
                   value={formData.mineName}
                   onChange={handleChange}
@@ -71,7 +71,7 @@ export default function CCSCalculator() {
               
               {/* Annual Emissions */}
               <div>
-                <label htmlFor="annualEmissions" className="block text-lg font-medium text-gray-700">
+                <label htmlFor="annualEmissions" className="block text-xl font-medium text-[#66C5CC] mb-2">
                   Annual Emissions (tons)
                 </label>
                 <input
@@ -79,8 +79,8 @@ export default function CCSCalculator() {
                   name="annualEmissions"
                   id="annualEmissions"
                   required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter annual emissions in tons"
+                  className="w-full border-2 border-[#4da5aa] rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[#66C5CC] focus:border-transparent text-lg bg-[#342F49] text-white"
+                  placeholder="Enter annual emissions"
                   value={formData.annualEmissions}
                   onChange={handleChange}
                 />
@@ -88,35 +88,34 @@ export default function CCSCalculator() {
               
               {/* Mine Size */}
               <div>
-                <label htmlFor="mineSize" className="block text-lg font-medium text-gray-700">
+                <label htmlFor="mineSize" className="block text-xl font-medium text-[#66C5CC] mb-2">
                   Mine Size
                 </label>
                 <select
-                  type="text"
                   name="mineSize"
                   id="mineSize"
                   required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter the size of the mine"
+                  className="w-full border-2 border-[#4da5aa] rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[#66C5CC] focus:border-transparent text-lg bg-[#342F49] text-white"
                   value={formData.mineSize}
                   onChange={handleChange}
-                ><option value="">Select mine size</option>
-                <option value="Small">Small</option>
-                <option value="Medium">Medium</option>
-                <option value="Large">Large</option>
-              </select>
+                >
+                  <option value="">Select mine size</option>
+                  <option value="Small">Small</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Large">Large</option>
+                </select>
               </div>
               
               {/* CCS Technology */}
               <div>
-                <label htmlFor="ccsTechnology" className="block text-lg font-medium text-gray-700">
+                <label htmlFor="ccsTechnology" className="block text-xl font-medium text-[#66C5CC] mb-2">
                   CCS Technology
                 </label>
                 <select
                   name="ccsTechnology"
                   id="ccsTechnology"
                   required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="w-full border-2 border-[#4da5aa] rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[#66C5CC] focus:border-transparent text-lg bg-[#342F49] text-white"
                   value={formData.ccsTechnology}
                   onChange={handleChange}
                 >
@@ -129,15 +128,15 @@ export default function CCSCalculator() {
               
               {/* Installation Cost Per Ton */}
               <div>
-                <label htmlFor="installationCostPerTon" className="block text-lg font-medium text-gray-700">
+                <label htmlFor="installationCostPerTon" className="block text-xl font-medium text-[#66C5CC] mb-2">
                   Installation Cost Per Ton (₹)
                 </label>
                 <input
                   type="number"
                   name="installationCostPerTon"
                   id="installationCostPerTon"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter installation cost per ton (Optional)"
+                  className="w-full border-2 border-[#4da5aa] rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[#66C5CC] focus:border-transparent text-lg bg-[#342F49] text-white"
+                  placeholder="Enter installation cost"
                   value={formData.installationCostPerTon}
                   onChange={handleChange}
                 />
@@ -145,52 +144,52 @@ export default function CCSCalculator() {
               
               {/* Annual Maintenance Cost */}
               <div>
-                <label htmlFor="annualMaintenanceCost" className="block text-lg font-medium text-gray-700">
+                <label htmlFor="annualMaintenanceCost" className="block text-xl font-medium text-[#66C5CC] mb-2">
                   Annual Maintenance Cost (₹)
                 </label>
                 <input
                   type="number"
                   name="annualMaintenanceCost"
                   id="annualMaintenanceCost"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter annual maintenance cost (Optional)"
+                  className="w-full border-2 border-[#4da5aa] rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[#66C5CC] focus:border-transparent text-lg bg-[#342F49] text-white"
+                  placeholder="Enter maintenance cost"
                   value={formData.annualMaintenanceCost}
                   onChange={handleChange}
                 />
               </div>
-              
-              {/* Submit Button */}
-              <div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  {loading ? 'Calculating...' : 'Calculate CCS'}
-                </button>
-              </div>
-            </form>
-  
-            {/* Error Message */}
-            {error && (
-              <div className="mt-4 text-red-600">{error}</div>
-            )}
-  
-            {/* Result Display */}
-            {result && (
-              <div className="mt-6">
-                <h2 className="text-lg font-medium text-gray-900">Results:</h2>
-                <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-                  {Object.entries(result).map(([key, value]) => (
-                    <div key={key} className="py-3 flex justify-between text-sm font-medium">
-                      <dt className="text-gray-500">{key}</dt>
-                      <dd className="text-gray-900">{value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            )}
-          </div>
+            </div>
+            
+            {/* Submit Button */}
+            <div className="mt-8">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center py-4 px-6 border border-transparent rounded-lg shadow-sm text-xl font-medium text-[#342F49] bg-[#66C5CC] hover:bg-[#4da5aa] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#66C5CC] transition-colors duration-200"
+              >
+                {loading ? 'Calculating...' : 'Calculate CCS'}
+              </button>
+            </div>
+          </form>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-6 text-center text-red-500 text-lg">{error}</div>
+          )}
+
+          {/* Result Display */}
+          {result && (
+            <div className="mt-10 bg-[#342F49] rounded-lg p-6 border-2 border-[#66C5CC]">
+              <h2 className="text-2xl font-bold text-[#66C5CC] mb-4">Results:</h2>
+              <dl className="space-y-4">
+                {Object.entries(result).map(([key, value]) => (
+                  <div key={key} className="flex justify-between items-center text-lg">
+                    <dt className="font-medium text-[#4da5aa]">{key}</dt>
+                    <dd className="font-bold text-white">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          )}
         </div>
       </div>
     </div>

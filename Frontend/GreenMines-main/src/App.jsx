@@ -21,6 +21,7 @@ import Renewable from './Components/RenewableSource';
 import ChatBot from './Components/Chatbot';
 import CCSCalculator from './Components/CCS';
 import EmissionsAnalysisPage from "./Components/EmissionsAnalysisPage";
+import AFOLUForm from './Components/AFOLUForm';
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
         <Route path="/chatbot" element={<ChatBot/>} />
         <Route path="/CCS" element={<CCSCalculator/>}/>
         <Route path="/emissions-analysis" element={<EmissionsAnalysisPage />} />
+        <Route path="/afolu" element={<AFOLUForm />} />
       </Routes>
       
     </div>
