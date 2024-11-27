@@ -3,3 +3,13 @@ Backend/ML/Transport/carbon_emission_model.pkl
 Backend/ML/Explosives/scaler.pkl
 Backend/ML/Explosives/random_forest_model.pkl
 Backend/ML/Explosives/label_encoder.pkl
+Backend/ML/Electricity/train.py
+Backend/ML/Electricity/trained_model.pkl
+Backend/ML/Electricity/scaler.pkl
+Backend/ML/Electricity/encoder.pkl
+Backend/ML/Electricity/label_encoder.pkl
+Backend/ML/Electricity/random_forest_model.pkl
+Backend/ML/Transport/Generated_Transport_Emissions_1000_Updatednew.csv
+Backend/ML/Fuel/accurate_fuel_consumption_data.csv
+Backend/ML/Explosives/explosion_emissions_data.csv
+Backend/ML/Electricity/coal_mine_electricity1000.csv
