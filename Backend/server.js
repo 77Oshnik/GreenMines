@@ -2,42 +2,50 @@ const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const cors = require('cors');
-
-
+const path = require("path");
 
 // Route Imports
 const emissionRoute = require("./routes/emissionRoute");
 const sinkRoute = require("./routes/sinkRoute");
 const genaiRoute = require("./routes/genaiRoute");
-const authRoutes = require('./routes/authRoutes');
-const dataRoute=require("./routes/datafetchingRoute")
-const chatbotRoute=require("./routes/chatbotRoute")
+const authRoutes = require('./routes/authRoutes');  // 2FA related auth routes
+const dataRoute = require("./routes/datafetchingRoute");
+const chatbotRoute = require("./routes/chatbotRoute");
 const afoluRoute = require("./routes/afoluRoute");
 // Add other routes similarly
 
 dotenv.config();
 connectDB();
 
-
 const app = express();
-app.use(express.json());
 
-app.use(cors());
+// Middleware
+app.use(express.json()); // To parse incoming JSON
+app.use(cors()); // Enable CORS
 app.use(cors({
-    origin: 'http://localhost:3000' // Adjust to match your frontend URL
+    origin: 'http://localhost:3000', // Frontend URL for CORS
+    methods: 'GET,POST,PUT,DELETE',
+    credentials: true,
 }));
 
-// Register routes
-app.use("/api",emissionRoute );
-app.use("/api", sinkRoute);
-app.use("/api", genaiRoute);
-app.use("/api",authRoutes);
-app.use("/api",dataRoute)
-app.use("/api",chatbotRoute)
-app.use("/api", afoluRoute);
+// Security Middleware
+const helmet = require("helmet");
+app.use(helmet());  // Adding Helmet for security headers
+
+// Static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Register Routes for 2FA and others
+app.use("/api", emissionRoute);      // Routes for emissions
+app.use("/api", sinkRoute);          // Routes for sinks
+app.use("/api", genaiRoute);         // Routes for GenAI
+app.use("/api", authRoutes);         // Routes for authentication (includes 2FA)
+app.use("/api", dataRoute);          // Routes for data fetching
+app.use("/api", chatbotRoute);       // Routes for chatbot
+app.use("/api", afoluRoute);         // Routes for Afolu
 // Add other routes similarly
 
-const PORT =  5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

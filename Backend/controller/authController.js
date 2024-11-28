@@ -10,8 +10,8 @@ const User = require('../models/User');
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: process.env.REACT_APP_EMAIL_USER,
-        pass: process.env.REACT_APP_EMAIL_PASS,
+        user: process.env.EMAIL_USER, // Correct the environment variable name
+        pass: process.env.EMAIL_PASS,  // Correct the environment variable name
     },
 });
 
@@ -62,6 +62,34 @@ exports.login = async (req, res) => {
     } catch (err) {
         console.error('Server error', err);
         res.status(500).json({ msg: 'Server error' });
+    }
+};
+
+// Verify Two-Factor Authentication
+exports.verifyTwoFactor = async (req, res) => {
+    const { email, twoFactorCode } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ msg: 'User not found' });
+
+        // Check if the 2FA code is valid and not expired
+        if (user.twoFactorCode !== twoFactorCode || Date.now() > user.twoFactorCodeExpires) {
+            return res.status(400).json({ msg: 'Invalid or expired 2FA code' });
+        }
+
+        // Clear the 2FA code after successful verification
+        user.twoFactorCode = undefined;
+        user.twoFactorCodeExpires = undefined;
+        await user.save();
+
+        const payload = { user: { id: user.id } };
+        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+            if (err) throw err;
+            res.json({ token });
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
     }
 };
 
