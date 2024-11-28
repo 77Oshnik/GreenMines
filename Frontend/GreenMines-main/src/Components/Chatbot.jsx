@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { FaPaperPlane, FaUserCircle, FaRobot } from 'react-icons/fa';
 import DOMPurify from 'dompurify';
-import Navbar from './Navbar';
 
 export default function ChatBot() {
   const [messages, setMessages] = useState([
@@ -11,14 +10,14 @@ export default function ChatBot() {
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef(null);
 
-  // Inline styles for HTML content
+  // Inline styles for parsed HTML content
   const htmlStyles = `
     .parsed-html-content h3 {
       font-size: 1.25rem;
       font-weight: bold;
       margin-top: 1rem;
       margin-bottom: 0.5rem;
-      color: #1a202c;
+      color: #66C5CC;
     }
     .parsed-html-content ul {
       list-style-type: disc;
@@ -27,28 +26,30 @@ export default function ChatBot() {
     }
     .parsed-html-content li {
       margin-bottom: 0.5rem;
-      color: #2d3748;
+      color: #ffffff;
     }
     .parsed-html-content p {
       margin-bottom: 0.75rem;
+      color: #ffffff;
     }
   `;
 
+  // Render parsed HTML with applied styles
   const renderHTMLContent = (htmlContent) => {
-    // Sanitize the HTML content
-    const cleanHTML = DOMPurify.sanitize(htmlContent);
-    
+    const cleanHTML = DOMPurify.sanitize(htmlContent); // Sanitize the HTML content
+
     return (
       <>
         <style>{htmlStyles}</style>
-        <div 
-          dangerouslySetInnerHTML={{ __html: cleanHTML }}
+        <div
           className="parsed-html-content"
+          dangerouslySetInnerHTML={{ __html: cleanHTML }}
         />
       </>
     );
   };
 
+  // Handle sending messages
   const handleSendMessage = async () => {
     if (inputMessage.trim() !== '') {
       const userMessage = { text: inputMessage, isUser: true };
@@ -78,12 +79,14 @@ export default function ChatBot() {
     }
   };
 
+  // Handle pressing Enter to send the message
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSendMessage();
     }
   };
 
+  // Scroll to the latest message when the message list updates
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -91,9 +94,7 @@ export default function ChatBot() {
   }, [messages]);
 
   return (
-    
     <div className="h-screen bg-[#342F49] flex items-center justify-center p-8">
-      {/*<Navbar />*/}
       <div className="flex flex-col h-screen w-3/4 mx-auto bg-[#231E3D] border-[#66C5CC] rounded-lg pt-2">
         {/* Messages Display */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 ml-2">
@@ -106,13 +107,12 @@ export default function ChatBot() {
               {!message.isUser && <FaRobot className="text-[#66C5CC] w-6 h-6" />}
               
               <div
-  className={`w-auto max-w-full rounded-lg p-3 ${
-    message.isUser
-      ? 'bg-[#66C5CC] text-[#342F49] font-bold' // User message background with bold text
-      : 'bg-[#7b6ba3cc] text-white font-bold' // Bot message background with bold text
-  } shadow-md`}
->
-                {/* Customizable font size for the message text */}
+                className={`w-auto max-w-full rounded-lg p-3 ${
+                  message.isUser
+                    ? 'bg-[#66C5CC] text-[#342F49] font-bold'
+                    : 'bg-[#342F49] text-white font-bold'
+                } shadow-md`}
+              >
                 <p className="text-base sm:text-lg md:text-xl">
                   {message.isHTML ? renderHTMLContent(message.text) : message.text}
                 </p>
@@ -138,7 +138,7 @@ export default function ChatBot() {
             />
             <button
               onClick={handleSendMessage}
-              className="inline-flex  font-bold items-center px-6 py-3 border border-transparent text-lg  rounded-md shadow-sm text-[#342F49] bg-[#66C5CC] hover:bg-[#4da5aa] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#66C5CC]"
+              className="inline-flex font-bold items-center px-6 py-3 border border-transparent text-lg rounded-md shadow-sm text-[#342F49] bg-[#66C5CC] hover:bg-[#4da5aa] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#66C5CC]"
             >
               <FaPaperPlane className="w-6 h-6 mr-2" />
               Send
@@ -147,6 +147,5 @@ export default function ChatBot() {
         </div>
       </div>
     </div>
-
   );
 }

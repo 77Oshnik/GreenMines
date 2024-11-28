@@ -21,13 +21,20 @@ const CarouselDemo = () => {
   const surroundingDivSize = { width: "250px", height: "250px" }; // Surrounding comment size
 
   // Colors (Customizable)
-  const sectionBgColor = "#34246e"; // Section background color
+  const sectionBgColor = "#241a52"; // Section background color
   const commentBgColor = "#2D2A40"; // Div background color
   const borderColor = "#66C5CC"; // Div border color
 
   // Styles
   const sectionStyle = `p-8 rounded-lg shadow-lg border text-white`;
   const textStyle = "text-lg mb-4";
+
+  // Function to avoid overlap
+  const getRandomPosition = () => {
+    const x = Math.random() * 100; // X position between 0 and %
+    const y = Math.random() * 100; // Y position between 0 and 70%
+    return { top: `${y}%`, left: `${x}%` };
+  };
 
   return (
     <div
@@ -47,28 +54,31 @@ const CarouselDemo = () => {
           <p className={textStyle}>
             "Best Deal and on Great price: I recently tried out Olly, and I must say I was pleasantly surprised..."
           </p>
-          <p className="text-sm text-[#4932af] mt-4">- AppSumo User</p>
+          <p className="text-sm text-[#2d1e6e] mt-4">- AppSumo User</p>
         </div>
       </div>
 
       {/* Surrounding Comments */}
-      {reviews.slice(1).map((review, index) => (
-        <div
-          key={review.id}
-          className={`${sectionStyle} absolute text-left p-4`}
-          style={{
-            ...surroundingDivSize,
-            backgroundColor: commentBgColor,
-            borderColor: borderColor,
-            top: `${Math.random() * 80}%`,
-            left: `${Math.random() * 80}%`,
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <p className={textStyle}>{review.text}</p>
-          <p className="text-sm text-[#66C5CC] mt-2">- {review.author}</p>
-        </div>
-      ))}
+      {reviews.slice(1).map((review, index) => {
+        const position = getRandomPosition(); // Get random position for each surrounding comment
+        return (
+          <div
+            key={review.id}
+            className={`${sectionStyle} absolute text-left p-4`}
+            style={{
+              ...surroundingDivSize,
+              backgroundColor: commentBgColor,
+              borderColor: borderColor,
+              top: position.top,
+              left: position.left,
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <p className={textStyle}>{review.text}</p>
+            <p className="text-sm text-[#66C5CC] mt-2">- {review.author}</p>
+          </div>
+        );
+      })}
     </div>
   );
 };

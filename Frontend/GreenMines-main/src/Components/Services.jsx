@@ -79,20 +79,21 @@ export default function LandingPage() {
                 </div>
   
                 {/* Information Div */}
-                <div className="w-full lg:w-[45%] space-y-4 sm:space-y-6 mt-8 lg:mt-0">
-                  <div className="flex items-center gap-4 sm:gap-6">
-                    {feature.icon}
-                    <h3 className="text-2xl sm:text-3xl font-semibold text-[#66C5CC]">
-                      {feature.title}
-                    </h3>
-                  </div>
-                  <p className="text-lg sm:text-xl text-white leading-relaxed">
-                    {feature.description}
-                  </p>
-                  <button className="bg-[#66C5CC] text-[#342F49] px-6 sm:px-8 py-2 sm:py-3 text-sm sm:text-lg rounded-md hover:bg-[#4da5aa] transition duration-300">
-                    Learn More
-                  </button>
-                </div>
+<div className="w-full lg:w-[45%] space-y-6 sm:space-y-8 mt-10 lg:mt-0">
+  <div className="flex items-center gap-6 sm:gap-8">
+    {feature.icon}
+    <h3 className="text-3xl sm:text-4xl font-semibold text-[#66C5CC]">
+      {feature.title}
+    </h3>
+  </div>
+  <p className="text-xl sm:text-2xl text-white leading-8 sm:leading-9">
+    {feature.description}
+  </p>
+  <button className="bg-[#66C5CC] text-[#342F49] px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg rounded-md hover:bg-[#4da5aa] transition duration-300">
+    Learn More
+  </button>
+</div>
+
               </div>
             ))}
           </div>
