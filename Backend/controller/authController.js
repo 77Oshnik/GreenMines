@@ -6,12 +6,12 @@ const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const User = require('../models/User');
 
-// Email transporter setup
+// Email transporter setup with hardcoded email and password
 const transporter = nodemailer.createTransport({
     service: 'GMAIL',
     auth: {
         user: process.env.EMAIL_USER, // Correct the environment variable name
-        pass: process.env.EMAIL_PASS,  // Correct the environment variable name
+        pass: process.env.EMAIL_PASS,// Hardcoded password
     },
 });
 
@@ -26,8 +26,15 @@ exports.register = async (req, res) => {
         await user.save();
 
         const payload = { user: { id: user.id } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
-            if (err) throw err;
+        
+        // Hardcoded JWT secret key
+        const secretKey = 'yourHardcodedSecretKey';  // Replace with your secret key
+
+        jwt.sign(payload, secretKey, { expiresIn: '1h' }, (err, token) => {
+            if (err) {
+                console.error('Error signing token:', err);
+                return res.status(500).json({ msg: 'Server error while generating token' });
+            }
             res.json({ token });
         });
     } catch (err) {
@@ -52,7 +59,7 @@ exports.login = async (req, res) => {
 
         const mailOptions = {
             to: email,
-            from: process.env.EMAIL_USER,
+            from: 'sujal.shah23@comp.sce.edu.in', // Hardcoded email
             subject: 'Your 2FA Code',
             text: `Your 2FA code is ${twoFactorCode}. It will expire in 10 minutes.`,
         };
@@ -72,18 +79,17 @@ exports.verifyTwoFactor = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ msg: 'User not found' });
 
-        // Check if the 2FA code is valid and not expired
         if (user.twoFactorCode !== twoFactorCode || Date.now() > user.twoFactorCodeExpires) {
             return res.status(400).json({ msg: 'Invalid or expired 2FA code' });
         }
 
-        // Clear the 2FA code after successful verification
         user.twoFactorCode = undefined;
         user.twoFactorCodeExpires = undefined;
         await user.save();
 
         const payload = { user: { id: user.id } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+        const secretKey = 'yourHardcodedSecretKey';  // Replace with your secret key
+        jwt.sign(payload, secretKey, { expiresIn: '1h' }, (err, token) => {
             if (err) throw err;
             res.json({ token });
         });
@@ -105,10 +111,10 @@ exports.forgotPassword = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000;
         await user.save();
 
-        const resetURL = `${process.env.RESET_PASSWORD_URL}?token=${resetToken}`;
+        const resetURL = `http://localhost:5000/reset-password?token=${resetToken}`;
         const mailOptions = {
             to: email,
-            from: process.env.EMAIL_USER,
+            from: 'sujal.shah23@comp.sce.edu.in', // Hardcoded email
             subject: 'Password Reset Request',
             text: `You requested a password reset. Click the following link to reset your password: ${resetURL}`,
         };
@@ -165,7 +171,7 @@ exports.enableTwoFactor = async (req, res) => {
 
         const mailOptions = {
             to: email,
-            from: process.env.EMAIL_USER,
+            from: 'sujal.shah23@comp.sce.edu.in', // Hardcoded email
             subject: 'Your 2FA Code',
             text: `Your 2FA code is ${code}. Please keep it secure.`,
         };

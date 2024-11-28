@@ -22,6 +22,12 @@ import ChatBot from './Components/Chatbot';
 import CCSCalculator from './Components/CCS';
 import EmissionsAnalysisPage from "./Components/EmissionsAnalysisPage";
 import AFOLUForm from './Components/AFOLUForm';
+import ForgotPassword from './Components/ForgotPassword';
+import ResetPassword from './Components/ResetPassword';
+import Login from './Components/Login';
+import Enable2FA from './Components/Enable2FA';
+import Verify2FA from './Components/Verify2FA';
+import Register from './Components/Register';
 
 function App() {
   return (
@@ -57,6 +63,12 @@ function App() {
         <Route path="/CCS" element={<CCSCalculator/>}/>
         <Route path="/emissions-analysis" element={<EmissionsAnalysisPage />} />
         <Route path="/afolu" element={<AFOLUForm />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/setup-2fa" element={<Enable2FA />} />
+        <Route path="/verify-2fa" element={<Verify2FA />}/>
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
       
     </div>
