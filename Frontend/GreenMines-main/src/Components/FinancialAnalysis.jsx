@@ -33,19 +33,22 @@ export default function FinancialAnalysis() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 ">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Financial Analysis</h2>
-      <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-medium text-gray-700 mb-2">Cost vs Savings Analysis</h3>
+    <div className="flex flex-col bg-gray-900 rounded-lg shadow-md p-6">
+    <h2 className="text-lg font-bold text-white mb-4">Financial Analysis</h2>
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-300 mb-2">Cost vs Savings Analysis</h3>
+        <div className="h-[400px] w-full"> {/* Adjust container size for the Bar Chart */}
           <Bar data={barData} options={barOptions} />
         </div>
-        <div>
-          <h3 className="text-lg font-medium text-gray-700 mb-2">ROI Potential</h3>
-          <p className="text-2xl font-bold text-green-600">22%</p>
-          <p className="text-sm text-gray-600">Estimated ROI over 5 years</p>
-        </div>
+      </div>
+      <div>
+        <h3 className="text-lg font-medium text-gray-300 mb-2">ROI Potential</h3>
+        <p className="text-2xl font-bold text-green-600">22%</p>
+        <p className="text-sm text-gray-400">Estimated ROI over 5 years</p>
       </div>
     </div>
+  </div>
+  
   );
 }

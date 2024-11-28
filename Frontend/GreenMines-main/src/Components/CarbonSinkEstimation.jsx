@@ -19,32 +19,90 @@ function CarbonSinkEstimation() {
   };
 
   const barOptions = {
+    responsive: true,
+    maintainAspectRatio: false, // Allows chart to scale with container
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+    },
     scales: {
       x: {
         type: 'category',
+        title: {
+          display: true,
+          text: 'Sink Type',
+          font: {
+            size: 14,
+          },
+          color: '#4A5568',
+        },
+        ticks: {
+          color: '#4A5568', // Dark gray
+        },
       },
       y: {
         beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Capacity (tons CO2)',
+          font: {
+            size: 14,
+          },
+          color: '#4A5568',
+        },
+        ticks: {
+          color: '#4A5568', // Dark gray
+        },
       },
     },
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Carbon Sink Estimation</h2>
-      <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-medium text-gray-700 mb-2">Sequestration Capacity</h3>
-          <Bar data={barData} options={barOptions} />
-        </div>
-        <div>
-          <h3 className="text-lg font-medium text-gray-700 mb-2">Proposed Afforestation Zones</h3>
-          <div className="bg-gray-200 h-64 rounded-lg flex items-center justify-center">
-            <p className="text-gray-500">Geospatial Map Placeholder</p>
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[100%] max-h-[1800px] mt-6">
+    <h2 className="text-lg font-bold text-white mb-4">Carbon Sink Estimation</h2>
+    <div className="flex justify-between items-center mb-6">
+      <span className="text-gray-400">Sequestration Capacity Overview</span>
+      <span className="text-3xl font-bold text-white">Overview</span>
     </div>
+    <div className="w-full h-full"> {/* Ensure full height and width for chart container */}
+      <Bar
+        data={barData}
+        options={{
+          responsive: true, // Ensure the chart is responsive
+          maintainAspectRatio: false, // Allow the chart to adjust to the container size
+          scales: {
+            x: {
+              grid: {
+                color: "#4A5568", // Optional grid line color
+              },
+              ticks: {
+                color: "#E2E8F0", // Tick label color
+              },
+            },
+            y: {
+              grid: {
+                color: "#4A5568", // Optional grid line color
+              },
+              ticks: {
+                color: "#E2E8F0", // Tick label color
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: "#E2E8F0", // Adjust legend text color
+              },
+            },
+          },
+        }}
+      />
+    </div>
+  </div>
+  
+
+
   );
 }
 

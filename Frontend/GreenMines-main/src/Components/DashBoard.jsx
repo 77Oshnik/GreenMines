@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Doughnut, Line } from "react-chartjs-2";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -317,15 +317,16 @@ function DashBoard() {
       <div className="grid grid-cols-1 gap-8 px-4 sm:px-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
         <div className="flex flex-col xl:flex-row gap-8 xl:col-span-3 p-4">
           {/* Total Emission Card */}
-          <div className="bg-gray-800 rounded-lg shadow-md p-6 mt-6 w-full max-w-full xl:max-w-none xl:flex-1">
-            <h2 className="text-lg font-bold mb-4">Total Emission</h2>
-            <div className="flex justify-between items-center mb-6"></div>
-            <div className="flex justify-center p-4">
-              <div className="w-full max-w-[400px] sm:max-w-[400px]">
-                <Doughnut data={doughnutData} />
-              </div>
-            </div>
-          </div>
+          <div className="bg-gray-800 rounded-lg shadow-md p-6 mt-6 w-full sm:w-[40%] md:w-[40%] lg:w-[40%] xl:w-[40%] max-w-full mx-auto">
+  <h2 className="text-lg font-bold mb-4">Total Emission</h2>
+  <div className="flex justify-between items-center mb-6"></div>
+  <div className="flex justify-center p-4">
+    <div className="w-full max-w-[400px] sm:max-w-[400px]">
+      <Doughnut data={doughnutData} />
+    </div>
+  </div>
+</div>
+
 
           {/* Data Entries Table */}
           <div className="bg-gray-800 rounded-lg shadow-md p-6 mt-6 w-full max-w-full xl:max-w-none xl:flex-1 overflow-auto">
@@ -402,92 +403,11 @@ function DashBoard() {
           </div>
 
           {/* User Profile Div (Squarish and fits beside the data entries) */}
-          <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 w-full max-w-xs h-[580px] xl:max-w-sm">
-            {/* <div className="flex justify-center mb-6">
-    <div className="w-32 h-32 rounded-full overflow-hidden">
-      <img
-        src="https://zesty-cajeta-af510d.netlify.app/image-33.svg"
-        alt="User Profile"
-        className="object-cover w-full h-full"
-      />
-    </div>
-  </div> */}
-
-            {/* User Info */}
-            {/* <div className="text-center mb-6">
-    <h2 className="text-3xl font-bold text-white">N</h2>
-    <p className="text-xl text-gray-400">Organization Manager</p>
-    <p className="text-xl text-green-500">Active</p>
-  </div> */}
-
-            {/* User Details */}
-            {/* <div className="text-center mb-6">
-    <p className="text-lg text-gray-400">Email: gugxi@gugu.com</p>
-    <p className="text-lg text-gray-400">Department: Operations</p>
-  </div> */}
-
-            {/* System Access */}
-            {/* <div className="text-center mb-6">
-    <p className="text-lg text-gray-400">Access Level: Full Access</p>
-    <p className="text-lg text-gray-400">Role: Admin</p>
-  </div> */}
-
-            {/* Settings */}
-            {/* <div className="mt-auto text-center">
-    <button className="text-lg bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
-      Update Profile
-    </button>
-  </div> */}
-            <CarbonSinkEstimation />
-          </div>
+         
         </div>
 
-        {/* Emission Line Chart Below Doughnut and Data Entries */}
-        <div className="flex gap-8 xl:col-span-3 p-2 ml-3">
-          <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[100%] max-h-[1800px] mt-6">
-            <h2 className="text-lg font-bold mb-4">Emission Line Chart</h2>
-            <div className="flex justify-between items-center mb-6">
-              <span className="text-gray-400">
-                Emission and Global warming trend in Emissions
-              </span>
-              <span className="text-3xl font-bold">Analysis</span>
-            </div>
-
-            {/* Time Range Filters */}
-            <div className="flex space-x-4 mb-4">
-              <button
-                onClick={() => setCurrentData(weekData)}
-                className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
-              >
-                Past Week
-              </button>
-              <button
-                onClick={() => setCurrentData(monthData)}
-                className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
-              >
-                Past Month
-              </button>
-              <button
-                onClick={() => setCurrentData(yearData)}
-                className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
-              >
-                Past Year
-              </button>
-            </div>
-
-            {/* Line Chart */}
-            {/* Adjust the height below to customize the chart size */}
-            <div className="h-[500px] overflow-hidden">
-              <Line
-                data={currentData}
-                options={{ responsive: true, maintainAspectRatio: false }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex flex-wrap gap-8 p-1 justify-between xl:col-span-3">
+          {/* Tabs */}
+          <div className="flex flex-wrap gap-8 p-1 justify-between xl:col-span-3">
           <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
             <h2 className="text-lg font-bold mb-2">Electricity</h2>
             <p className="text-3xl font-semibold mb-2">60 MWh</p>
@@ -513,112 +433,208 @@ function DashBoard() {
           </div>
         </div>
 
-        <div className="flex gap-8 xl:col-span-3 p-1 mb-6">
-          {/* Sink Graph */}
-          <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 flex-1">
-            <h2 className="text-lg font-bold text-gray-300 mb-4">
-              Sink Status
-            </h2>
+       {/* Emission Line and Bar Chart Below Doughnut and Data Entries */}
+<div className="flex gap-8 xl:col-span-3 p-2 ml-3">
+  {/* Line Chart */}
+  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[65%] max-h-[1800px] mt-6">
+    <h2 className="text-lg font-bold mb-4">Emission Line Chart</h2>
+    <div className="flex justify-between items-center mb-6">
+      <span className="text-gray-400">
+        Emission and Global warming trend in Emissions
+      </span>
+      <span className="text-3xl font-bold">Analysis</span>
+    </div>
 
-            {/* Time Range Filters */}
-            <div className="flex space-x-4 mb-4">
-              <button
-                onClick={() => setSelectedProfitData(weekProfitData)}
-                className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition"
-              >
-                Past Week
-              </button>
-              <button
-                onClick={() => setSelectedProfitData(monthProfitData)}
-                className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition"
-              >
-                Past Month
-              </button>
-              <button
-                onClick={() => setSelectedProfitData(yearProfitData)}
-                className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition"
-              >
-                Past Year
-              </button>
-            </div>
+    {/* Time Range Filters */}
+    <div className="flex space-x-4 mb-4">
+      <button
+        onClick={() => setCurrentData(weekData)}
+        className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
+      >
+        Past Week
+      </button>
+      <button
+        onClick={() => setCurrentData(monthData)}
+        className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
+      >
+        Past Month
+      </button>
+      <button
+        onClick={() => setCurrentData(yearData)}
+        className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
+      >
+        Past Year
+      </button>
+    </div>
 
-            {/* Line Chart */}
-            <div className="w-full h-[400px]">
-              <Line
-                data={selectedProfitData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false, // Ensure the chart adapts to container dimensions
-                  scales: {
-                    x: {
-                      grid: {
-                        color: "#4A5568", // Optional grid customization
-                      },
-                      ticks: {
-                        color: "#E2E8F0", // Optional tick customization
-                      },
-                    },
-                    y: {
-                      grid: {
-                        color: "#4A5568",
-                      },
-                      ticks: {
-                        color: "#E2E8F0",
-                      },
-                    },
-                  },
-                  plugins: {
-                    legend: {
-                      labels: {
-                        color: "#E2E8F0", // Adjust legend text color
-                      },
-                    },
-                  },
-                }}
-              />
-            </div>
-          </div>
+    {/* Line Chart */}
+    <div className="h-[500px] overflow-hidden">
+      <Line
+        data={currentData}
+        options={{ responsive: true, maintainAspectRatio: false }}
+      />
+    </div>
+  </div>
 
-          {/* Real-Time Map Section */}
-          <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 flex-1 max-w-xs min-w-[550px]">
-            <h2 className="text-lg font-bold mb-4">Real-Time Map</h2>
-            <MapContainer
-              center={mapLocation}
-              zoom={12}
-              scrollWheelZoom={false}
-              className="h-72"
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-              <Marker position={mapLocation} icon={customMarker}>
-                <Popup>Your predefined location is here!</Popup>
-              </Marker>
-            </MapContainer>
+ {/* Bar Chart */}
+<div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[35%] max-h-[1800px] mt-6">
+  <h2 className="text-lg font-bold mb-4">Emission Bar Chart</h2>
+  <div className="flex justify-between items-center mb-6">
+    <span className="text-gray-400">Emission Contribution by Source</span>
+    <span className="text-3xl font-bold">Overview</span>
+  </div>
 
-            <br></br>
-            <h2 className="text-lg font-bold mb-4">Enter Location</h2>
-            <input
-              type="text"
-              className="text-black p-2 rounded-md mb-4"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Enter a location (e.g., New York)"
-            />
-            <button
-              onClick={() => geocodeLocation(location)}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
-            >
-              Go to Location
-            </button>
-          </div>
-          
-        </div>
-        <div className="flex w-full gap-96">
-            <FinancialAnalysis />
-            <ReportsAndAlerts />
-          </div>
+  {/* Bar Chart */}
+  <div className="flex-1">
+    <Bar
+      data={{
+        labels: ['Electricity', 'Explosion', 'Fuel', 'Shipping'],
+        datasets: [
+          {
+            label: 'Emission (tons CO2)',
+            data: [120, 150, 200, 100], // Example data
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.6)',
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(255, 206, 86, 0.6)',
+              'rgba(75, 192, 192, 0.6)',
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+            ],
+            borderWidth: 1,
+          },
+        ],
+      }}
+      options={{
+        responsive: true,
+        maintainAspectRatio: false, // Allow the chart to adjust to its container
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Sources',
+              font: {
+                size: 14,
+              },
+              color: '#ffffff',
+            },
+            ticks: {
+              color: '#ffffff',
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Emissions (tons CO2)',
+              font: {
+                size: 14,
+              },
+              color: '#ffffff',
+            },
+            ticks: {
+              color: '#ffffff',
+            },
+          },
+        },
+      }}
+    />
+  </div>
+</div>
+
+</div>
+
+<div className="flex gap-8 xl:col-span-3 p-1 mb-6">
+  {/* Sink Bar - 30% Width */}
+  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 w-[30%] min-w-[300px]">
+    <CarbonSinkEstimation />
+  </div>
+  
+  {/* Sink Graph - 70% Width */}
+  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6 w-[70%]">
+    <h2 className="text-lg font-bold text-gray-300 mb-4">Sink Status</h2>
+
+    {/* Time Range Filters */}
+    <div className="flex space-x-4 mb-4">
+      <button
+        onClick={() => setSelectedProfitData(weekProfitData)}
+        className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition"
+      >
+        Past Week
+      </button>
+      <button
+        onClick={() => setSelectedProfitData(monthProfitData)}
+        className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition"
+      >
+        Past Month
+      </button>
+      <button
+        onClick={() => setSelectedProfitData(yearProfitData)}
+        className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition"
+      >
+        Past Year
+      </button>
+    </div>
+
+    {/* Line Chart */}
+    <div className="w-full h-[400px]">
+      <Line
+        data={selectedProfitData}
+        options={{
+          responsive: true,
+          maintainAspectRatio: false, // Ensure the chart adapts to container dimensions
+          scales: {
+            x: {
+              grid: {
+                color: "#4A5568", // Optional grid customization
+              },
+              ticks: {
+                color: "#E2E8F0", // Optional tick customization
+              },
+            },
+            y: {
+              grid: {
+                color: "#4A5568",
+              },
+              ticks: {
+                color: "#E2E8F0",
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: "#E2E8F0", // Adjust legend text color
+              },
+            },
+          },
+        }}
+      />
+    </div>
+  </div>
+</div>
+
+        <div className="flex flex-col xl:flex-row gap-8 xl:col-span-3 p-4">
+  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[50%] max-h-[1800px] mb-4">
+    <h2 className="text-lg font-bold text-white mb-4">Financial Analysis</h2>
+    <FinancialAnalysis />
+  </div>
+  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[50%] max-h-[1800px] mb-4">
+    <h2 className="text-lg font-bold text-white mb-4">Reports and Alerts</h2>
+    <ReportsAndAlerts />
+  </div>
+</div>
+
+
       </div>
       <Footer className="w-full bg-gray-800 text-white py-4 text-center" />
     </div>
