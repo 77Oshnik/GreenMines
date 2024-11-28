@@ -9,6 +9,7 @@ const cors = require('cors');
 const emissionRoute = require("./routes/emissionRoute");
 const sinkRoute = require("./routes/sinkRoute");
 const genaiRoute = require("./routes/genaiRoute");
+const authRoutes = require('./routes/authRoutes');
 const dataRoute=require("./routes/datafetchingRoute")
 const chatbotRoute=require("./routes/chatbotRoute")
 const afoluRoute = require("./routes/afoluRoute");
@@ -30,6 +31,7 @@ app.use(cors({
 app.use("/api",emissionRoute );
 app.use("/api", sinkRoute);
 app.use("/api", genaiRoute);
+app.use("/api",authRoutes);
 app.use("/api",dataRoute)
 app.use("/api",chatbotRoute)
 app.use("/api", afoluRoute);
