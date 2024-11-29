@@ -78,100 +78,142 @@ const LineAndBarEmission = ({data}) => {
   console.log(fetchWeekData);
   
 
-  // Utility function to get the day of the week
-const getDayOfWeek = (date) => {
-  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const day = new Date(date).getDay();
-  return days[day];
-};
-
-// Function to calculate total CO2 emissions per day
-const calculateEmissionsByDay = (data) => {
-  const emissionsByDay = {};
-
-  const addEmissionToDay = (date, emission) => {
-    const day = getDayOfWeek(date);
-    if (!emissionsByDay[day]) {
-      emissionsByDay[day] = 0;
-    }
-    emissionsByDay[day] += emission;
+  const calculateEmissionsByDay = (data) => {
+    // Initialize emissionsByDay with all the days of the week
+    const emissionsByDay = {
+      Sunday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
+      Monday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
+      Tuesday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
+      Wednesday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
+      Thursday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
+      Friday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
+      Saturday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
+    };
+  
+    const addEmissionToDay = (date, emission, category) => {
+      const day = getDayOfWeek(date); // Get the day of the week
+      if (emissionsByDay[day]) {
+        emissionsByDay[day][category] += emission; // Add emission to the respective category
+      }
+    };
+  
+    // Electricity
+    data.electricity.forEach(entry => {
+      const co2Emission = entry.result.CO2.value;
+      addEmissionToDay(entry.createdAt, co2Emission, 'electricity');
+    });
+  
+    // Fuel Combustion
+    data.fuelCombustion.forEach(entry => {
+      const co2Emission = entry.result.CO2.value;
+      addEmissionToDay(entry.createdAt, co2Emission, 'fuelCombustion');
+    });
+  
+    // Shipping
+    data.shipping.forEach(entry => {
+      const co2Emission = parseFloat(entry.result.carbonEmissions.kilograms);
+      addEmissionToDay(entry.createdAt, co2Emission, 'shipping');
+    });
+  
+    // Explosion
+    data.explosion.forEach(entry => {
+      const co2Emission = parseFloat(entry.emissions.CO2);
+      addEmissionToDay(entry.createdAt, co2Emission, 'explosion');
+    });
+  
+    return emissionsByDay;
   };
-
-  // Electricity
-  data.electricity.forEach(entry => {
-    const co2Emission = entry.result.CO2.value;
-    addEmissionToDay(entry.createdAt, co2Emission);
-  });
-
-  // Fuel Combustion
-  data.fuelCombustion.forEach(entry => {
-    const co2Emission = entry.result.CO2.value;
-    addEmissionToDay(entry.createdAt, co2Emission);
-  });
-
-  // Shipping
-  data.shipping.forEach(entry => {
-    const co2Emission = parseFloat(entry.result.carbonEmissions.kilograms);
-    addEmissionToDay(entry.createdAt, co2Emission);
-  });
-
-  // Explosion
-  data.explosion.forEach(entry => {
-    const co2Emission = parseFloat(entry.emissions.CO2);
-    addEmissionToDay(entry.createdAt, co2Emission);
-  });
-
-  return emissionsByDay;
-};
-
-// Get total CO2 emissions for each day of the week
-const totalEmissionsByDay = fetchWeekData ? calculateEmissionsByDay(fetchWeekData) : null;
-console.log(totalEmissionsByDay);
-
-
-
+  
+  // Utility function to get the day of the week
+  const getDayOfWeek = (date) => {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const day = new Date(date).getDay();
+    return days[day];
+  };
+  
+  // Ensure fetchWeekData is not null before calling the function
+  const totalEmissionsByDay = fetchWeekData ? calculateEmissionsByDay(fetchWeekData) : null;
+  
+  console.log(totalEmissionsByDay);
+  
   const weekData = {
-    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
     datasets: [
       {
         label: "Electricity",
-        data: [15, 30, 25, 20, 50, 40],
+        data: [
+          (totalEmissionsByDay && totalEmissionsByDay.Monday ? totalEmissionsByDay.Monday.electricity : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Tuesday ? totalEmissionsByDay.Tuesday.electricity : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Wednesday ? totalEmissionsByDay.Wednesday.electricity : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Thursday ? totalEmissionsByDay.Thursday.electricity : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Friday ? totalEmissionsByDay.Friday.electricity : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Saturday ? totalEmissionsByDay.Saturday.electricity : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Sunday ? totalEmissionsByDay.Sunday.electricity : 0),
+        ],
         borderColor: "#0046b9",
         backgroundColor: "#0046b9",
         tension: 0.4,
       },
       {
         label: "Explosion",
-        data: [10, 20, 15, 30, 40, 25],
+        data: [
+          (totalEmissionsByDay && totalEmissionsByDay.Monday ? totalEmissionsByDay.Monday.explosion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Tuesday ? totalEmissionsByDay.Tuesday.explosion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Wednesday ? totalEmissionsByDay.Wednesday.explosion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Thursday ? totalEmissionsByDay.Thursday.explosion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Friday ? totalEmissionsByDay.Friday.explosion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Saturday ? totalEmissionsByDay.Saturday.explosion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Sunday ? totalEmissionsByDay.Sunday.explosion : 0),
+        ],
         borderColor: "#11c610",
         backgroundColor: "#11c610",
         tension: 0.4,
       },
       {
         label: "Fuel",
-        data: [20, 25, 35, 45, 50, 55],
+        data: [
+          (totalEmissionsByDay && totalEmissionsByDay.Monday ? totalEmissionsByDay.Monday.fuelCombustion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Tuesday ? totalEmissionsByDay.Tuesday.fuelCombustion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Wednesday ? totalEmissionsByDay.Wednesday.fuelCombustion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Thursday ? totalEmissionsByDay.Thursday.fuelCombustion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Friday ? totalEmissionsByDay.Friday.fuelCombustion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Saturday ? totalEmissionsByDay.Saturday.fuelCombustion : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Sunday ? totalEmissionsByDay.Sunday.fuelCombustion : 0),
+        ],
         borderColor: "#d5d502",
         backgroundColor: "#d5d502",
         tension: 0.4,
       },
       {
         label: "Shipping",
-        data: [5, 10, 15, 20, 25, 30],
+        data: [
+          (totalEmissionsByDay && totalEmissionsByDay.Monday ? totalEmissionsByDay.Monday.shipping : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Tuesday ? totalEmissionsByDay.Tuesday.shipping : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Wednesday ? totalEmissionsByDay.Wednesday.shipping : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Thursday ? totalEmissionsByDay.Thursday.shipping : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Friday ? totalEmissionsByDay.Friday.shipping : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Saturday ? totalEmissionsByDay.Saturday.shipping : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Sunday ? totalEmissionsByDay.Sunday.shipping : 0),
+        ],
         borderColor: "#6302d5",
         backgroundColor: "#6302d5",
         tension: 0.4,
       },
     ],
   };
+  
+  
+  
+  // console.log(weekData);
+  
 
   const monthData = {
-    labels: Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`),
+    labels:["Week 1","Week 2","Week 3","Week 4", ],
     datasets: [
       {
         label: "Electricity",
         data: [
-          50, 60, 55, 65, 70, 80, 85, 75, 90, 95, 100, 110, 120, 125, 130, 140,
-          135, 150, 145, 160, 165, 170, 175, 180, 185, 190, 195, 200, 205, 210,
+          200,300,400,500
         ],
         borderColor: "#0046b9",
         backgroundColor: "#0046b9",
@@ -180,8 +222,7 @@ console.log(totalEmissionsByDay);
       {
         label: "Explosion",
         data: [
-          20, 25, 30, 35, 40, 50, 60, 65, 70, 75, 80, 90, 85, 95, 100, 110, 115,
-          120, 125, 130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180,
+          200,400,400,500
         ],
         borderColor: "#11c610",
         backgroundColor: "#11c610",
@@ -190,8 +231,7 @@ console.log(totalEmissionsByDay);
       {
         label: "Fuel",
         data: [
-          40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 110, 115, 120, 125,
-          130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180, 185, 190, 195,
+          200,600,400,500
         ],
         borderColor: "#d5d502",
         backgroundColor: "#d5d502",
@@ -200,8 +240,7 @@ console.log(totalEmissionsByDay);
       {
         label: "Shipping",
         data: [
-          15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95,
-          100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160,
+          200,700,400,500
         ],
         borderColor: "#6302d5",
         backgroundColor: "#6302d5",
