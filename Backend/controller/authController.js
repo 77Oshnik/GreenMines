@@ -10,8 +10,8 @@ const User = require('../models/User');
 const transporter = nodemailer.createTransport({
     service: 'GMAIL',
     auth: {
-        user: process.env.EMAIL_USER, // Correct the environment variable name
-        pass: process.env.EMAIL_PASS,// Hardcoded password
+        user: 'sujal.shah23@comp.sce.edu.in', // Correct the environment variable name
+        pass: 'sujal9867000788',// Hardcoded password
     },
 });
 
@@ -111,7 +111,7 @@ exports.forgotPassword = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000;
         await user.save();
 
-        const resetURL = `http://localhost:5000/reset-password?token=${resetToken}`;
+        const resetURL = `http://localhost:3000/reset-password?token=${resetToken}`;
         const mailOptions = {
             to: email,
             from: 'sujal.shah23@comp.sce.edu.in', // Hardcoded email
