@@ -45,24 +45,28 @@ def safe_transform(encoder, value):
 # Risk evaluation thresholds
 def risk_evaluation(row):
     thresholds = {
-        'CO': (400, 700),
-        'NOx': (20, 40),
-        'NH3': (50, 80),
-        'HCN': (20, 50),
-        'H2S': (20, 50),
-        'SO2': (1, 5),
-        'CO2': (1000, 5000)
+        'CO': [400, 700, 1000],
+        'NOx': [20, 40, 60],
+        'NH3': [50, 80, 120],
+        'HCN': [20, 50, 80],
+        'H2S': [20, 50, 80],
+        'SO2': [1, 5, 10],
+        'CO2': [1000, 5000, 10000]
     }
+
     risks = []
-    for gas, (low, high) in thresholds.items():
-        value = row[gas]
-        if value > high:
+    for gas, levels in thresholds.items():
+        value = row.get(gas, 0)  # Safely get the value for the gas, default to 0 if not present
+        if value > levels[2]:
+            risks.append(f'{gas} - Severe')
+        elif value > levels[1]:
             risks.append(f'{gas} - High')
-        elif value > low:
+        elif value > levels[0]:
             risks.append(f'{gas} - Moderate')
         else:
             risks.append(f'{gas} - Low')
     return risks
+
 
 # Function to predict emissions and evaluate risks for multiple explosives per day
 def predict_7_days_multiple_explosives(input_data):
@@ -98,11 +102,18 @@ def predict_7_days_multiple_explosives(input_data):
             # Create a DataFrame for the predictions
             predicted_df = pd.DataFrame(predicted_emissions, columns=['CO', 'NOx', 'NH3', 'HCN', 'H2S', 'SO2', 'CO2'])
 
+            # Add the explosive type as a new column
+            predicted_df['Explosive Type'] = explosive_type
+
             # Add risk evaluations
             predicted_df['Risk Evaluation'] = predicted_df.apply(risk_evaluation, axis=1)
 
-            # Append the predictions for this explosive type
-            daily_predictions.append(predicted_df[['Risk Evaluation', 'CO', 'NOx', 'NH3', 'HCN', 'H2S', 'SO2', 'CO2']].to_dict(orient='records'))
+            ordered_columns = ['Explosive Type', 'Risk Evaluation', 'CO', 'NOx', 'NH3', 'HCN', 'H2S', 'SO2', 'CO2']
+            ordered_df = predicted_df[ordered_columns]
+
+            # Convert the DataFrame to a dictionary with the correct column order
+            daily_predictions.append(ordered_df.to_dict(orient='records'))
+
 
         # Store the predictions for the day
         all_predictions[f"Day {day}"] = daily_predictions

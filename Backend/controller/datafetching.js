@@ -96,8 +96,6 @@ exports.fetchDateRangeData = async (req, res) => {
             Explosion.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
         ]);
 
-        // Log the response before sending it
-        console.log("Fetched emissions data:", { electricityData, fuelData, shippingData, explosionData });
 
         return res.status(200).json({
             electricity: electricityData,

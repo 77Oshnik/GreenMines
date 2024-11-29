@@ -1,1 +1,2 @@
 pip install pandas numpy scikit-learn flask joblib
+pip install -U flask-cors

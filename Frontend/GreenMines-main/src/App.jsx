@@ -29,7 +29,7 @@ import Enable2FA from './Components/Enable2FA';
 import Verify2FA from './Components/Verify2FA';
 import Register from './Components/Register';
 import MovingText from './Components/MarqueeText';
-
+import Prediction from './Components/Predictions'
 function App() {
   return (
     <div className="App font-link">
@@ -71,6 +71,7 @@ function App() {
         <Route path="/CCS" element={<CCSCalculator/>}/>
         <Route path="/emissions-analysis" element={<EmissionsAnalysisPage />} />
         <Route path="/afolu" element={<AFOLUForm />} />
+        <Route path="/predictions" element={<Prediction />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/setup-2fa" element={<Enable2FA />} />

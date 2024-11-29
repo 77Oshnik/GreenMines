@@ -48,7 +48,7 @@ def preprocess_data(input_data):
 
     # Scale the features using the previously fitted scaler
     input_scaled = scaler.transform(input_df)
-
+    
     return input_scaled
 
 # Function to predict emissions and evaluate risk
@@ -66,7 +66,7 @@ def predict_emissions_and_risk(days_data, state_name):
     # Add the state name to each day's data
     for day in days_data:
         day['stateName'] = state_name
-
+    
     # Preprocess the input data
     input_scaled = preprocess_data(days_data)
 
@@ -78,7 +78,7 @@ def predict_emissions_and_risk(days_data, state_name):
     for i, predicted_co2 in enumerate(predictions):
         risk_level, predicted_value = assess_risk(predicted_co2)
         response.append({
-            "day": i + 1,
+            "Entry No ": i + 1,
             "predicted_co2": predicted_value,
             "risk_level": risk_level
         })
