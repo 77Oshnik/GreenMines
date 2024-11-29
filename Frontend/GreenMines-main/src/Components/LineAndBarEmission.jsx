@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
+import axios from "axios";
 import { Line, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -23,7 +24,112 @@ ChartJS.register(
   Legend
 );
 
-const LineAndBarEmission = () => {
+const LineAndBarEmission = ({data}) => {
+
+  const [fetchWeekData, setWeekData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchLastWeekData = async () => {
+      try {
+        setLoading(true);
+
+        // Get today's date
+        const today = new Date(); // Today's date will be something like November 29, 2024
+
+        // Calculate the start of the current week (this week's Monday)
+        const currentWeekMonday = new Date(today);
+        currentWeekMonday.setDate(today.getDate() - today.getDay() + 1); // Set to Monday of the current week (November 25, 2024)
+        currentWeekMonday.setHours(0, 0, 0, 0); // Set to midnight (00:00:00)
+
+        // Calculate the start of last week (Monday of previous week)
+        const lastWeekMonday = new Date(currentWeekMonday);
+        lastWeekMonday.setDate(currentWeekMonday.getDate() - 7); // Go back 7 days to get last week's Monday (November 18, 2024)
+        
+        // Calculate the end of last week (Sunday of previous week)
+        const lastWeekSunday = new Date(lastWeekMonday);
+        lastWeekSunday.setDate(lastWeekMonday.getDate() + 6); // Set to Sunday of last week (November 24, 2024)
+        lastWeekSunday.setHours(23, 59, 59, 999); // Set to the end of the day (23:59:59)
+
+        // Format the dates to YYYY-MM-DD
+        const formattedStartDate = lastWeekMonday.toISOString().split('T')[0]; // "2024-11-18"
+        const formattedEndDate = lastWeekSunday.toISOString().split('T')[0]; // "2024-11-24"
+
+        // Make the API call with the start and end date for last week
+        const response = await axios.get(`http://localhost:5000/api/data/${formattedStartDate}/${formattedEndDate}`);
+
+        console.log('Last week data:', response.data); // Log the response for debugging
+
+        // Set the fetched data to state
+        setWeekData(response.data);
+        setLoading(false);
+
+      } catch (err) {
+        setError("Failed to fetch data");
+        setLoading(false);
+        console.error(err);
+      }
+    };
+
+    // Call the fetch function immediately when the component loads
+    fetchLastWeekData();
+  }, []); // Empty dependency array ensures this runs only once when the component mounts
+  console.log(fetchWeekData);
+  
+
+  // Utility function to get the day of the week
+const getDayOfWeek = (date) => {
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const day = new Date(date).getDay();
+  return days[day];
+};
+
+// Function to calculate total CO2 emissions per day
+const calculateEmissionsByDay = (data) => {
+  const emissionsByDay = {};
+
+  const addEmissionToDay = (date, emission) => {
+    const day = getDayOfWeek(date);
+    if (!emissionsByDay[day]) {
+      emissionsByDay[day] = 0;
+    }
+    emissionsByDay[day] += emission;
+  };
+
+  // Electricity
+  data.electricity.forEach(entry => {
+    const co2Emission = entry.result.CO2.value;
+    addEmissionToDay(entry.createdAt, co2Emission);
+  });
+
+  // Fuel Combustion
+  data.fuelCombustion.forEach(entry => {
+    const co2Emission = entry.result.CO2.value;
+    addEmissionToDay(entry.createdAt, co2Emission);
+  });
+
+  // Shipping
+  data.shipping.forEach(entry => {
+    const co2Emission = parseFloat(entry.result.carbonEmissions.kilograms);
+    addEmissionToDay(entry.createdAt, co2Emission);
+  });
+
+  // Explosion
+  data.explosion.forEach(entry => {
+    const co2Emission = parseFloat(entry.emissions.CO2);
+    addEmissionToDay(entry.createdAt, co2Emission);
+  });
+
+  return emissionsByDay;
+};
+
+// Get total CO2 emissions for each day of the week
+const totalEmissionsByDay = fetchWeekData ? calculateEmissionsByDay(fetchWeekData) : null;
+console.log(totalEmissionsByDay);
+
+
+
   const weekData = {
     labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     datasets: [
@@ -153,6 +259,34 @@ const LineAndBarEmission = () => {
 
   const [currentData, setCurrentData] = useState(weekData);
 
+
+  const electricityCO2 = data.electricity.reduce((total, item) => total + item.result.CO2.value, 0);
+  const fuelCO2 = data.fuelCombustion.reduce((total, item) => total + item.result.CO2.value, 0);
+  const shippingCO2 = data.shipping.reduce((total, item) => total + parseFloat(item.result.carbonEmissions.kilograms), 0);
+  const explosionCO2 = data.explosion.reduce((total, item) => total + parseFloat(item.emissions.CO2), 0);
+  const barData={
+    labels: ['Electricity', 'Explosion', 'Fuel', 'Shipping'],
+    datasets: [
+      {
+        label: 'Emission (tons CO2)',
+        data: [electricityCO2, explosionCO2, fuelCO2,shippingCO2 ], // Example data
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)',
+          'rgba(75, 192, 192, 0.6)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  }
+
   return (
     <div className="flex gap-8 xl:col-span-3 p-2 ml-3">
       {/* Line Chart */}
@@ -194,28 +328,7 @@ const LineAndBarEmission = () => {
   {/* Bar Chart */}
   <div className="flex-1">
     <Bar
-      data={{
-        labels: ['Electricity', 'Explosion', 'Fuel', 'Shipping'],
-        datasets: [
-          {
-            label: 'Emission (tons CO2)',
-            data: [120, 150, 200, 100], // Example data
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.6)',
-              'rgba(54, 162, 235, 0.6)',
-              'rgba(255, 206, 86, 0.6)',
-              'rgba(75, 192, 192, 0.6)',
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-            ],
-            borderWidth: 1,
-          },
-        ],
-      }}
+      data={barData}
       options={{
         responsive: true,
         maintainAspectRatio: false, // Allow the chart to adjust to its container

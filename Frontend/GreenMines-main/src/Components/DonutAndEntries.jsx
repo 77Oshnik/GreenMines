@@ -2,13 +2,21 @@ import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import "chart.js/auto";
 
-const DonutAndEntries = () => {
+const DonutAndEntries = ({ data }) => {
+  console.log(data);
+  
+
+  const electricityCO2 = data.electricity.reduce((total, item) => total + item.result.CO2.value, 0);
+  const fuelCO2 = data.fuelCombustion.reduce((total, item) => total + item.result.CO2.value, 0);
+  const shippingCO2 = data.shipping.reduce((total, item) => total + parseFloat(item.result.carbonEmissions.kilograms), 0);
+  const explosionCO2 = data.explosion.reduce((total, item) => total + parseFloat(item.emissions.CO2), 0);
+
   // Data for the Doughnut Chart
   const doughnutData = {
     labels: ["Electricity", "Explosion", "Fuel", "Shipping"],
     datasets: [
       {
-        data: [50, 30, 20, 45],
+        data: [ electricityCO2 ,explosionCO2 ,fuelCO2, shippingCO2],
         backgroundColor: ["#0046b9", "#11c610", "#d5d502", "#6302d5"],
         hoverBackgroundColor: ["#0046b9", "#11c610", "#d5d502", "#6302d5"],
       },
