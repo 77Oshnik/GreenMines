@@ -5,6 +5,7 @@ import EmissionForm from './EmissionForm';
 import Footer from './Footer';
 import NeutralityForm from './NeurtalityForm';
 import NeutralityResult from './NeutralityResult';
+import ChatAssistant from './ChatAssistant';
 
 function Neutrality() {
   return (
@@ -13,6 +14,7 @@ function Neutrality() {
           <Route path="/" element={
             <>
               <Enavbar />
+              <ChatAssistant />
               <NeutralityForm />
               <Footer />
             </>

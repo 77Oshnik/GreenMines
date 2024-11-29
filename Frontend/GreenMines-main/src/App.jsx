@@ -30,6 +30,9 @@ import Verify2FA from './Components/Verify2FA';
 import Register from './Components/Register';
 import MovingText from './Components/MarqueeText';
 import Prediction from './Components/Predictions'
+import NeutralityOptions from './Components/NeutralityOptions';
+import ChatAssistant from './Components/ChatAssistant';
+import Profile from './Components/Profile';
 function App() {
   return (
     <div className="App font-link">
@@ -38,11 +41,13 @@ function App() {
       <Routes>
       <Route path="/" element={
           <>
+          <ChatAssistant />
             <Header id="home" />
             <MovingText
-        text="Your Moving Text"
+        text="
+        Sustainable Future Green Growth Future Friendly"
         fontSize={100}
-        outlineColor="purple"
+        outlineColor="black"
         fillColor="purple"
         duration={8}
       />
@@ -78,6 +83,9 @@ function App() {
         <Route path="/verify-2fa" element={<Verify2FA />}/>
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/neutralityoptions" element={<NeutralityOptions />} />
+        <Route path="/chatassistant" element={<ChatAssistant />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
       
     </div>

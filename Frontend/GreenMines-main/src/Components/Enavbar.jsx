@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { MenuIcon, XIcon } from "@heroicons/react/outline";
-import { Disclosure } from "@headlessui/react";
-import { HashLink } from "react-router-hash-link";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X } from 'lucide-react';
 import logo from "./logo.png"; 
 
 const navigation = [
   { name: "Home", href: "/" },
   { name: "Carbon Footprint", href: "/emission" },
-  { name: "Solutions", href: "/neutrality" },
+  { name: "Neutrality", href: "/neutralityoptions" },
   { name: "About Us", href: "/aboutus" }
 ];
 
@@ -18,34 +16,36 @@ function classNames(...classes) {
 
 function Enavbar({ className }) {
   const location = useLocation();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
   const [navs, setNavs] = useState(navigation);
 
   useEffect(() => {
-    // Update the `current` property based on the current URL
-    const updatedNavs = navs.map(nav => ({
+    // Only update `navs` when location.pathname changes
+    const updatedNavs = navigation.map(nav => ({
       ...nav,
       current: location.pathname === nav.href
     }));
     setNavs(updatedNavs);
-  }, [location.pathname, navs]);
+  }, [location.pathname]);  // Removed `navs` from dependency array
 
   return (
-    <Disclosure as="nav" className={`bg-[#2B263F] ${className} overflow-x-hidden`}>
-  {({ open }) => (
-    <>
+    <nav className={`bg-[#2B263F] fixed top-0 left-0 w-full z-50`}>
       <div className="w-full px-4">
         <div className="relative flex items-center justify-between h-24 max-w-screen-2xl mx-auto">
           {/* Mobile menu button */}
           <div className="sm:hidden">
-            <Disclosure.Button className="inline-flex items-center justify-center p-3 rounded-md text-[#66C5CC] hover:text-white hover:bg-[#342F49] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="inline-flex items-center justify-center p-3 rounded-md text-[#66C5CC] hover:text-white hover:bg-[#342F49] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+            >
               <span className="sr-only">Open main menu</span>
-              {open ? (
-                <XIcon className="block h-6 w-6" aria-hidden="true" />
+              {isOpen ? (
+                <X className="block h-6 w-6" aria-hidden="true" />
               ) : (
-                <MenuIcon className="block h-6 w-6" aria-hidden="true" />
+                <Menu className="block h-6 w-6" aria-hidden="true" />
               )}
-            </Disclosure.Button>
+            </button>
           </div>
 
           {/* Logo */}
@@ -54,7 +54,7 @@ function Enavbar({ className }) {
               src={logo}
               alt="Logo"
               className="h-12 w-auto max-w-full cursor-pointer"
-              onClick={() => navigate("/")} // Adjust height and ensure it scales properly
+              onClick={() => navigate("/")}
             />
           </div>
 
@@ -62,7 +62,7 @@ function Enavbar({ className }) {
           <div className="hidden sm:flex flex-grow justify-center">
             <div className="flex space-x-8">
               {navs.map((item) => (
-                <HashLink
+                <Link
                   key={item.name}
                   to={item.href}
                   className={classNames(
@@ -74,7 +74,7 @@ function Enavbar({ className }) {
                   aria-current={item.current ? "page" : undefined}
                 >
                   {item.name}
-                </HashLink>
+                </Link>
               ))}
             </div>
           </div>
@@ -95,30 +95,29 @@ function Enavbar({ className }) {
       </div>
 
       {/* Mobile Menu */}
-      <Disclosure.Panel className="sm:hidden">
-        <div className="px-2 pt-2 pb-3 space-y-1">
-          {navs.map((item) => (
-            <Disclosure.Button
-              key={item.name}
-              as="a"
-              href={item.href}
-              className={classNames(
-                item.current
-                  ? "bg-[#342F49] text-[#66C5CC]"
-                  : "text-[#66C5CC] hover:bg-[#342F49] hover:text-white",
-                "block px-6 py-3 rounded-md text-lg font-semibold"
-              )}
-              aria-current={item.current ? "page" : undefined}
-            >
-              {item.name}
-            </Disclosure.Button>
-          ))}
+      {isOpen && (
+        <div className="sm:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {navs.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={classNames(
+                  item.current
+                    ? "bg-[#342F49] text-[#66C5CC]"
+                    : "text-[#66C5CC] hover:bg-[#342F49] hover:text-white",
+                  "block px-6 py-3 rounded-md text-lg font-semibold"
+                )}
+                aria-current={item.current ? "page" : undefined}
+                onClick={() => setIsOpen(false)}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
         </div>
-      </Disclosure.Panel>
-    </>
-  )}
-</Disclosure>
-
+      )}
+    </nav>
   );
 }
 

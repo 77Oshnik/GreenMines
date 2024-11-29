@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
 import Enavbar from './Enavbar';
+import ChatAssistant from './ChatAssistant';
 
 const AFOLUForm = () => {
   const [landSize, setLandSize] = useState('');
@@ -89,6 +90,7 @@ const AFOLUForm = () => {
 
   return (
     <div className="min-h-screen bg-[#342F49] flex flex-col p-10">
+      <ChatAssistant />
     {/* Navbar */}
     <div className="w-full bg-[#231E3D] fixed top-0 left-0 z-10 shadow-lg">
       <Enavbar />
@@ -262,7 +264,7 @@ const AFOLUForm = () => {
         )}
       </div>
       {responseMessage && (
-  <div className="mt-10 bg-[#342F49] rounded-lg p-10 border-2 border-[#66C5CC]">
+  <div className="mt-10 bg-[#483c8065] rounded-lg p-10 border-2 border-[#66C5CC]">
     <h2 className="text-3xl font-bold text-[#66C5CC] mb-4">Environmental Impact Analysis:</h2>
     <div className="text-lg font-semibold text-white">
       {renderHTMLContent(responseMessage)}
