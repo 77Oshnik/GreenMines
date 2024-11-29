@@ -2,11 +2,21 @@
 
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
+// Register required chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function CarbonSinkEstimation() {
+  // Static data for the bar chart
   const barData = {
     labels: ['Existing Sinks', 'Required Sinks'],
     datasets: [
@@ -18,17 +28,20 @@ function CarbonSinkEstimation() {
     ],
   };
 
+  // Chart options to ensure adaptability and proper display
   const barOptions = {
     responsive: true,
-    maintainAspectRatio: false, // Allows chart to scale with container
+    maintainAspectRatio: false, // Ensures the chart adjusts to container size
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          color: '#E2E8F0', // Legend text color
+        },
       },
     },
     scales: {
       x: {
-        type: 'category',
         title: {
           display: true,
           text: 'Sink Type',
@@ -38,7 +51,10 @@ function CarbonSinkEstimation() {
           color: '#4A5568',
         },
         ticks: {
-          color: '#4A5568', // Dark gray
+          color: '#E2E8F0', // Tick label color
+        },
+        grid: {
+          color: '#4A5568', // Grid line color
         },
       },
       y: {
@@ -52,57 +68,29 @@ function CarbonSinkEstimation() {
           color: '#4A5568',
         },
         ticks: {
-          color: '#4A5568', // Dark gray
+          color: '#E2E8F0', // Tick label color
+        },
+        grid: {
+          color: '#4A5568', // Grid line color
         },
       },
     },
   };
 
   return (
-    <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[100%] max-h-[1800px] mt-6">
-    <h2 className="text-lg font-bold text-white mb-4">Carbon Sink Estimation</h2>
-    <div className="flex justify-between items-center mb-6">
-      <span className="text-gray-400">Sequestration Capacity Overview</span>
-      <span className="text-3xl font-bold text-white">Overview</span>
-    </div>
-    <div className="w-full h-full"> {/* Ensure full height and width for chart container */}
-      <Bar
-        data={barData}
-        options={{
-          responsive: true, // Ensure the chart is responsive
-          maintainAspectRatio: false, // Allow the chart to adjust to the container size
-          scales: {
-            x: {
-              grid: {
-                color: "#4A5568", // Optional grid line color
-              },
-              ticks: {
-                color: "#E2E8F0", // Tick label color
-              },
-            },
-            y: {
-              grid: {
-                color: "#4A5568", // Optional grid line color
-              },
-              ticks: {
-                color: "#E2E8F0", // Tick label color
-              },
-            },
-          },
-          plugins: {
-            legend: {
-              labels: {
-                color: "#E2E8F0", // Adjust legend text color
-              },
-            },
-          },
-        }}
-      />
-    </div>
-  </div>
-  
+    <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[100%] max-h-[900px] mt-6">
+      {/* Title Section */}
+      <h2 className="text-lg font-bold text-white mb-4">Carbon Sink Estimation</h2>
+      <div className="flex justify-between items-center mb-6">
+        <span className="text-gray-400">Sequestration Capacity Overview</span>
+        <span className="text-3xl font-bold text-white">Overview</span>
+      </div>
 
-
+      {/* Chart Container */}
+      <div className="w-full h-[400px] md:h-[600px] lg:h-[350px]">
+        <Bar data={barData} options={barOptions} />
+      </div>
+    </div>
   );
 }
 

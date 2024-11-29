@@ -54,7 +54,8 @@ export default function Navbar({ className }) {
                 <img
                   src={logo}
                   alt="Logo"
-                  className="h-10 w-auto" // Adjust the height and width of the logo as needed
+                  className="h-10 w-auto cursor-pointer" // Adjust the height and width of the logo as needed
+                  onClick={() => navigate("/")}
                 />
               </div>
 

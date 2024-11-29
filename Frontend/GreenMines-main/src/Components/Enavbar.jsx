@@ -53,7 +53,8 @@ function Enavbar({ className }) {
             <img
               src={logo}
               alt="Logo"
-              className="h-12 w-auto max-w-full" // Adjust height and ensure it scales properly
+              className="h-12 w-auto max-w-full cursor-pointer"
+              onClick={() => navigate("/")} // Adjust height and ensure it scales properly
             />
           </div>
 

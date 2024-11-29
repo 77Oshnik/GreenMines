@@ -15,7 +15,7 @@ export default function OverviewSection() {
   const progressOffset = circumference - (neutralityProgress / 100) * circumference;
 
   return (
-    <div className="bg-[#140c35] rounded-lg shadow-md p-6 mt-8 relative">
+    <div className="bg-gray-800 rounded-lg shadow-md p-6 mt-8 relative">
       <div className="absolute top-6 right-6">
         <div className="relative">
           <svg width={size} height={size} className="transform -rotate-90">
