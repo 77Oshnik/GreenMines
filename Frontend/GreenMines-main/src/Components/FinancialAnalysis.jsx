@@ -33,6 +33,8 @@ export default function FinancialAnalysis() {
   };
 
   return (
+    
+  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[50%] max-h-[1800px] mb-4">
     <div className="flex flex-col bg-gray-900 rounded-lg shadow-md p-6">
     <h2 className="text-lg font-bold text-white mb-4">Financial Analysis</h2>
     <div className="space-y-6">
@@ -48,6 +50,7 @@ export default function FinancialAnalysis() {
         <p className="text-sm text-gray-400">Estimated ROI over 5 years</p>
       </div>
     </div>
+  </div>
   </div>
   
   );

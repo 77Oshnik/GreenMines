@@ -73,24 +73,15 @@ function DashBoard() {
           </div>
         </div>
 
-       {/* Emission Line and Bar Chart Below Doughnut and Data Entries */}
-
+       
+{/* Emission Line and Bar Chart Below Doughnut and Data Entries */}
 
 <LineAndBarEmission />
-
-
-
 <SinkGraphs />
 
         <div className="flex flex-col xl:flex-row gap-8 xl:col-span-3 p-4">
-  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[50%] max-h-[1800px] mb-4">
-    <h2 className="text-lg font-bold text-white mb-4">Financial Analysis</h2>
     <FinancialAnalysis />
-  </div>
-  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[50%] max-h-[1800px] mb-4">
-    <h2 className="text-lg font-bold text-white mb-4">Reports and Alerts</h2>
     <ReportsAndAlerts />
-  </div>
 </div>
 
 

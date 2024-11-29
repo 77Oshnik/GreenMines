@@ -8,6 +8,7 @@ export default function ReportsAndAlerts() {
   ]
 
   return (
+    <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[50%] max-h-[1800px] mb-4">
     <div className="flex-1 min-w-[300px] bg-gray-800 rounded-lg shadow-lg p-8">
     <h2 className="text-2xl font-bold text-white mb-6">Reports and Alerts</h2>
     <div className="space-y-8">
@@ -51,6 +52,7 @@ export default function ReportsAndAlerts() {
         </ul>
       </div>
     </div>
+  </div>
   </div>
   
 
