@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { fetchDateRangeData } = require("./datafetching");
+const { fetchDateRangeDatagenai } = require("./genaidata");
 
 exports.analyzeEmissionsWithGenAI = async (req, res) => {
   const { startDate, endDate } = req.body;
@@ -10,7 +10,7 @@ exports.analyzeEmissionsWithGenAI = async (req, res) => {
 
   try {
     // Fetch data for the given date range
-    const emissionsData = await fetchDateRangeData({ params: { startDate, endDate } });
+    const emissionsData = await fetchDateRangeDatagenai({ params: { startDate, endDate } });
     console.log("Fetched Emissions Data:", emissionsData);
 
     // Initialize impactfulData object to store categorized emissions data
