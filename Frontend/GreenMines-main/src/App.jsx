@@ -28,6 +28,7 @@ import Login from './Components/Login';
 import Enable2FA from './Components/Enable2FA';
 import Verify2FA from './Components/Verify2FA';
 import Register from './Components/Register';
+import MovingText from './Components/MarqueeText';
 
 function App() {
   return (
@@ -38,6 +39,13 @@ function App() {
       <Route path="/" element={
           <>
             <Header id="home" />
+            <MovingText
+        text="Your Moving Text"
+        fontSize={100}
+        outlineColor="purple"
+        fillColor="purple"
+        duration={8}
+      />
             <ScrollArrow />
             <Companies id="about" />
             <Services id="services" />

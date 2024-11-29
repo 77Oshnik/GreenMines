@@ -45,10 +45,10 @@ exports.fetchDateData = async (req, res) => {
         endDate.setHours(23, 59, 59, 999);
 
         const [electricityData, fuelData, shippingData, explosionData] = await Promise.all([
-            fetchModelData(Electricity, start, end),
-            fetchModelData(FuelCombustion, start, end),
-            fetchModelData(Shipping, start, end),
-            fetchModelData(Explosion, start, end)
+            fetchModelData(Electricity, startDate, endDate),
+            fetchModelData(FuelCombustion, startDate, endDate),
+            fetchModelData(Shipping, startDate, endDate),
+            fetchModelData(Explosion, startDate, endDate)
         ]);
         
         console.log({ electricityData, fuelData, shippingData, explosionData }); // Log fetched data
