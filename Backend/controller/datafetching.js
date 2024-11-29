@@ -13,8 +13,6 @@ const isValidDate = (dateString) => {
     return date instanceof Date && !isNaN(date.getTime());
 };
 
-
-
 // Function to fetch data from a specific model
 const fetchModelData = async (Model, startDate, endDate) => {
     const query = {
@@ -74,7 +72,7 @@ exports.fetchDateData = async (req, res) => {
 // Modify fetchDateRangeData to return a Promise that resolves with data
 exports.fetchDateRangeData = async (req, res) => {
     try {
-        const { startDate, endDate } = req.body || req.params;
+        const { startDate, endDate } =  req.params;
 
         if (!isValidDate(startDate) || !isValidDate(endDate)) {
             return res.status(400).json({ error: "Invalid date format. Please use YYYY-MM-DD." });
@@ -101,21 +99,17 @@ exports.fetchDateRangeData = async (req, res) => {
         // Log the response before sending it
         console.log("Fetched emissions data:", { electricityData, fuelData, shippingData, explosionData });
 
-        return {
+        return res.status(200).json({
             electricity: electricityData,
             fuelCombustion: fuelData,
             shipping: shippingData,
             explosion: explosionData,
-        }; // Return the response object
+        }); // Return the response object
     } catch (error) {
         console.error("Error fetching data:", error.message);
         throw new Error("Error fetching data");
     }
 };
-
-
-
-
 
 // Function to delete an entry by ID across all models
 exports.deleteById = async (req, res) => {
