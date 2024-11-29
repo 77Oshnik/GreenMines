@@ -12,6 +12,8 @@ const authRoutes = require('./routes/authRoutes');  // 2FA related auth routes
 const dataRoute = require("./routes/datafetchingRoute");
 const chatbotRoute = require("./routes/chatbotRoute");
 const afoluRoute = require("./routes/afoluRoute");
+const sinkdatafetchRoute = require("./routes/sinkdatafetchRoute");
+const existingSinkRoute = require("./routes/existingSinkRoute");
 // Add other routes similarly
 
 dotenv.config();
@@ -43,6 +45,8 @@ app.use("/api", authRoutes);         // Routes for authentication (includes 2FA)
 app.use("/api", dataRoute);          // Routes for data fetching
 app.use("/api", chatbotRoute);       // Routes for chatbot
 app.use("/api", afoluRoute);         // Routes for Afolu
+app.use("/api", sinkdatafetchRoute); // Routes for sink data fetching
+app.use("/api", existingSinkRoute);  // Routes for existing sink
 // Add other routes similarly
 
 const PORT = process.env.PORT || 5000;
