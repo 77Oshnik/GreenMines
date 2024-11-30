@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { FaPaperPlane, FaUserCircle, FaRobot } from 'react-icons/fa';
 import DOMPurify from 'dompurify';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import { FaArrowLeft } from 'react-icons/fa';
 
 export default function ChatBot() {
   const [messages, setMessages] = useState([
@@ -9,6 +11,9 @@ export default function ChatBot() {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef(null);
+  
+  // For navigation
+  const navigate = useNavigate();  // Create navigate instance
 
   // Inline styles for parsed HTML content
   const htmlStyles = `
@@ -93,9 +98,23 @@ export default function ChatBot() {
     }
   }, [messages]);
 
+  // Handle the back button functionality
+  const handleBack = () => {
+    navigate(-1);  // Go back to the previous page
+  };
+
   return (
     <div className="h-screen bg-[#342F49] flex items-center justify-center p-8">
+      <button
+  onClick={handleBack}
+  className="bg-[#2b8d94] text-black font-bold px-8 py-3 text-xl rounded-lg mt-4 self-start flex items-center space-x-2"
+>
+  <FaArrowLeft className="w-6 h-6" /> {/* Left arrow icon */}
+  <span>Go Back</span>
+</button>
       <div className="flex flex-col h-screen w-3/4 mx-auto bg-[#231E3D] border-[#66C5CC] rounded-lg pt-2">
+        
+
         {/* Messages Display */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 ml-2">
           {messages.map((message, index) => (

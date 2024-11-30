@@ -1,4 +1,5 @@
 import React from 'react';
+import ChatAssistant from './ChatAssistant';
 
 function AboutUs() {
   const sectionStyle = "bg-[#342F49] p-8 rounded-lg shadow-lg border border-[#66C5CC]";
@@ -7,7 +8,8 @@ function AboutUs() {
   const listStyle = "list-disc pl-5 text-lg text-white";
 
   return (
-    <div className="p-6 md:p-10 lg:p-20 min-h-screen flex flex-col items-center relative overflow-hidden bg-gradient-to-r from-[#2B263F] to-[#4B5563]">
+    <div className="p-6 md:p-10 mt-24 lg:p-20 min-h-screen flex flex-col items-center relative overflow-hidden bg-gradient-to-r from-[#2B263F] to-[#4B5563]">
+      <ChatAssistant />
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-r from-[#66C5CC] to-[#55B2B6] opacity-20 animate-pulse"></div>
       </div>

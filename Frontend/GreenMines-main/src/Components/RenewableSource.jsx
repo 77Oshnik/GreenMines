@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Enavbar from './Enavbar';
+import ChatAssistant from './ChatAssistant';
 
 const RenewableEnergyForm = () => {
   const [solutionName, setSolutionName] = useState('');
@@ -39,60 +41,79 @@ const RenewableEnergyForm = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold text-center mb-6">Renewable Energy Calculator</h2>
+    <div className="min-h-screen bg-[#342F49] py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+      <ChatAssistant />
+  {/* Navbar */}
+  <div className="w-full bg-[#231E3D] fixed top-0 left-0 z-10 shadow-lg">
+    <Enavbar />
+  </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+  {/* Main Container */}
+  <div className="w-full max-w-4xl mx-auto mt-28 bg-[#231E3D] rounded-2xl shadow-lg overflow-hidden border-2 border-[#66C5CC]">
+    <div className="p-8 md:p-12">
+      <h2 className="text-3xl md:text-4xl font-bold text-[#66C5CC] mb-8 text-center">
+        Renewable Energy Calculator
+      </h2>
+
+      <form onSubmit={handleSubmit} className="space-y-8">
         {/* Solution Name */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="solutionName">Solution Name</label>
+          <label className="block text-xl font-medium text-[#66C5CC] mb-2" htmlFor="solutionName">
+            Solution Name
+          </label>
           <input
             id="solutionName"
             type="text"
             placeholder="Enter solution name"
             value={solutionName}
             onChange={(e) => setSolutionName(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border-2 border-[#4da5aa] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#66C5CC] bg-[#342F49] text-white"
             required
           />
         </div>
 
         {/* CO₂ Emissions Per Day */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="co2EmissionsPerDay">CO₂ Emissions Per Day (tonnes)</label>
+          <label className="block text-xl font-medium text-[#66C5CC] mb-2" htmlFor="co2EmissionsPerDay">
+            CO₂ Emissions Per Day (tonnes)
+          </label>
           <input
             id="co2EmissionsPerDay"
             type="number"
             placeholder="Enter CO₂ emissions per day"
             value={co2EmissionsPerDay}
             onChange={(e) => setCo2EmissionsPerDay(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border-2 border-[#4da5aa] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#66C5CC] bg-[#342F49] text-white"
             required
           />
         </div>
 
         {/* Desired CO₂ Reduction Percentage */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="desiredReductionPercentage">Desired CO₂ Reduction (%)</label>
+          <label className="block text-xl font-medium text-[#66C5CC] mb-2" htmlFor="desiredReductionPercentage">
+            Desired CO₂ Reduction (%)
+          </label>
           <input
             id="desiredReductionPercentage"
             type="number"
             placeholder="Enter reduction percentage"
             value={desiredReductionPercentage}
             onChange={(e) => setDesiredReductionPercentage(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border-2 border-[#4da5aa] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#66C5CC] bg-[#342F49] text-white"
             required
           />
         </div>
 
         {/* Select Renewable Energy */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="selectedRenewable">Select Renewable Energy</label>
+          <label className="block text-xl font-medium text-[#66C5CC] mb-2" htmlFor="selectedRenewable">
+            Select Renewable Energy
+          </label>
           <select
             id="selectedRenewable"
             value={selectedRenewable}
             onChange={(e) => setSelectedRenewable(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border-2 border-[#4da5aa] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#66C5CC] bg-[#342F49] text-white"
           >
             <option value="Solar">Solar</option>
             <option value="Wind">Wind</option>
@@ -103,23 +124,25 @@ const RenewableEnergyForm = () => {
 
         {/* Available Land */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="availableLand">Available Land (hectares)</label>
+          <label className="block text-xl font-medium text-[#66C5CC] mb-2" htmlFor="availableLand">
+            Available Land (hectares)
+          </label>
           <input
             id="availableLand"
             type="number"
             placeholder="Enter available land in hectares"
             value={availableLand}
             onChange={(e) => setAvailableLand(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border-2 border-[#4da5aa] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#66C5CC] bg-[#342F49] text-white"
             required
           />
         </div>
 
         {/* Submit Button */}
-        <div className="text-center">
+        <div className="mt-8 text-center">
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full max-w-xs py-3 px-4 text-lg font-semibold text-black rounded-lg shadow-lg bg-[#66C5CC] hover:bg-[#5eb6b7]"
           >
             Calculate Impact
           </button>
@@ -128,14 +151,14 @@ const RenewableEnergyForm = () => {
 
       {/* Error Message */}
       {errorMessage && (
-        <div className="mt-4 text-red-500 text-center">{errorMessage}</div>
+        <div className="mt-6 text-center text-red-500 text-lg">{errorMessage}</div>
       )}
 
       {/* Result Display */}
       {result && (
-        <div className="mt-8 p-4 bg-green-100 border border-green-300 rounded-lg">
-          <h3 className="text-xl font-semibold text-green-700">Calculation Results</h3>
-          <ul className="space-y-2 mt-4 text-gray-700">
+        <div className="mt-10 p-8 bg-[#342F49] rounded-lg border-2 border-[#66C5CC]">
+          <h3 className="text-3xl font-bold text-[#66C5CC] mb-4">Calculation Results</h3>
+          <ul className="space-y-4 text-lg font-semibold text-white">
             <li><strong>Solution Name:</strong> {result.solutionName}</li>
             <li><strong>Renewable Energy Source:</strong> {result.selectedRenewable}</li>
             <li><strong>Implementation Cost:</strong> {result.implementationCost}</li>
@@ -147,6 +170,9 @@ const RenewableEnergyForm = () => {
         </div>
       )}
     </div>
+  </div>
+</div>
+
   );
 };
 

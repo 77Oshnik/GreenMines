@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
 import Enavbar from './Enavbar';
+import ChatAssistant from './ChatAssistant';
 
 export default function CCSCalculator() {
   // State for form data
@@ -47,6 +48,7 @@ export default function CCSCalculator() {
 
   return (
    <div className="min-h-screen bg-[#342F49] py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+    <ChatAssistant />
     {/* Navbar */}
     <div className="w-full bg-[#231E3D] fixed top-0 left-0 z-10 shadow-lg">
       <Enavbar />

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import GraphPage from './GraphPage';
-import { Navigate, useNavigate } from 'react-router-dom';
+
+import ChatAssistant from './ChatAssistant';
 const stateOptions = [
   'andhra pradesh', 'arunachal pardesh', 'assam', 'bihar', 'chattisgarh',
   'delhi', 'goa', 'orissa', 'punjab', 'rajasthan',
@@ -12,7 +12,7 @@ const stateOptions = [
 ];
 
 function CombinedCode() {
-  const navigate = useNavigate();
+ 
 
   
 
@@ -132,10 +132,11 @@ function CombinedCode() {
       setShippingResult(null);
     }
   };
-  
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4 sm:p-6 md:p-8 w-full overflow-x-hidden">
+    <div className="min-h-screen mt-24 bg-gray-900 text-white p-4 sm:p-6 md:p-8 w-full overflow-x-hidden">
+      {/* Fixed chatbot */}
+      <ChatAssistant />
     <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#2B263F] to-[#4B5563] overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-[#66C5CC] to-[#55B2B6] opacity-20 animate-pulse"></div>
     </div>
@@ -439,15 +440,7 @@ function CombinedCode() {
           </div>
         )}
       </div>
-      <div className="flex justify-center mt-8 pt-8">
-  <button
-    onClick={() => {
-      navigate("/graphpage");
-    }}
-    className="px-5 py-3 bg-gradient-to-r from-[#66C5CC] to-[#55B2B6] text-black font-extrabold text-xl rounded-xl shadow-2xl hover:bg-gradient-to-l hover:from-[#55B2B6] hover:to-[#66C5CC] hover:text-white transform hover:scale-110 active:scale-95 transition duration-300 ease-in-out"  >
-    Generate Graph
-  </button>
-</div>
+      
 
       {/* <div className='pt-20 pb-25'>
       <GraphPage />

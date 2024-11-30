@@ -91,7 +91,7 @@ def predict_emissions_and_risk(days_data):
             risk_level = assess_risk(predicted_emission)
 
             # Store prediction and risk level
-            day_results.append({'Predicted Emission': predicted_emission, 'Risk Level': risk_level})
+            day_results.append({'Trasport Method':transport_method,'Predicted Emission': predicted_emission, 'Risk Level': risk_level})
 
         # Add day's results to the main results list
         results.append({'Day': day, 'Results': day_results})

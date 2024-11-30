@@ -21,6 +21,7 @@ import LineAndBarEmission from "./LineAndBarEmission";
 import SinkGraphs from "./SinkGraphs";
 import { useEffect,useState } from "react";
 import axios from "axios";
+import ChatAssistant from "./ChatAssistant";
 
 ChartJS.register(
   CategoryScale,
@@ -78,6 +79,7 @@ if (!data) {
   return (
     <div className="bg-gray-900 text-white min-h-screen w-full overflow-x-hidden">
       <Navbar className="mb-2 pt-4" />
+      <ChatAssistant />
 
       {/* Dashboard Grid Layout */}
       <div className="px-10">

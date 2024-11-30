@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask_cors import CORS,cross_origin
 # Import model prediction functions from individual model files
 from Transport.transport import predict_emissions_and_risk as predict_transport_emissions
 from Fuel.fuel import predict_emissions_and_risk as predict_fuel_emissions  # Import the fuel model's prediction function
@@ -7,16 +7,16 @@ from Electricity.electricity import predict_emissions_and_risk as predict_emissi
 from Explosives.explosive import predict_7_days_multiple_explosives as predict_7_days_multiple_explosives  # Import the appropriate function
 
 app = Flask(__name__)
-CORS(app)
+CORS(app,resources={r"/*": {"origins": "http://localhost:3000"}})
 
 @app.route('/ml/transport', methods=['POST'])
+@cross_origin(origins='http://localhost:3000')  # Explicitly allow CORS on this route
 def ml_transport():
     """
     Flask route for the transport model that accepts input data,
     processes it, and returns predictions with risk levels.
     """
     data = request.get_json()  # Get the JSON data from the request
-    print("Received data:", data)  # Log the received data
     predictions = predict_transport_emissions(data['days_data'])  # Call the transport model's prediction function
     return jsonify(predictions)  # Return the predictions as a JSON response
 
@@ -77,6 +77,7 @@ def ml_fuel():
 
 
 @app.route('/ml/electricity', methods=['POST'])
+@cross_origin(origins='http://localhost:3000')  # Explicitly allow CORS on this route
 def ml_electricity():
     """
     Flask route for the electricity model that accepts input data,
