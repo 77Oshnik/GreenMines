@@ -235,8 +235,44 @@ const LineAndBarEmission = ({data}) => {
     fetchLastMonthData();
   }, [])
 console.log("month data",fetchMonthData);
-
 const parseData = (data) => {
+  // If data is null or undefined, return a default dataset
+  if (!data || Object.values(data).some(arr => arr == null)) {
+    return {
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      datasets: [
+        {
+          label: "Electricity",
+          data: [0, 0, 0, 0],
+          borderColor: "#0046b9",
+          backgroundColor: "#0046b9",
+          tension: 0.4
+        },
+        {
+          label: "Fuel Combustion",
+          data: [0, 0, 0, 0],
+          borderColor: "#FF6384",
+          backgroundColor: "#FF6384",
+          tension: 0.4
+        },
+        {
+          label: "Shipping",
+          data: [0, 0, 0, 0],
+          borderColor: "#36A2EB",
+          backgroundColor: "#36A2EB",
+          tension: 0.4
+        },
+        {
+          label: "Explosions",
+          data: [0, 0, 0, 0],
+          borderColor: "#FFCE56",
+          backgroundColor: "#FFCE56",
+          tension: 0.4
+        }
+      ]
+    };
+  }
+
   const parseNumeric = (value) => {
     if (typeof value === 'string') {
       // Extract first numeric value, handle various formats
@@ -246,13 +282,15 @@ const parseData = (data) => {
     return Number(value) || 0;
   };
 
-  const getAllDates = (dataArray, dateKey = 'createdAt') => 
+  const getAllDates = (dataArray, dateKey = 'createdAt') =>
     dataArray.map(item => new Date(item[dateKey]));
 
   const generateWeeks = (dates) => {
+    if (dates.length === 0) return [];
+
     const sortedDates = dates.sort((a, b) => a - b);
     const startDate = new Date(sortedDates[0].getFullYear(), sortedDates[0].getMonth(), 1);
-    const endDate = new Date(sortedDates[sortedDates.length - 1].getFullYear(), 
+    const endDate = new Date(sortedDates[sortedDates.length - 1].getFullYear(),
                               sortedDates[sortedDates.length - 1].getMonth() + 1, 0);
 
     const weeks = [];
@@ -261,7 +299,7 @@ const parseData = (data) => {
     while (currentWeekStart <= endDate) {
       const currentWeekEnd = new Date(currentWeekStart);
       currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
-      
+
       weeks.push({
         start: new Date(currentWeekStart),
         end: currentWeekEnd > endDate ? endDate : currentWeekEnd
@@ -274,10 +312,13 @@ const parseData = (data) => {
   };
 
   const getWeekSums = (dataArray, dateKey = 'createdAt', valueKey = 'result.CO2.value') => {
+    // If dataArray is null or empty, return an array of zeros
+    if (!dataArray || dataArray.length === 0) return new Array(4).fill(0);
+
     const allDates = getAllDates(dataArray, dateKey);
     const weeks = generateWeeks(allDates);
 
-    return weeks.map(week => 
+    return weeks.map(week =>
       dataArray
         .filter(item => {
           const itemDate = new Date(item[dateKey]);
@@ -432,7 +473,7 @@ useEffect(() => {
   };
 
   const [currentData, setCurrentData] = useState(weekData);
-
+  
 
   const electricityCO2 = data.electricity.reduce((total, item) => total + item.result.CO2.value, 0);
   const fuelCO2 = data.fuelCombustion.reduce((total, item) => total + item.result.CO2.value, 0);

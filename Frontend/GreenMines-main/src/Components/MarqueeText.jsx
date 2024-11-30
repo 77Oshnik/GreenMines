@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
@@ -18,13 +17,14 @@ export default function MovingText({
     const handleMouseMove = (event) => {
       setCursorPosition({ x: event.clientX, y: event.clientY });
     };
+
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   return (
     <div
-      className="relative overflow-hidden bg-gray-800 w-full h-30 flex items-center"
+      className="relative overflow-hidden bg-[#342F49] w-full h-30 flex items-center"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -72,10 +72,19 @@ export default function MovingText({
           fontWeight="bold"
           stroke={outlineColor}
           strokeWidth="2"
-          fill={isHovering ? fillColor : "transparent"} // Change color on hover
-          transition={{
-            duration: 0.3,
-            ease: "easeInOut",
+          // Shadow filter
+          filter="drop-shadow(0px 4px 6px rgba(0,0,0,0.3))"
+          // Animate entire text fill with shadow
+          animate={{
+            fill: isHovering ? fillColor : "transparent",
+            fillOpacity: isHovering ? 1 : 0,
+            filter: isHovering 
+              ? "drop-shadow(0px 6px 8px rgba(0,0,0,1))" 
+              : "drop-shadow(0px 4px 6px rgba(0,0,0,0.3))",
+            transition: {
+              duration: 0.7,
+              ease: "easeInOut"
+            }
           }}
         >
           {text}
