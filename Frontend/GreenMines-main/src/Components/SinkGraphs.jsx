@@ -172,9 +172,9 @@ const SinkGraphs = () => {
         </div>
 
         {/* Carbon Sink Estimation - placed below Sink Entries */}
-        <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 mt-6">
+       
           <CarbonSinkEstimation />
-        </div>
+        
       </div>
 
       {/* Right Hand Section - Sink Status Graph */}

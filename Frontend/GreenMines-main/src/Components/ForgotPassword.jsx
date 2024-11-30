@@ -29,33 +29,78 @@ function ForgotPassword() {
   };
 
   return (
-    <Container maxWidth="sm" style={{ marginTop: '50px' }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Forgot Password
-      </Typography>
-      <form noValidate autoComplete="off">
-        <TextField
-          label="Email"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        {error && <Typography color="error" align="center" style={{ marginTop: '20px' }}>{error}</Typography>}
-        {success && <Typography color="primary" align="center" style={{ marginTop: '20px' }}>{success}</Typography>}
-        <Button 
-          variant="contained" 
-          color="secondary" 
-          fullWidth 
-          onClick={handleSubmit} 
-          style={{ marginTop: '20px' }}
-          disabled={loading}
+    <div className="min-h-screen bg-[#342F49] py-16 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+  <Container
+    maxWidth="sm"
+    className="forgot-password-container bg-gray-900 rounded-md p-10 shadow-lg"
+    style={{ minHeight: '60vh' }} // Adjusted container height for balance
+  >
+    <Typography
+      variant="h4"
+      align="center"
+      gutterBottom
+      className="forgot-password-title text-[#66C5CC] font-bold text-3xl sm:text-4xl"
+    >
+      Forgot Password
+    </Typography>
+    <form noValidate autoComplete="off">
+      <TextField
+        label="Email"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="forgot-password-field"
+        style={{
+          backgroundColor: '#2E2E2E',
+          borderRadius: '5px',
+          fontSize: '1rem', // Adjust font size for better visibility
+        }}
+      />
+      {error && (
+        <Typography
+          color="error"
+          align="center"
+          style={{ marginTop: '20px', color: '#F87171' }}
+          className="forgot-password-error"
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : 'Request Password Reset'}
-        </Button>
-      </form>
-    </Container>
+          {error}
+        </Typography>
+      )}
+      {success && (
+        <Typography
+          color="primary"
+          align="center"
+          style={{ marginTop: '20px', color: '#66C5CC' }}
+          className="forgot-password-success"
+        >
+          {success}
+        </Typography>
+      )}
+      <Button
+        variant="contained"
+        color="secondary"
+        fullWidth
+        onClick={handleSubmit}
+        style={{
+          marginTop: '20px',
+          backgroundColor: '#66C5CC',
+          color: '#1A202C',
+          fontSize: '1.4rem', // Increased button font size
+        }}
+        disabled={loading}
+      >
+        {loading ? (
+          <CircularProgress size={24} color="inherit" />
+        ) : (
+          'Request Password Reset'
+        )}
+      </Button>
+    </form>
+  </Container>
+</div>
+
   );
 }
 

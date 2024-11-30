@@ -1,86 +1,113 @@
-import React from "react";
-
-const reviews = [
-  { id: 1, text: "Best Deal and on Great price: I recently tried out Olly, and I must say I was pleasantly surprised...", author: "AppSumo User" },
-  { id: 2, text: "Congratulations on the launch. Just got myself a lifetime subscription...", author: "Aman Sharma" },
-  { id: 3, text: "This tool could be a gamechanger for SMM agencies...", author: "Roberto Perez" },
-  { id: 4, text: "It's really awesome to see a tool that makes commenting this easy.", author: "Mike Wakoz" },
-  { id: 5, text: "Congratulation Yash Olly is a perfect example of the best use of AI...", author: "Jawad Naeem" },
-  { id: 6, text: "Actually, a very useful product for those who do active social media marketing.", author: "Alex Egorov" },
-  { id: 7, text: "Best for LinkedIn: Right from the first comment that Olly crafted, I knew I would be using it for all my socials.", author: "Unknown" },
-  { id: 8, text: "Absolutely love the simplicity and effectiveness of this tool!", author: "Sophia Reed" },
-  { id: 9, text: "Olly has transformed the way I interact with my audience. It's a must-have!", author: "Daniel Vega" },
-  { id: 10, text: "Never thought I'd find a tool like Olly. It's intuitive and super helpful!", author: "Chris Zhang" },
-  { id: 11, text: "The AI-powered suggestions are top-notch. It saves me hours of work!", author: "Emily Taylor" },
-  { id: 12, text: "A game-changer for creating engaging comments and boosting online presence.", author: "Mason Carter" },
-];
-
-const CarouselDemo = () => {
-  // Adjustable sizes
-  const centralDivSize = { width: "400px", height: "400px" }; // Central comment size
-  const surroundingDivSize = { width: "250px", height: "250px" }; // Surrounding comment size
-
-  // Colors (Customizable)
-  const sectionBgColor = "#241a52"; // Section background color
-  const commentBgColor = "#2D2A40"; // Div background color
-  const borderColor = "#66C5CC"; // Div border color
-
-  // Styles
-  const sectionStyle = `p-8 rounded-lg shadow-lg border text-white`;
-  const textStyle = "text-lg mb-4";
-
-  // Function to avoid overlap
-  const getRandomPosition = () => {
-    const x = Math.random() * 100; // X position between 0 and %
-    const y = Math.random() * 100; // Y position between 0 and 70%
-    return { top: `${y}%`, left: `${x}%` };
-  };
-
+export default function CarouselDemo() {
   return (
-    <div
-      className="relative w-full h-[1000px] overflow-hidden p-10"
-      style={{ backgroundColor: sectionBgColor }}
-    >
-      {/* Central Comment */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div
-          className={`${sectionStyle} text-center flex flex-col items-center justify-center`}
-          style={{
-            ...centralDivSize,
-            backgroundColor: commentBgColor,
-            borderColor: borderColor,
-          }}
-        >
-          <p className={textStyle}>
-            "Best Deal and on Great price: I recently tried out Olly, and I must say I was pleasantly surprised..."
-          </p>
-          <p className="text-sm text-[#2d1e6e] mt-4">- AppSumo User</p>
-        </div>
-      </div>
+    <div className="w-full min-h-screen bg-[#342F49]">
+  {/* Hero Section Start */}
+  <div className="flex flex-col md:flex-row items-center gap-4 mb-24 px-8 py-16">
+  <div className="md:w-1/2">
+  <h1 className="text-5xl md:text-6xl font-bold text-[#66C5CC] mb-8">
+    Teamwork: The Core of GreenMines
+  </h1>
+  <p className="text-white text-xl md:text-2xl">
+    At GreenMines, our success is built on collaboration. Our dedicated team, Quantum Quorum, combines diverse expertise and innovation to tackle the challenges of sustainable mining and create impactful solutions together.
+  </p>
+</div>
 
-      {/* Surrounding Comments */}
-      {reviews.slice(1).map((review, index) => {
-        const position = getRandomPosition(); // Get random position for each surrounding comment
-        return (
-          <div
-            key={review.id}
-            className={`${sectionStyle} absolute text-left p-4`}
-            style={{
-              ...surroundingDivSize,
-              backgroundColor: commentBgColor,
-              borderColor: borderColor,
-              top: position.top,
-              left: position.left,
-              transform: "translate(-50%, -50%)",
-            }}
-          >
-            <p className={textStyle}>{review.text}</p>
-            <p className="text-sm text-[#66C5CC] mt-2">- {review.author}</p>
-          </div>
-        );
-      })}
+    <div className="md:w-1/2">
+      <img 
+        src="climb.jpg" 
+        alt="GreenMines Hero Illustration" 
+        className="w-full border border-[#66C5CC] rounded-lg"
+      />
     </div>
-  );
-};
+  </div>
+  {/* Hero Section End */}
 
-export default CarouselDemo;
+  {/* Latest News Section Start */}
+<div className="mb-28 px-8">
+  <h2 className="text-4xl font-bold text-[#66C5CC] mb-12">Latest Updates</h2>
+  <div className="grid md:grid-cols-3 gap-12">
+    <div className="bg-[#342F49] p-10 rounded-lg shadow-lg border border-[#66C5CC]">
+      <div className="flex items-center gap-2 mb-6">
+        <span className="text-base text-[#66C5CC]">SIH 2024</span>
+        <span className="text-white">+</span>
+        <span className="text-base text-[#66C5CC]">GreenMines</span>
+      </div>
+      <p className="text-lg text-white">
+        Our project, GreenMines, is driving change in sustainable mining and has proudly secured a spot in the **Smart India Hackathon 2024 Senior Grand Finale**.
+      </p>
+    </div>
+    <div className="bg-[#342F49] p-10 rounded-lg shadow-lg border border-[#66C5CC]">
+      <div className="flex items-center gap-2 mb-6">
+        <span className="text-base text-[#66C5CC]">Green Initiatives</span>
+        <span className="text-white">+</span>
+        <span className="text-base text-[#66C5CC]">Carbon Neutrality</span>
+      </div>
+      <p className="text-lg text-white">
+        We’re exploring innovative AI-based solutions to help coal mines achieve carbon neutrality and minimize environmental impact.
+      </p>
+    </div>
+    <div className="bg-[#342F49] p-10 rounded-lg shadow-lg border border-[#66C5CC]">
+      <div className="flex items-center gap-2 mb-6">
+        <span className="text-base text-[#66C5CC]">Teamwork</span>
+        <span className="text-white">+</span>
+        <span className="text-base text-[#66C5CC]">Sustainability</span>
+      </div>
+      <p className="text-lg text-white">
+        Our team, **Quantum Quorum**, is dedicated to driving sustainability in mining with innovative tools and a mission for change.
+      </p>
+    </div>
+  </div>
+</div>
+{/* Latest News Section End */}
+
+{/* How It Works Section Start */}
+<div className="px-10 py-5">
+  <h2 className="text-4xl font-bold text-center text-[#66C5CC] mb-12">
+    Simplifying the Path to Carbon Neutrality in Four Steps
+  </h2>
+  <div className="grid md:grid-cols-4 gap-16 mt-12">
+    <div className="text-center">
+      <div className="w-16 h-16 bg-[#66C5CC] rounded-full flex items-center justify-center mx-auto mb-8">
+        <span className="text-[#342F49] text-xl font-bold">1</span>
+      </div>
+      <h3 className="font-semibold text-white mb-4 text-xl">Data Collection</h3>
+      <p className="text-base text-white">
+        Gather comprehensive data on emissions and environmental factors from coal mines.
+      </p>
+    </div>
+    <div className="text-center">
+      <div className="w-16 h-16 bg-[#66C5CC] rounded-full flex items-center justify-center mx-auto mb-8">
+        <span className="text-[#342F49] text-xl font-bold">2</span>
+      </div>
+      <h3 className="font-semibold text-white mb-4 text-xl">Impact Analysis</h3>
+      <p className="text-base text-white">
+        Use AI-powered tools to analyze the carbon footprint and environmental impact of operations.
+      </p>
+    </div>
+    <div className="text-center">
+      <div className="w-16 h-16 bg-[#66C5CC] rounded-full flex items-center justify-center mx-auto mb-8">
+        <span className="text-[#342F49] text-xl font-bold">3</span>
+      </div>
+      <h3 className="font-semibold text-white mb-4 text-xl">Actionable Insights</h3>
+      <p className="text-base text-white">
+        Generate actionable reports with recommendations for reducing emissions and transitioning to greener processes.
+      </p>
+    </div>
+    <div className="text-center">
+      <div className="w-16 h-16 bg-[#66C5CC] rounded-full flex items-center justify-center mx-auto mb-8">
+        <span className="text-[#342F49] text-xl font-bold">4</span>
+      </div>
+      <h3 className="font-semibold text-white mb-4 text-xl">Track Progress</h3>
+      <p className="text-base text-white">
+        Monitor changes over time and refine strategies to meet carbon neutrality goals effectively.
+      </p>
+    </div>
+  </div>
+</div>
+{/* How It Works Section End */}
+
+</div>
+
+  )
+}
+

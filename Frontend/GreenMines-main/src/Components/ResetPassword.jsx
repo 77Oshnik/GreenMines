@@ -35,68 +35,105 @@ function ResetPassword() {
   };
 
   return (
-    <Container maxWidth="sm" className="reset-password-container">
-      <Typography variant="h4" align="center" gutterBottom className="reset-password-title">
+    <div className="min-h-screen bg-[#342F49] py-16 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+  <Container
+    maxWidth="sm"
+    className="reset-password-container bg-gray-900 rounded-md p-10 shadow-lg"
+    style={{ minHeight: '60vh' }} // Adjusted container height for balanced form
+  >
+    <Typography
+      variant="h4"
+      align="center"
+      gutterBottom
+      className="reset-password-title text-[#66C5CC] font-bold text-3xl sm:text-4xl"
+    >
+      Reset Password
+    </Typography>
+    <form noValidate autoComplete="off">
+      <TextField
+        label="New Password"
+        type={showPassword ? 'text' : 'password'}
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+                style={{ color: '#66C5CC' }}
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+        className="reset-password-field"
+        style={{
+          backgroundColor: '#2E2E2E',
+          borderRadius: '5px',
+          fontSize: '1rem', // Adjust font size for better visibility
+        }}
+      />
+      <TextField
+        label="Confirm Password"
+        type={showPassword ? 'text' : 'password'}
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+                style={{ color: '#66C5CC' }}
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+        className="reset-password-field"
+        style={{
+          backgroundColor: '#2E2E2E',
+          borderRadius: '5px',
+          fontSize: '1rem', // Adjust font size for better visibility
+        }}
+      />
+      {error && (
+        <Alert severity="error" className="reset-password-alert mt-2 text-[#66C5CC]">
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert severity="success" className="reset-password-alert mt-2 text-[#66C5CC]">
+          {success}
+        </Alert>
+      )}
+      <Button
+        variant="contained"
+        fullWidth
+        onClick={handleResetPassword}
+        className="reset-password-button"
+        style={{
+          backgroundColor: '#66C5CC',
+          color: '#1A202C',
+          marginTop: '1rem',
+          fontSize: '1.2rem', // Increased button font size
+        }}
+      >
         Reset Password
-      </Typography>
-      <form noValidate autoComplete="off">
-        <TextField
-          label="New Password"
-          type={showPassword ? 'text' : 'password'}
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setShowPassword(!showPassword)}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          className="reset-password-field"
-        />
-        <TextField
-          label="Confirm Password"
-          type={showPassword ? 'text' : 'password'}
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setShowPassword(!showPassword)}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          className="reset-password-field"
-        />
-        {error && <Alert severity="error" className="reset-password-alert">{error}</Alert>}
-        {success && <Alert severity="success" className="reset-password-alert">{success}</Alert>}
-        <Button
-          variant="contained"
-          color="secondary"
-          fullWidth
-          onClick={handleResetPassword}
-          className="reset-password-button"
-        >
-          Reset Password
-        </Button>
-      </form>
-    </Container>
+      </Button>
+    </form>
+  </Container>
+</div>
+
   );
 }
 

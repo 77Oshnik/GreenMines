@@ -41,6 +41,14 @@ export default function CarbonNeutralityOptions() {
       impact: 1800,
       detailsUrl: "/afolu",
     },
+    {
+      icon: <Cloud className="w-12 h-12 text-[#66C5CC]" />,
+      title: "Emissions Impact Analyzer",
+      description: "Agriculture, Forestry, and Other Land Use practices to reduce emissions and enhance carbon sequestration.",
+      effectiveness: 48,
+      impact: 1800,
+      detailsUrl: "/emissions-analysis",
+    },
   ];
 
   return (

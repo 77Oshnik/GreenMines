@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 export default function MovingText({
@@ -22,16 +22,12 @@ export default function MovingText({
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Precalculate character positions for spacing
-  const characterLayout = useMemo(() => {
-    return text.split("").map((char, index) => ({
-      char,
-      x: index * fontSize * 0.6, // Consistent spacing
-    }));
-  }, [text, fontSize]);
-
   return (
-    <div className="relative overflow-hidden bg-gray-800 w-full h-30 flex items-center">
+    <div
+      className="relative overflow-hidden bg-gray-800 w-full h-30 flex items-center"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
       {/* Custom glowing cursor */}
       {isHovering && (
         <motion.div
@@ -76,43 +72,13 @@ export default function MovingText({
           fontWeight="bold"
           stroke={outlineColor}
           strokeWidth="2"
+          fill={isHovering ? fillColor : "transparent"} // Change color on hover
+          transition={{
+            duration: 0.3,
+            ease: "easeInOut",
+          }}
         >
-          {characterLayout.map(({ char, x }, index) => (
-            <motion.tspan
-              key={index}
-              x={x}
-              fill="transparent"
-              initial={{
-                fill: "transparent",
-                filter: "drop-shadow(0 0 0px rgba(0,0,0,0))",
-              }}
-              whileHover={{
-                fill: fillColor,
-                filter: `drop-shadow(0 0 10px ${fillColor})`,
-                scale: 1.1,
-              }}
-              onMouseEnter={() => setIsHovering(true)} // Enable glowing cursor
-              onMouseLeave={() => setIsHovering(false)} // Disable glowing cursor
-              transition={{
-                duration: 0.3,
-                ease: "easeInOut",
-                fill: {
-                  duration: 0.3,
-                  ease: "easeInOut",
-                },
-                filter: {
-                  duration: 0.3,
-                  ease: "easeInOut",
-                },
-                scale: {
-                  duration: 0.2,
-                  ease: "easeInOut",
-                },
-              }}
-            >
-              {char}
-            </motion.tspan>
-          ))}
+          {text}
         </motion.text>
       </motion.svg>
     </div>

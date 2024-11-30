@@ -45,7 +45,7 @@ function App() {
             <Header id="home" />
             <MovingText
         text="
-        Sustainable Future Green Growth Future Friendly"
+        Sustainable Future Green World"
         fontSize={100}
         outlineColor="black"
         fillColor="purple"
