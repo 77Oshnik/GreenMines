@@ -139,16 +139,23 @@ const SinkGraphs = () => {
         <div className="space-y-4">
           {displayedEntries.map((entry, index) => (
             <div key={index} className="flex justify-between items-center">
-              <div className="text-gray-300">
+              {/* Sink Type */}
+              <div className="text-gray-300 w-1/3">
                 <p><strong>{entry.type}</strong></p>
+              </div>
+              {/* CO2 Absorbed */}
+              <div className="text-gray-300 w-1/3">
                 <p>{entry.co2Absorbed} CO2 absorbed</p>
               </div>
-              <button
-                onClick={() => handleDelete(index + currentIndex)}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500"
-              >
-                Delete
-              </button>
+              {/* Delete Button */}
+              <div className="w-1/3 text-right">
+                <button
+                  onClick={() => handleDelete(index + currentIndex)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>
