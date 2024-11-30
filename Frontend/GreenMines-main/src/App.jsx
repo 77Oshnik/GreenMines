@@ -44,17 +44,16 @@ function App() {
           <ChatAssistant />
             <Header id="home" />
             <MovingText
-        text="
-        Sustainable Future Green World"
+        text="Sustainable Future Green World"
         fontSize={100}
-        outlineColor="black"
-        fillColor="purple"
+        outlineColor="#10B981"
+        fillColor="#10B981"
         duration={8}
       />
             <ScrollArrow />
-            <Companies id="about" />
+            {/* <Companies id="about" /> */}
             <Services id="services" />
-            <Experience />
+            {/* <Experience /> */}
             <Projects id="projects" />
             <Clients />
             <Footer />
