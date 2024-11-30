@@ -30,52 +30,39 @@ const LineAndBarEmission = ({data}) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const fetchLastSevenDaysData = async () => {
+    try {
+      setLoading(true);
+  
+      // Get today's date
+      const today = new Date();
+  
+      // Calculate 7 days ago from today
+      const sevenDaysAgo = new Date(today);
+      sevenDaysAgo.setDate(today.getDate() - 7);
+      
+      // Format the dates to YYYY-MM-DD
+      const formattedStartDate = sevenDaysAgo.toISOString().split('T')[0];
+      const formattedEndDate = today.toISOString().split('T')[0];
+  
+      // Make the API call with the start and end date for last 7 days
+      const response = await axios.get(`http://localhost:5000/api/data/${formattedStartDate}/${formattedEndDate}`);
+  
+      console.log('Last 7 days data:', response.data);
+  
+      // Set the fetched data to state
+      setWeekData(response.data);
+      setLoading(false);
+  
+    } catch (err) {
+      setError("Failed to fetch data");
+      setLoading(false);
+      console.error(err);
+    }
+  };
   useEffect(() => {
-    const fetchLastWeekData = async () => {
-      try {
-        setLoading(true);
-
-        // Get today's date
-        const today = new Date(); // Today's date will be something like November 29, 2024
-
-        // Calculate the start of the current week (this week's Monday)
-        const currentWeekMonday = new Date(today);
-        currentWeekMonday.setDate(today.getDate() - today.getDay() + 1); // Set to Monday of the current week (November 25, 2024)
-        currentWeekMonday.setHours(0, 0, 0, 0); // Set to midnight (00:00:00)
-
-        // Calculate the start of last week (Monday of previous week)
-        const lastWeekMonday = new Date(currentWeekMonday);
-        lastWeekMonday.setDate(currentWeekMonday.getDate() - 7); // Go back 7 days to get last week's Monday (November 18, 2024)
-        
-        // Calculate the end of last week (Sunday of previous week)
-        const lastWeekSunday = new Date(lastWeekMonday);
-        lastWeekSunday.setDate(lastWeekMonday.getDate() + 6); // Set to Sunday of last week (November 24, 2024)
-        lastWeekSunday.setHours(23, 59, 59, 999); // Set to the end of the day (23:59:59)
-
-        // Format the dates to YYYY-MM-DD
-        const formattedStartDate = lastWeekMonday.toISOString().split('T')[0]; // "2024-11-18"
-        const formattedEndDate = lastWeekSunday.toISOString().split('T')[0]; // "2024-11-24"
-
-        // Make the API call with the start and end date for last week
-        const response = await axios.get(`http://localhost:5000/api/data/${formattedStartDate}/${formattedEndDate}`);
-
-        console.log('Last week data:', response.data); // Log the response for debugging
-
-        // Set the fetched data to state
-        setWeekData(response.data);
-        setLoading(false);
-
-      } catch (err) {
-        setError("Failed to fetch data");
-        setLoading(false);
-        console.error(err);
-      }
-    };
-
-    // Call the fetch function immediately when the component loads
-    fetchLastWeekData();
-  }, []); // Empty dependency array ensures this runs only once when the component mounts
-  console.log(fetchWeekData);
+    fetchLastSevenDaysData();
+  }, []);
   
 
   const calculateEmissionsByDay = (data) => {
@@ -209,31 +196,37 @@ const LineAndBarEmission = ({data}) => {
   const [MonthData,setMonthData]=useState(null);
 
   // Function to fetch last month's data
-  const fetchLastMonthData = async () => {
-    // Calculate the start and end dates for the last month
-    const today = new Date();
-    const firstDayOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-    const lastDayOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0); // 0 is the last day of the previous month
-    
-    // Format dates as YYYY-MM-DD for the API request
-    const startDate = firstDayOfLastMonth.toISOString().split('T')[0];
-    const endDate = lastDayOfLastMonth.toISOString().split('T')[0];
-
-    // Fetch data from the backend
+  const fetchLastThirtyDaysData = async () => {
     try {
+      // Get today's date
+      const today = new Date();
+  
+      // Calculate 30 days ago from today
+      const thirtyDaysAgo = new Date(today);
+      thirtyDaysAgo.setDate(today.getDate() - 30);
+      
+      // Format dates as YYYY-MM-DD for the API request
+      const startDate = thirtyDaysAgo.toISOString().split('T')[0];
+      const endDate = today.toISOString().split('T')[0];
+  
+      // Fetch data from the backend
       const response = await axios.get(`http://localhost:5000/api/data/${startDate}/${endDate}`);
-      console.log('Last Month data:', response.data); // Log the response for debugging
+      
+      console.log('Last 30 days data:', response.data);
       setFetchMonthData(response.data);
+  
     } catch (error) {
-      console.error('Error fetching last month data:', error);
+      console.error('Error fetching last 30 days data:', error);
       return null;
     }
   };
+  
 
   // Use useEffect to call the function when the page loads (component mount)
   useEffect(() => {
-    fetchLastMonthData();
-  }, [])
+    fetchLastThirtyDaysData();
+  }, []);
+
 console.log("month data",fetchMonthData);
 const parseData = (data) => {
   // If data is null or undefined, return a default dataset
@@ -372,6 +365,8 @@ const parseData = (data) => {
   return monthData;
 };
 
+
+
 useEffect(() => {
   if (fetchMonthData !== null) {
     console.log("month data", fetchMonthData);
@@ -381,96 +376,144 @@ useEffect(() => {
   }
 }, [fetchMonthData]);
 
-// console.log(processMonthlyData(fetchMonthData)); 
+const [chartData, setChartData] = useState(null);
+const [isLoading, setIsLoading] = useState(true);
+// const [error, setError] = useState(null);
 
-  // const monthData = {
-  //   labels:["Week 1","Week 2","Week 3","Week 4", ],
-  //   datasets: [
-  //     {
-  //       label: "Electricity",
-  //       data: [
-  //         200,300,400,500
-  //       ],
-  //       borderColor: "#0046b9",
-  //       backgroundColor: "#0046b9",
-  //       tension: 0.4,
-  //     },
-  //     {
-  //       label: "Explosion",
-  //       data: [
-  //         200,400,400,500
-  //       ],
-  //       borderColor: "#11c610",
-  //       backgroundColor: "#11c610",
-  //       tension: 0.4,
-  //     },
-  //     {
-  //       label: "Fuel",
-  //       data: [
-  //         200,600,400,500
-  //       ],
-  //       borderColor: "#d5d502",
-  //       backgroundColor: "#d5d502",
-  //       tension: 0.4,
-  //     },
-  //     {
-  //       label: "Shipping",
-  //       data: [
-  //         200,700,400,500
-  //       ],
-  //       borderColor: "#6302d5",
-  //       backgroundColor: "#6302d5",
-  //       tension: 0.4,
-  //     },
-  //   ],
-  // };
+// Function to fetch and format data
+const fetchLastTwelveMonthsData = async () => {
+  const today = new Date();
+  
+  // Calculate 12 months ago from today
+  const twelveMonthsAgo = new Date(today);
+  twelveMonthsAgo.setFullYear(today.getFullYear() - 1);
+  
+  // Format dates
+  const startDate = twelveMonthsAgo.toISOString().split('T')[0];
+  const endDate = today.toISOString().split('T')[0];
+  
+  try {
+    console.log('Fetching data with date range:', {
+      startDate,
+      endDate
+    });
 
-  const yearData = {
-    labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
+    // Fetch the raw API response
+    const response = await axios.get(`http://localhost:5000/api/data/${startDate}/${endDate}`);
+    
+    // Log raw response
+    console.log('Raw API Response:', response.data);
+    console.log('Categories in response:', Object.keys(response.data));
+
+    // Log data for each category
+    Object.keys(response.data).forEach(category => {
+      console.log(`${category} data count:`, response.data[category].length);
+      console.log(`First ${category} item:`, response.data[category][0]);
+    });
+    
+    // Format data for chart
+    const formattedData = formatDataForChart(response.data);
+    
+    // Log formatted chart data
+    console.log('Formatted Chart Data:', formattedData);
+    
+    return formattedData;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    setError(error);
+    return null;
+  }
+};
+
+// Function to format data for chart
+const formatDataForChart = (rawData) => {
+  const labels = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  const calculateMonthlyCO2Sums = (categoryData) => {
+    const monthlySums = new Array(12).fill(0);
+    
+    categoryData.forEach(item => {
+      const date = new Date(item.createdAt);
+      const monthIndex = date.getMonth();
+      
+      const co2Value = item.result?.CO2?.value || 0;
+      monthlySums[monthIndex] += co2Value;
+
+      // Log individual item processing
+      console.log(`Processing item: 
+        Date: ${date}, 
+        Month Index: ${monthIndex}, 
+        CO2 Value: ${co2Value}`);
+    });
+    
+    // Log monthly sums for each category
+    console.log('Monthly CO2 Sums:', monthlySums);
+    
+    return monthlySums;
+  };
+
+  return {
+    labels: labels,
     datasets: [
       {
         label: "Electricity",
-        data: [500, 600, 750, 800, 850, 900, 950, 1000, 1100, 1150, 1200, 1250],
+        data: calculateMonthlyCO2Sums(rawData.electricity),
         borderColor: "#0046b9",
         backgroundColor: "#0046b9",
         tension: 0.4,
       },
       {
         label: "Explosion",
-        data: [200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750],
+        data: calculateMonthlyCO2Sums(rawData.explosion),
         borderColor: "#11c610",
         backgroundColor: "#11c610",
         tension: 0.4,
       },
       {
         label: "Fuel",
-        data: [400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500],
+        data: calculateMonthlyCO2Sums(rawData.fuelCombustion),
         borderColor: "#d5d502",
         backgroundColor: "#d5d502",
         tension: 0.4,
       },
       {
         label: "Shipping",
-        data: [150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700],
+        data: calculateMonthlyCO2Sums(rawData.shipping),
         borderColor: "#6302d5",
         backgroundColor: "#6302d5",
         tension: 0.4,
-      },
-    ],
+      }
+    ]
   };
+};
+
+// useEffect to fetch data when component mounts
+useEffect(() => {
+  const loadData = async () => {
+    console.log('Component mounted. Starting data fetch...');
+    setIsLoading(true);
+    try {
+      const data = await fetchLastTwelveMonthsData();
+      setChartData(data);
+      console.log('Data successfully fetched and set');
+    } catch (error) {
+      console.error('Error in data loading:', error);
+      setError(error);
+    } finally {
+      setIsLoading(false);
+      console.log('Loading state completed');
+    }
+  };
+
+  loadData();
+}, []); // Empty dependency array means this runs once when component mounts
+
+
+
+  
 
   const [currentData, setCurrentData] = useState(weekData);
   
@@ -524,7 +567,7 @@ useEffect(() => {
             Past Month
           </button>
           <button
-            onClick={() => setCurrentData(yearData)}
+            onClick={() => setCurrentData(chartData)}
             className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
           >
             Past Year
