@@ -205,49 +205,184 @@ const LineAndBarEmission = ({data}) => {
   
   
   // console.log(weekData);
-  
+  const [fetchMonthData, setFetchMonthData] = useState(null);
+  const [MonthData,setMonthData]=useState(null);
+
+  // Function to fetch last month's data
+  const fetchLastMonthData = async () => {
+    // Calculate the start and end dates for the last month
+    const today = new Date();
+    const firstDayOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const lastDayOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0); // 0 is the last day of the previous month
+    
+    // Format dates as YYYY-MM-DD for the API request
+    const startDate = firstDayOfLastMonth.toISOString().split('T')[0];
+    const endDate = lastDayOfLastMonth.toISOString().split('T')[0];
+
+    // Fetch data from the backend
+    try {
+      const response = await axios.get(`http://localhost:5000/api/data/${startDate}/${endDate}`);
+      console.log('Last Month data:', response.data); // Log the response for debugging
+      setFetchMonthData(response.data);
+    } catch (error) {
+      console.error('Error fetching last month data:', error);
+      return null;
+    }
+  };
+
+  // Use useEffect to call the function when the page loads (component mount)
+  useEffect(() => {
+    fetchLastMonthData();
+  }, [])
+console.log("month data",fetchMonthData);
+
+const parseData = (data) => {
+  const parseNumeric = (value) => {
+    if (typeof value === 'string') {
+      // Extract first numeric value, handle various formats
+      const matches = value.match(/[-+]?(\d*\.\d+|\d+)/);
+      return matches ? parseFloat(matches[0]) : 0;
+    }
+    return Number(value) || 0;
+  };
+
+  const getAllDates = (dataArray, dateKey = 'createdAt') => 
+    dataArray.map(item => new Date(item[dateKey]));
+
+  const generateWeeks = (dates) => {
+    const sortedDates = dates.sort((a, b) => a - b);
+    const startDate = new Date(sortedDates[0].getFullYear(), sortedDates[0].getMonth(), 1);
+    const endDate = new Date(sortedDates[sortedDates.length - 1].getFullYear(), 
+                              sortedDates[sortedDates.length - 1].getMonth() + 1, 0);
+
+    const weeks = [];
+    let currentWeekStart = new Date(startDate);
+
+    while (currentWeekStart <= endDate) {
+      const currentWeekEnd = new Date(currentWeekStart);
+      currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
+      
+      weeks.push({
+        start: new Date(currentWeekStart),
+        end: currentWeekEnd > endDate ? endDate : currentWeekEnd
+      });
+
+      currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+    }
+
+    return weeks;
+  };
+
+  const getWeekSums = (dataArray, dateKey = 'createdAt', valueKey = 'result.CO2.value') => {
+    const allDates = getAllDates(dataArray, dateKey);
+    const weeks = generateWeeks(allDates);
+
+    return weeks.map(week => 
+      dataArray
+        .filter(item => {
+          const itemDate = new Date(item[dateKey]);
+          return itemDate >= week.start && itemDate <= week.end;
+        })
+        .reduce((sum, item) => {
+          const value = getNestedValue(item, valueKey);
+          return sum + parseNumeric(value);
+        }, 0)
+    );
+  };
+
+  const getNestedValue = (obj, path) => {
+    return path.split('.').reduce((o, key) => (o && o[key] !== undefined) ? o[key] : undefined, obj);
+  };
 
   const monthData = {
-    labels:["Week 1","Week 2","Week 3","Week 4", ],
+    labels: generateWeeks(getAllDates(data.electricity)).map((week, index) => `Week ${index + 1}`),
     datasets: [
       {
         label: "Electricity",
-        data: [
-          200,300,400,500
-        ],
+        data: getWeekSums(data.electricity, 'createdAt', 'result.CO2.value'),
         borderColor: "#0046b9",
         backgroundColor: "#0046b9",
-        tension: 0.4,
+        tension: 0.4
       },
       {
-        label: "Explosion",
-        data: [
-          200,400,400,500
-        ],
-        borderColor: "#11c610",
-        backgroundColor: "#11c610",
-        tension: 0.4,
-      },
-      {
-        label: "Fuel",
-        data: [
-          200,600,400,500
-        ],
-        borderColor: "#d5d502",
-        backgroundColor: "#d5d502",
-        tension: 0.4,
+        label: "Fuel Combustion",
+        data: getWeekSums(data.fuelCombustion, 'createdAt', 'result.CO2.value'),
+        borderColor: "#FF6384",
+        backgroundColor: "#FF6384",
+        tension: 0.4
       },
       {
         label: "Shipping",
-        data: [
-          200,700,400,500
-        ],
-        borderColor: "#6302d5",
-        backgroundColor: "#6302d5",
-        tension: 0.4,
+        data: getWeekSums(data.shipping, 'createdAt', 'result.carbonEmissions.kilograms'),
+        borderColor: "#36A2EB",
+        backgroundColor: "#36A2EB",
+        tension: 0.4
       },
-    ],
+      {
+        label: "Explosions",
+        data: getWeekSums(data.explosion, 'createdAt', 'emissions.CO2'),
+        borderColor: "#FFCE56",
+        backgroundColor: "#FFCE56",
+        tension: 0.4
+      }
+    ]
   };
+
+  return monthData;
+};
+
+useEffect(() => {
+  if (fetchMonthData !== null) {
+    console.log("month data", fetchMonthData);
+    const monthData = parseData(fetchMonthData); // Call parseData only when fetchMonthData is not null
+    console.log("Parsed month data", monthData);
+    setMonthData(monthData)
+  }
+}, [fetchMonthData]);
+
+// console.log(processMonthlyData(fetchMonthData)); 
+
+  // const monthData = {
+  //   labels:["Week 1","Week 2","Week 3","Week 4", ],
+  //   datasets: [
+  //     {
+  //       label: "Electricity",
+  //       data: [
+  //         200,300,400,500
+  //       ],
+  //       borderColor: "#0046b9",
+  //       backgroundColor: "#0046b9",
+  //       tension: 0.4,
+  //     },
+  //     {
+  //       label: "Explosion",
+  //       data: [
+  //         200,400,400,500
+  //       ],
+  //       borderColor: "#11c610",
+  //       backgroundColor: "#11c610",
+  //       tension: 0.4,
+  //     },
+  //     {
+  //       label: "Fuel",
+  //       data: [
+  //         200,600,400,500
+  //       ],
+  //       borderColor: "#d5d502",
+  //       backgroundColor: "#d5d502",
+  //       tension: 0.4,
+  //     },
+  //     {
+  //       label: "Shipping",
+  //       data: [
+  //         200,700,400,500
+  //       ],
+  //       borderColor: "#6302d5",
+  //       backgroundColor: "#6302d5",
+  //       tension: 0.4,
+  //     },
+  //   ],
+  // };
 
   const yearData = {
     labels: [
@@ -339,7 +474,10 @@ const LineAndBarEmission = ({data}) => {
             Past Week
           </button>
           <button
-            onClick={() => setCurrentData(monthData)}
+            onClick={() => {
+              // fetchLastMonthData();
+              setCurrentData(MonthData);
+            }}
             className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
           >
             Past Month
