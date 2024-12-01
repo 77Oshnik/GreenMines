@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
@@ -8,12 +8,11 @@ import Enavbar from './Enavbar';
 const RouteForm = () => {
   const [vehicle, setVehicle] = useState({
     vehicle_id: '',
-    start_location_id: '',
-    start_address: '', // Address input for vehicle
+    start_address: '',
   });
 
   const [services, setServices] = useState([
-    { id: '', name: '', location_id: '', address: '' }, // Address for services
+    { id: '', name: '', address: '' },
   ]);
 
   const [loading, setLoading] = useState(false);
@@ -25,10 +24,20 @@ const RouteForm = () => {
   const [addressSuggestions, setAddressSuggestions] = useState([]);
   const [activeAddressType, setActiveAddressType] = useState('');
 
-  const customIcon = new L.Icon({
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
+  const mapRef = useRef(null);
+
+  // Custom icons
+  const truckIcon = new L.Icon({
+    iconUrl: 'https://cdn.iconscout.com/icon/free/png-512/free-truck-icon-download-in-svg-png-gif-file-formats--front-city-basic-icons-pack-industry-449929.png?f=webp&w=256',
+    iconSize: [55, 55],
+    iconAnchor: [17.5, 35],
+    popupAnchor: [1, -34],
+  });
+
+  const storeIcon = new L.Icon({
+    iconUrl: 'https://cdn.iconscout.com/icon/premium/png-512-thumb/factory-659-775144.png?f=webp&w=256',
+    iconSize: [55, 55],
+    iconAnchor: [15, 30],
     popupAnchor: [1, -34],
   });
 
@@ -43,7 +52,7 @@ const RouteForm = () => {
   };
 
   const addService = () => {
-    setServices([...services, { id: '', name: '', location_id: '', address: '' }]);
+    setServices([...services, { id: '', name: '', address: '' }]);
   };
 
   const removeService = (index) => {
@@ -51,16 +60,14 @@ const RouteForm = () => {
     setServices(updatedServices);
   };
 
-  // Geocode the address using the Nominatim API (OpenStreetMap)
   const geocodeAddress = async (address, type = 'vehicle') => {
-    setActiveAddressType(type); // Track which type of address we're currently working on
+    setActiveAddressType(type);
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${address}`;
     try {
-      console.log(`Geocoding address: ${address} for ${type}`);
       const response = await axios.get(url);
       if (response.data && response.data.length > 0) {
-        const suggestions = response.data.slice(0, 5); // Limit to 5 suggestions
-        setAddressSuggestions(suggestions); // Store the suggestions
+        const suggestions = response.data.slice(0, 5);
+        setAddressSuggestions(suggestions);
         if (suggestions.length > 0) {
           const { lat, lon } = suggestions[0];
           if (type === 'vehicle') {
@@ -81,63 +88,64 @@ const RouteForm = () => {
   };
 
   const debouncedGeocodeAddress = useCallback(
-    debounce((address, type) => geocodeAddress(address, type), 500), // 500ms debounce delay
+    debounce((address, type) => geocodeAddress(address, type), 500),
     []
   );
 
-  // Handle the form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Log the form data before submission
-    console.log('Submitting form data:', vehicle, services);
-    console.log('Vehicle coordinates:', vehicleCoords);
-    console.log('Service coordinates:', serviceCoords);
-
-    // Perform basic validation
     if (!vehicle.vehicle_id || !vehicle.start_address) {
       setError('Please fill out all required fields for the vehicle.');
       return;
     }
-
-    services.forEach(service => {
-      if ( !service.name ||  !service.address) {
+  
+    for (let service of services) {
+      if (!service.name || !service.address) {
         setError('Please fill out all required fields for each service.');
         return;
       }
-    });
-
-     // Log validation passed message
-  console.log('Validation passed, preparing payload...');
-
+    }
+  
     const payload = {
       vehicle: {
         ...vehicle,
-        coordinates: vehicleCoords, // Add coordinates for the vehicle
+        coordinates: vehicleCoords,
       },
       services: services.map((service, index) => ({
         ...service,
-        coordinates: serviceCoords[index], // Add coordinates for each service
+        coordinates: serviceCoords[index],
       })),
     };
-
-    console.log('Payload being sent to backend:', payload);
-
+  
     setLoading(true);
     setError('');
     setResult(null);
-
+  
     try {
       const response = await axios.post('http://localhost:5000/api/optimize-route', payload);
-      console.log('Optimization Result:', response.data);
-      setResult(response.data);
-    } catch (error) {
-      console.error('Error optimizing route:', error.response?.data || error.message);
+  
+      if (!response.data.route) {
+        setError('We cannot travel between these locations via road.');
+        setResult(null);
+      } else {
+        const route = response.data.route;
+        setResult(response.data);
+  
+        // Ensure the map ref is available before calling fitBounds
+        if (mapRef.current && route && route.length > 0) {
+          const bounds = L.latLngBounds(route.map(([lat, lon]) => [lat, lon]));
+          mapRef.current.fitBounds(bounds);
+        }
+      }
+    } catch (err) {
+      console.error('Error optimizing route:', err.response?.data || err.message);
       setError('Failed to optimize route.');
     } finally {
       setLoading(false);
     }
   };
+  
+  
 
   function debounce(func, delay) {
     let timeout;
@@ -153,15 +161,21 @@ const RouteForm = () => {
         <div className="w-3/5 pr-6">
           <div className="w-full max-w-4xl bg-gray-800 rounded-lg shadow-md p-8 mt-8">
             <h2 className="text-2xl text-teal-300 font-semibold mb-4 text-center">Map View</h2>
-            <MapContainer center={[vehicleCoords?.lat || 19.0760, vehicleCoords?.lon || 72.8777]} zoom={13} style={{ height: '754px', width: '100%' }} className="h-full">
+            <MapContainer
+              center={[vehicleCoords?.lat || 19.0760, vehicleCoords?.lon || 72.8777]}
+              zoom={13}
+              style={{ height: '754px', width: '100%' }}
+              className="h-full"
+              whenCreated={(mapInstance) => { mapRef.current = mapInstance; }}
+            >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               {vehicleCoords && (
-                <Marker position={[vehicleCoords.lat, vehicleCoords.lon]} icon={customIcon}>
+                <Marker position={[vehicleCoords.lat, vehicleCoords.lon]} icon={truckIcon}>
                   <Popup>Vehicle located at {vehicleCoords.lat}, {vehicleCoords.lon}</Popup>
                 </Marker>
               )}
               {serviceCoords.map((coords, index) => (
-                <Marker key={index} position={[coords.lat, coords.lon]} icon={customIcon}>
+                <Marker key={index} position={[coords.lat, coords.lon]} icon={storeIcon}>
                   <Popup>Service at {coords.lat}, {coords.lon}</Popup>
                 </Marker>
               ))}
@@ -192,7 +206,7 @@ const RouteForm = () => {
                       value={vehicle.start_address}
                       onChange={(e) => {
                         handleVehicleChange(e);
-                        debouncedGeocodeAddress(e.target.value, 'vehicle'); // Call the debounced geocoding function
+                        debouncedGeocodeAddress(e.target.value, 'vehicle');
                       }}
                       className="w-full bg-gray-700 text-white border border-teal-500 rounded-lg p-3 focus:ring-2 focus:ring-teal-400 focus:outline-none"
                     />
@@ -202,7 +216,7 @@ const RouteForm = () => {
                           <li key={index} className="p-2 text-teal-300 cursor-pointer hover:bg-teal-700" onClick={() => {
                             setVehicle({ ...vehicle, start_address: suggestion.display_name });
                             setVehicleCoords({ lat: suggestion.lat, lon: suggestion.lon });
-                            setAddressSuggestions([]); // Clear suggestions
+                            setAddressSuggestions([]);
                           }}>
                             {suggestion.display_name}
                           </li>
@@ -216,48 +230,29 @@ const RouteForm = () => {
               <div>
                 <h2 className="text-xl font-semibold text-teal-300 mb-4">Services</h2>
                 {services.map((service, index) => (
-                  <div key={index} className="border-b border-teal-600 pb-6">
+                  <div key={index} className="border border-teal-500 p-4 mb-4 rounded-lg">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label htmlFor={`service_name_${index}`} className="block text-teal-400 font-medium mb-2">Service Name</label>
-                        <input
-                          type="text"
-                          name="name"
-                          id={`service_name_${index}`}
-                          placeholder="Enter service name"
-                          value={service.name}
-                          onChange={(e) => handleServiceChange(index, e)}
-                          className="w-full bg-gray-700 text-white border border-teal-500 rounded-lg p-3 focus:ring-2 focus:ring-teal-400 focus:outline-none"
-                          required
-                        />
+                        <input type="text" name="name" id={`service_name_${index}`} placeholder="Enter service name" value={service.name} onChange={(e) => handleServiceChange(index, e)} className="w-full bg-gray-700 text-white border border-teal-500 rounded-lg p-3 focus:ring-2 focus:ring-teal-400 focus:outline-none" required />
                       </div>
                       <div>
                         <label htmlFor={`service_address_${index}`} className="block text-teal-400 font-medium mb-2">Service Address</label>
-                        <input
-                          type="text"
-                          name="address"
-                          id={`service_address_${index}`}
-                          placeholder="Enter service address"
-                          value={service.address}
-                          onChange={(e) => {
-                            handleServiceChange(index, e);
-                            debouncedGeocodeAddress(e.target.value, 'service');
-                          }}
-                          className="w-full bg-gray-700 text-white border border-teal-500 rounded-lg p-3 focus:ring-2 focus:ring-teal-400 focus:outline-none"
-                        />
+                        <input type="text" name="address" id={`service_address_${index}`} placeholder="Enter service address" value={service.address} onChange={(e) => {
+                          handleServiceChange(index, e);
+                          debouncedGeocodeAddress(e.target.value, 'service');
+                        }} className="w-full bg-gray-700 text-white border border-teal-500 rounded-lg p-3 focus:ring-2 focus:ring-teal-400 focus:outline-none" required />
                         {addressSuggestions.length > 0 && activeAddressType === 'service' && (
                           <ul className="bg-gray-700 mt-2 border border-teal-500 rounded-lg max-h-40 overflow-auto">
-                            {addressSuggestions.map((suggestion, index) => (
-                              <li key={index} className="p-2 text-teal-300 cursor-pointer hover:bg-teal-700" onClick={() => {
+                            {addressSuggestions.map((suggestion, suggestionIndex) => (
+                              <li key={suggestionIndex} className="p-2 text-teal-300 cursor-pointer hover:bg-teal-700" onClick={() => {
                                 const updatedServices = [...services];
                                 updatedServices[index].address = suggestion.display_name;
                                 setServices(updatedServices);
-                                setServiceCoords(prevCoords => {
-                                  const updated = [...prevCoords];
-                                  updated[index] = { lat: suggestion.lat, lon: suggestion.lon };
-                                  return updated;
-                                });
-                                setAddressSuggestions([]); // Clear suggestions
+                                const updatedCoords = [...serviceCoords];
+                                updatedCoords[index] = { lat: suggestion.lat, lon: suggestion.lon };
+                                setServiceCoords(updatedCoords);
+                                setAddressSuggestions([]);
                               }}>
                                 {suggestion.display_name}
                               </li>
@@ -266,25 +261,19 @@ const RouteForm = () => {
                         )}
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      className="text-red-600 hover:text-red-800 mt-4"
-                      onClick={() => removeService(index)}
-                    >
-                      Remove Service
-                    </button>
+                    {services.length > 1 && (
+                      <button type="button" className="text-red-400 mt-4" onClick={() => removeService(index)}>Remove Service</button>
+                    )}
                   </div>
                 ))}
-                <button type="button" onClick={addService} className="mt-4 text-teal-300 hover:text-teal-500">Add Service</button>
+                <button type="button" className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg transition-colors" onClick={addService}>Add Service</button>
               </div>
 
-              <div className="mt-6 text-center">
-                <button
-                  type="submit"
-                  className="w-full bg-teal-500 text-white py-3 px-6 rounded-lg hover:bg-teal-600 focus:outline-none"
-                  disabled={loading}
-                >
-                  {loading ? 'Optimizing Route...' : 'Optimize Route'}
+              {error && <p className="text-red-500 font-medium">{error}</p>}
+
+              <div className="text-center">
+                <button type="submit" disabled={loading} className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  {loading ? 'Loading...' : 'Submit'}
                 </button>
               </div>
             </form>
