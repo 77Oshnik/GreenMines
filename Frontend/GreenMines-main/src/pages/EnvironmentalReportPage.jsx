@@ -1,5 +1,6 @@
+// pages/EnvironmentalReportPage.jsx
 import React, { useState } from 'react';
-import { Container, Alert, CircularProgress } from '@mui/material';
+import { Container, Alert, CircularProgress, Box } from '@mui/material';
 import ReportGenerator from '../Components/EnvironmentalReport/ReportGenerator';
 import ReportDisplay from '../Components/EnvironmentalReport/ReportDisplay';
 import ReportStats from '../Components/EnvironmentalReport/ReportStats';
@@ -22,27 +23,39 @@ const EnvironmentalReportPage = () => {
                 ? await fetchDailyEnvironmentalReport()
                 : type === 'weekly'
                 ? await fetchWeeklyEnvironmentalReport()
-                : await fetchMonthlyEnvironmentalReport(); // Handle monthly report
+                : await fetchMonthlyEnvironmentalReport();
             setReportData(response);
         } catch (error) {
             setError('Failed to generate report. Please try again.');
+            console.error('Report generation error:', error);
         }
         setLoading(false);
     };
 
     return (
         <Container maxWidth="lg">
-            <ReportGenerator onGenerateReport={handleGenerateReport} />
-            
-            {loading && <CircularProgress />}
-            {error && <Alert severity="error">{error}</Alert>}
-            
-            {reportData && (
-                <>
-                    <ReportStats data={reportData.data} />
-                    <ReportDisplay report={reportData.report} />
-                </>
-            )}
+            <Box sx={{ py: 4 }}>
+                <ReportGenerator onGenerateReport={handleGenerateReport} />
+                
+                {loading && (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                        <CircularProgress />
+                    </Box>
+                )}
+                
+                {error && (
+                    <Alert severity="error" sx={{ my: 2 }}>
+                        {error}
+                    </Alert>
+                )}
+                
+                {reportData && (
+                    <>
+                        <ReportStats data={reportData.data} />
+                        <ReportDisplay report={reportData.report} />
+                    </>
+                )}
+            </Box>
         </Container>
     );
 };

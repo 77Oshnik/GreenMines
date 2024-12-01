@@ -3,6 +3,8 @@ const Electricity = require("../models/Electricity");
 const FuelCombustion = require("../models/FuelCombustion");
 const Shipping = require("../models/Shipping");
 const Explosion = require("../models/Explosion");
+const Sink = require("../models/ExistingSink");
+const ExistingSink = require("../models/ExistingSink");
 
 const calculateDateRange = (days) => {
     const now = new Date();
@@ -13,13 +15,43 @@ const calculateDateRange = (days) => {
 
 const fetchDataForRange = async (startDate, endDate) => {
     const query = { createdAt: { $gte: startDate, $lte: endDate } };
-    const [electricity, fuelCombustion, shipping, explosion] = await Promise.all([
+    const [electricity, fuelCombustion, shipping, explosion, sinks] = await Promise.all([
         Electricity.find(query).sort({ createdAt: 1 }),
         FuelCombustion.find(query).sort({ createdAt: 1 }),
         Shipping.find(query).sort({ createdAt: 1 }),
         Explosion.find(query).sort({ createdAt: 1 }),
+        ExistingSink.find(query).sort({ createdAt: 1 })
     ]);
-    return { electricity, fuelCombustion, shipping, explosion };
+
+    
+    // Calculate totals
+    const calculateTotal = (data) => 
+        data.reduce((sum, item) => sum + (item.emissions || 0), 0);
+
+    const totalEmissions = {
+        electricity: calculateTotal(electricity),
+        explosion: calculateTotal(explosion),
+        fuelCombustion: calculateTotal(fuelCombustion),
+        shipping: calculateTotal(shipping),
+        total: 0
+    };
+// Calculate total emissions
+totalEmissions.total = Object.values(totalEmissions).reduce((a, b) => a + b, 0);
+
+const totalAbsorption = sinks.reduce((sum, item) => sum + (item.carbonAbsorbed || 0), 0);
+
+return {
+    electricity,
+    explosion,
+    fuelCombustion,
+    shipping,
+    sinks,
+    summary: {
+        totalEmissions,
+        totalAbsorption,
+        netEmissions: totalEmissions.total - totalAbsorption
+    }
+};
 };
 
 exports.generateDailyEnvironmentalReport = async (req, res) => {

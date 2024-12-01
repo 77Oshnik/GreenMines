@@ -5,6 +5,8 @@
   "dependencies": {
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
+    "@google-ai/generativelanguage": "^2.8.0",
+    "@google/generative-ai": "^0.21.0",
     "@headlessui/react": "^1.7.19",
     "@heroicons/react": "^1.0.6",
     "@mui/icons-material": "^5.16.7",
@@ -22,6 +24,7 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.462.0",
     "mongoose": "^8.5.4",
+    "pdf-lib": "^1.17.1",
     "react": "^18.0.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.0.0",
