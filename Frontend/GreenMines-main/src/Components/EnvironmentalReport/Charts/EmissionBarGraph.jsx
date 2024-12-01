@@ -58,18 +58,35 @@ const EmissionBarGraph = ({ data }) => {
 
     const options = {
         responsive: true,
+        maintainAspectRatio: false, // Important for PDF rendering
         plugins: {
             legend: {
                 position: 'top',
+                labels: {
+                    font: {
+                        size: 14
+                    }
+                }
             },
             title: {
                 display: true,
-                text: 'Emissions Comparison'
+                text: 'Emissions Comparison',
+                font: {
+                    size: 16
+                }
             }
         }
     };
 
-    return <Bar data={barData} options={options} />;
+    return (
+        <div style={{ 
+            width: '100%', 
+            height: '500px', // Ensure sufficient height
+            backgroundColor: 'white' 
+        }}>
+            <Bar data={barData} options={options} />;
+            </div>
+            );
 };
 
 export default EmissionBarGraph;
