@@ -55,7 +55,6 @@ function EmissionPredictionPage() {
       // Format the data
       const formattedData = formatDataForCategory(selectedCategory, categoryData);
   
-      console.log("Formatted Data to send to Flask:", formattedData);
   
       // Send the formatted data to Flask
       const flaskRoute = getFlaskRoute(selectedCategory);
