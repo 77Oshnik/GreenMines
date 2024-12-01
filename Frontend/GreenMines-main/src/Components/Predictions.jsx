@@ -35,49 +35,55 @@ function EmissionPredictionPage() {
       setError("Please select a valid date range.");
       return;
     }
-
+  
     setLoading(true);
     setError(null);
-
+  
     try {
-
       // Fetching data from your Flask API
       const response = await axios.get(`http://localhost:5000/api/data/${startDate}/${endDate}`);
-
+  
       const categoryData = response.data[selectedCategory] || [];
-
+  
       // Check if there's no data for the selected category
       if (categoryData.length === 0) {
         setError(`No data available for the selected category (${selectedCategory}) in the past 7 days.`);
         setPredictions(null);
         return;
       }
-
+  
       // Format the data
       const formattedData = formatDataForCategory(selectedCategory, categoryData);
-
-      console.log("Formatted Data to send to Flask:", formattedData); // Log the formatted data before sending it to Flask
-
+  
+  
       // Send the formatted data to Flask
       const flaskRoute = getFlaskRoute(selectedCategory);
       const apiResponse = await axios.post(flaskRoute, formattedData);
-      console.log("API Response from Flask:", apiResponse.data); // Log response from Flask
-
-      setPredictions(apiResponse.data); // Set the full response object
+      
+  
+      setPredictions(apiResponse.data);
     } catch (err) {
-      if (err.response?.status === 400 && err.response?.data?.error) {
-        setError(err.response.data.error);
+      console.error("Full error details:", err);
+      
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        console.error("Error response data:", err.response.data);
+        console.error("Error response status:", err.response.status);
+        console.error("Error response headers:", err.response.headers);
+      } else if (err.request) {
+        // The request was made but no response was received
+        console.error("Error request:", err.request);
       } else {
-        setError("An unexpected error occurred.");
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error message:", err.message);
       }
+  
+      setError("An unexpected error occurred. Please check the console for details.");
     } finally {
       setLoading(false);
     }
   };
-
   const formatDataForCategory = (category, data) => {
-    console.log(`Formatting data for category: ${category}`); // Log category selection
-
     switch (category) {
       case "fuelCombustion":
         return formatFuelData(data);
@@ -94,52 +100,63 @@ function EmissionPredictionPage() {
 
   // Format fuel data
   const formatFuelData = (fuelData) => {
-    const daysData = [];
-
-    // Check if data is empty
-    if (fuelData.length === 0) {
-      console.log("Fuel data is empty.");
-    }
-
-    // Loop through the fuel data
-    fuelData.forEach(fuel => {
-
-        // Create an array for each fuel entry with fuel type and quantity
-        const fuelEntry = [fuel.fuel, fuel.quantityFuelConsumed];
-        
-        daysData.push([fuelEntry]);  // Push as an array of arrays
+    // Create an object to group fuel data by date
+    const groupedByDate = {};
+  
+    // Iterate over the fuel data
+    fuelData.forEach((fuel) => {
+      const date = new Date(fuel.createdAt).toISOString().split("T")[0]; // Extract date in YYYY-MM-DD format
+  
+      // If the date doesn't exist in the grouped object, initialize it
+      if (!groupedByDate[date]) {
+        groupedByDate[date] = [];
+      }
+  
+      // Push the fuel data (type and quantity) into the array for that date
+      groupedByDate[date].push([fuel.fuel, fuel.quantityFuelConsumed]);
     });
-
+  
+    // Convert the grouped object into an array of arrays for `days_data`
+    const daysData = Object.values(groupedByDate);
+  
     return { days_data: daysData };
   };
+  
 
   // Format electricity data
   const formatElectricityData = (data) => {
-    // If data is empty, return a default structure
-    
+    if (!data || data.length === 0) {
+      console.log("No data available for electricity. Returning default payload.");
+      return {
+        state_name: "Unknown",
+        days_data: [],
+      };
+    }
   
-    let stateName = "Karnataka";  // Default fallback state name
-  
-    // Iterate through the data to find the first valid entry with a stateName
+    // Try to determine `state_name` from the first valid entry in the data
+    let stateName = "Unknown"; // Default fallback
     for (let entry of data) {
       if (entry?.stateName) {
-        stateName = entry.stateName;  // Assign the state name from the first valid entry
-        break;  // Once we find a valid stateName, stop iterating
+        stateName = entry.stateName;
+        break;
       }
     }
   
-    // Map the rest of the data for the days_data array
-    const daysData = data.map((entry) => ({
-      energyPerTime: entry.energyPerTime,
-      responsibleArea: entry.responsibleArea,
-      totalArea: entry.totalArea,
-    }));
+    // Transform the `data` array into `days_data`
+    const daysData = data
+      .filter(entry => entry.energyPerTime !== undefined) // Filter out invalid entries
+      .map(entry => ({
+        energyPerTime: entry.energyPerTime || 0,
+        responsibleArea: entry.responsibleArea || "N/A",
+        totalArea: entry.totalArea || "N/A",
+      }));
   
     return {
       state_name: stateName,
       days_data: daysData,
     };
   };
+  
   
   
 
@@ -294,11 +311,177 @@ function EmissionPredictionPage() {
 
           {/* Display Predictions */}
           {predictions && !loading && (
-            <div className="mt-6 bg-[#1d1d1f] p-6 rounded-lg text-[#66C5CC]">
-              <h3 className="text-2xl mb-4">Predictions</h3>
-              <pre>{JSON.stringify(predictions, null, 2)}</pre>
+  <div className="mt-6 bg-[#1d1d1f] p-6 rounded-lg text-[#66C5CC]">
+    <h3 className="text-2xl mb-4">Predictions for {selectedCategory}</h3>
+    {selectedCategory === 'fuelCombustion' && predictions.predictions && (
+      <div className="space-y-4">
+        {predictions.predictions.predictions.map((prediction, index) => (
+          <div key={index} className="border-b border-[#66C5CC] pb-4">
+            <h4 className="text-xl font-semibold mb-2">Day {prediction.day}</h4>
+            <p className="mb-2">
+              <strong>Fuel Type:</strong> {prediction.fuel_data.fuel_type}
+            </p>
+            <p className="mb-2">
+              <strong>Quantity Consumed:</strong>{" "}
+              {prediction.fuel_data.quantity_fuel_consumed_liters} liters
+            </p>
+            <div className="mb-2">
+              <h5 className="font-medium">Emissions:</h5>
+              <ul className="ml-4 list-disc">
+                {Object.entries(prediction.fuel_data.emissions).map(
+                  ([key, value]) => (
+                    <li key={key}>
+                      <strong>{key}:</strong> {value}
+                    </li>
+                  )
+                )}
+              </ul>
+            </div>
+            <div>
+              <h5 className="font-medium">Risk Levels:</h5>
+              <ul className="ml-4 list-disc">
+                {Object.entries(prediction.fuel_data.risk_levels).map(
+                  ([key, value]) => (
+                    <li key={key}>
+                      <strong>{key}:</strong> {value}
+                    </li>
+                  )
+                )}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+
+{selectedCategory === 'electricity' && (
+  <div className="space-y-4">
+    {predictions && predictions.predictions ? (
+      <>
+        <p className="text-lg"><strong>State:</strong> {predictions.state}</p>
+        {Array.isArray(predictions.predictions) ? (
+          predictions.predictions.map((prediction, index) => (
+            <div key={index} className="border-b border-[#66C5CC] pb-4">
+              <h4 className="text-xl font-semibold mb-2">Entry No. {prediction['Entry No ']}</h4>
+              <p className="mb-2">
+                <strong>Predicted CO2:</strong> {prediction.predicted_co2}
+              </p>
+              <p>
+                <strong>Risk Level:</strong> {prediction.risk_level}
+              </p>
+            </div>
+          ))
+        ) : (
+          <div className="text-center text-red-500">
+            No predictions available for electricity
+          </div>
+        )}
+      </>
+    ) : (
+      <div className="text-center text-red-500">
+        Unexpected predictions format
+      </div>
+    )}
+  </div>
+)}
+
+{selectedCategory === 'explosion' && (
+  <div className="space-y-4">
+    {predictions ? (
+      Object.entries(predictions).map(([day, dayPredictions]) => (
+        <div key={day} className="mb-6">
+          <h3 className="text-2xl font-semibold mb-4">{day}</h3>
+          {Array.isArray(dayPredictions) ? (
+            dayPredictions.map((predictionGroup, groupIndex) => (
+              <div key={groupIndex} className="border-b border-[#66C5CC] pb-4 mb-4">
+                {Array.isArray(predictionGroup) ? (
+                  predictionGroup.map((prediction, predIndex) => (
+                    <div key={predIndex}>
+                      <p className="mb-2">
+                        <strong>Explosive Type:</strong> {prediction['Explosive Type']}
+                      </p>
+                      <div className="mb-2">
+                        <h5 className="font-medium">Emissions:</h5>
+                        <ul className="ml-4 list-disc">
+                          {Object.entries(prediction)
+                            .filter(([key]) => ['CO', 'CO2', 'H2S', 'HCN', 'NH3', 'NOx', 'SO2'].includes(key))
+                            .map(([key, value]) => (
+                              <li key={key}>
+                                <strong>{key}:</strong> {value}
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                      {prediction['Risk Evaluation'] && (
+                        <div>
+                          <h5 className="font-medium">Risk Levels:</h5>
+                          <ul className="ml-4 list-disc">
+                            {Array.isArray(prediction['Risk Evaluation']) ? (
+                              prediction['Risk Evaluation'].map((risk, riskIndex) => (
+                                <li key={riskIndex}>{risk}</li>
+                              ))
+                            ) : (
+                              <li>{prediction['Risk Evaluation']}</li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center text-red-500">
+                    Unexpected prediction group format
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-red-500">
+              No predictions available for explosion
             </div>
           )}
+        </div>
+      ))
+    ) : (
+      <div className="text-center text-red-500">
+        Unexpected predictions format
+      </div>
+    )}
+  </div>
+)}
+
+{selectedCategory === 'shipping' && (
+  <div className="space-y-4">
+    {/* Check if predictions is an array */}
+    {Array.isArray(predictions) ? (
+      predictions.map((dayPrediction, dayIndex) => (
+        <div key={dayIndex}>
+          <h3 className="text-2xl font-semibold mb-4">Day {dayPrediction.Day}</h3>
+          {dayPrediction.Results.map((result, resultIndex) => (
+            <div key={resultIndex} className="border-b border-[#66C5CC] pb-4 mb-4">
+              <p className="mb-2">
+                <strong>Transport Method:</strong> {result["Trasport Method"]}
+              </p>
+              <p className="mb-2">
+                <strong>Predicted Emission:</strong> {result["Predicted Emission"]}
+              </p>
+              <p>
+                <strong>Risk Level:</strong> {result["Risk Level"]}
+              </p>
+            </div>
+          ))}
+        </div>
+      ))
+    ) : (
+      <div className="text-center text-red-500">
+        No predictions available for shipping
+      </div>
+    )}
+  </div>
+)}
+
+  </div>
+)}
         </div>
       </div>
     </div>

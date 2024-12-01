@@ -19,9 +19,6 @@ const stateOptions = [
 
 function CombinedCode() {
  
-
-  
-
   const [electricityData, setElectricityData] = useState({
     stateName: '',
     energyPerTime: '',
