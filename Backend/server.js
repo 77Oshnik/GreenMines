@@ -16,6 +16,7 @@ const sinkdatafetchRoute = require("./routes/sinkdatafetchRoute");
 const existingSinkRoute = require("./routes/existingSinkRoute");
 const reportRoute = require("./routes/reportRoute");
 const environmentalReportRoute = require("./routes/environmentalReportRoute");
+const optimizedRouting = require ("./routes/optimizeRoute")
 // Add other routes similarly
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use(cors({
 
 // Security Middleware
 const helmet = require("helmet");
+const { optimizeRoute } = require("./controller/routeController");
 app.use(helmet());  // Adding Helmet for security headers
 
 // Static files
@@ -51,6 +53,8 @@ app.use("/api", sinkdatafetchRoute); // Routes for sink data fetching
 app.use("/api", existingSinkRoute);  // Routes for existing sink
 app.use("/api/reports", reportRoute);
 app.use("/api/environmental-reports", environmentalReportRoute);
+app.use("/api",optimizedRouting);
+
 // Add other routes similarly
 
 const PORT = process.env.PORT || 5000;
