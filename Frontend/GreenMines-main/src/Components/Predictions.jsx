@@ -61,10 +61,6 @@ function EmissionPredictionPage() {
       const flaskRoute = getFlaskRoute(selectedCategory);
       const apiResponse = await axios.post(flaskRoute, formattedData);
       
-      // Detailed logging of the API response
-      console.log("API Response Type:", typeof apiResponse.data);
-      console.log("API Response Keys:", Object.keys(apiResponse.data));
-      console.log("Full API Response:", JSON.stringify(apiResponse.data, null, 2));
   
       setPredictions(apiResponse.data);
     } catch (err) {
@@ -89,8 +85,6 @@ function EmissionPredictionPage() {
     }
   };
   const formatDataForCategory = (category, data) => {
-    console.log(`Formatting data for category: ${category}`); // Log category selection
-
     switch (category) {
       case "fuelCombustion":
         return formatFuelData(data);
@@ -107,52 +101,63 @@ function EmissionPredictionPage() {
 
   // Format fuel data
   const formatFuelData = (fuelData) => {
-    const daysData = [];
-
-    // Check if data is empty
-    if (fuelData.length === 0) {
-      console.log("Fuel data is empty.");
-    }
-
-    // Loop through the fuel data
-    fuelData.forEach(fuel => {
-
-        // Create an array for each fuel entry with fuel type and quantity
-        const fuelEntry = [fuel.fuel, fuel.quantityFuelConsumed];
-        
-        daysData.push([fuelEntry]);  // Push as an array of arrays
+    // Create an object to group fuel data by date
+    const groupedByDate = {};
+  
+    // Iterate over the fuel data
+    fuelData.forEach((fuel) => {
+      const date = new Date(fuel.createdAt).toISOString().split("T")[0]; // Extract date in YYYY-MM-DD format
+  
+      // If the date doesn't exist in the grouped object, initialize it
+      if (!groupedByDate[date]) {
+        groupedByDate[date] = [];
+      }
+  
+      // Push the fuel data (type and quantity) into the array for that date
+      groupedByDate[date].push([fuel.fuel, fuel.quantityFuelConsumed]);
     });
-
+  
+    // Convert the grouped object into an array of arrays for `days_data`
+    const daysData = Object.values(groupedByDate);
+  
     return { days_data: daysData };
   };
+  
 
   // Format electricity data
   const formatElectricityData = (data) => {
-    // If data is empty, return a default structure
-    
+    if (!data || data.length === 0) {
+      console.log("No data available for electricity. Returning default payload.");
+      return {
+        state_name: "Unknown",
+        days_data: [],
+      };
+    }
   
-    let stateName = "Karnataka";  // Default fallback state name
-  
-    // Iterate through the data to find the first valid entry with a stateName
+    // Try to determine `state_name` from the first valid entry in the data
+    let stateName = "Unknown"; // Default fallback
     for (let entry of data) {
       if (entry?.stateName) {
-        stateName = entry.stateName;  // Assign the state name from the first valid entry
-        break;  // Once we find a valid stateName, stop iterating
+        stateName = entry.stateName;
+        break;
       }
     }
   
-    // Map the rest of the data for the days_data array
-    const daysData = data.map((entry) => ({
-      energyPerTime: entry.energyPerTime,
-      responsibleArea: entry.responsibleArea,
-      totalArea: entry.totalArea,
-    }));
+    // Transform the `data` array into `days_data`
+    const daysData = data
+      .filter(entry => entry.energyPerTime !== undefined) // Filter out invalid entries
+      .map(entry => ({
+        energyPerTime: entry.energyPerTime || 0,
+        responsibleArea: entry.responsibleArea || "N/A",
+        totalArea: entry.totalArea || "N/A",
+      }));
   
     return {
       state_name: stateName,
       days_data: daysData,
     };
   };
+  
   
   
 
