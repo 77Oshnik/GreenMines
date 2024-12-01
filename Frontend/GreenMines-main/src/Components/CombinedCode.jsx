@@ -3,19 +3,11 @@ import axios from 'axios';
 
 import ChatAssistant from './ChatAssistant';
 const stateOptions = [
-  'andhra pradesh', 'arunachal pardesh', 'assam', 'bihar', 'chattisgarh',
-  'delhi', 'goa', 'orissa', 'punjab', 'rajasthan',
-  'tamil nadu', 'tripura', 'uttar pradesh', 'uttaranchal', 'west bengal',
-  'gujarat', 'haryana', 'himachal pradesh', 'jammu and kashmir', 'jharkhand',
-  'karnataka', 'kereala', 'madhya pradesh', 'maharashtra', 'manipur',
-  'meghalaya', 'mizoram', 'nagaland'
-];
+  'andhra pradesh', 'chattisgarh', 'orissa',  'west bengal',
+  'jharkhand', 'madhya pradesh', 'maharashtra' ];
 
 function CombinedCode() {
  
-
-  
-
   const [electricityData, setElectricityData] = useState({
     stateName: '',
     energyPerTime: '',
