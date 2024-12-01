@@ -48,7 +48,8 @@ const parseEmissionsData = (text) => {
 // Function to apply semi-bold style to text enclosed in - and :
 const applySemiBoldStyle = (text) => {
   return text.replace(/(-.*?:)/g, (match) => {
-    return `<span class="font-semibold text-gray-800">${match}</span>`;
+
+    return `<span class="font-semibold text-[#20B2AA] hover:text-[#39FFD7]">${match}</span>`;
   });
 };
 
@@ -79,7 +80,7 @@ function EmissionsResult({ result }) {
                   {point.boldParts.map((boldText, boldIndex) => (
                     <span
                       key={boldIndex}
-                      className="bg-[#66C5CC] inline-block py-1 px-2 rounded text-[#342F49] font-bold text-xl mr-1 mb-1"
+                      className="bg-[#FFD700] inline-block py-1 px-2 rounded text-[#39FF14] font-bold text-xl mr-1 mb-1"
                     >
                       {boldText}
                     </span>
