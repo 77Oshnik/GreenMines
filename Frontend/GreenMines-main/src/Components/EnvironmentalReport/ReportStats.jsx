@@ -1,8 +1,11 @@
 // Components/EnvironmentalReport/ReportStats.jsx
 import React from 'react';
+import EmissionDonutChart from './Charts/EmissionDonutChart';
+import EmissionBarGraph from './Charts/EmissionBarGraph';
+import EmissionMultiLineGraph from './Charts/EmissionMultiLineGraph';
 import { Grid, Card, CardContent, Typography, Box, Divider, Alert } from '@mui/material';
 
-const ReportStats = ({ data }) => {
+const ReportStats = ({ data, reportType, chartRefs }) => {
     if (!data) return null;
 
     const formatNumber = (num) => Number(num).toLocaleString(undefined, {
@@ -326,6 +329,65 @@ const ReportStats = ({ data }) => {
                     </CardContent>
                 </Card>
             </Box>
+             {/* Add Charts Section */}
+            <Box sx={{ mt: 4 }}>
+                <Typography 
+                    variant="h4" 
+                    gutterBottom 
+                    sx={{ 
+                        fontWeight: 'bold', 
+                        color: '#2c3e50', 
+                        marginBottom: 3,
+                        textAlign: 'center'
+                    }}
+                >
+                    Emissions Visualization
+                </Typography>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={4}>
+                        <Card sx={{ height: '100%', boxShadow: 3 }}>
+                            <CardContent>
+                                <Typography 
+                                    variant="h6" 
+                                    color="primary" 
+                                    sx={{ fontWeight: 'bold', marginBottom: 2 }}
+                                >
+                                    Emissions Distribution
+                                </Typography>
+                                <div ref={chartRefs.donutChartRef}>
+                                    <EmissionDonutChart data={data} />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} md={7}>  {/* Changed md from 4 to 6 */}
+                        <Card sx={{ height: '100%', boxShadow: 3 }}>
+                            <CardContent>
+                                <Typography 
+                                    variant="h6" 
+                                    color="primary" 
+                                    sx={{ fontWeight: 'bold', marginBottom: 2 }}
+                                >
+                                    Emissions Comparison
+                                </Typography>
+                                <div ref={chartRefs.barGraphRef}>
+                                    <EmissionBarGraph data={data} />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                    {/* <Grid item xs={12} md={4}>
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h6">Emissions Over Time</Typography>
+                                <EmissionMultiLineGraph data={data} />
+                            </CardContent>
+                        </Card>
+                    </Grid> */}
+                </Grid>
+            </Box>
+            
         </Box>
     );
 };
