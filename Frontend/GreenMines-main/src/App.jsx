@@ -34,6 +34,7 @@ import NeutralityOptions from './Components/NeutralityOptions';
 import ChatAssistant from './Components/ChatAssistant';
 import Profile from './Components/Profile';
 import EnvironmentalReportPage from './pages/EnvironmentalReportPage';
+import Routing from './Components/RouteFrm'
 function App() {
   return (
     <div className="App font-link">
@@ -87,6 +88,7 @@ function App() {
         <Route path="/chatassistant" element={<ChatAssistant />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/environmental-reports" element={<EnvironmentalReportPage />} />
+        <Route path="/routing" element={<Routing />} />
       </Routes>
       
     </div>
