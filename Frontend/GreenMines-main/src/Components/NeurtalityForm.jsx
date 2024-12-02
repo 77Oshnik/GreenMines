@@ -1,27 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function NeutralityForm() {
-  const [formType, setFormType] = useState('sink'); // 'sink' or 'existing'
+
+  const VEGETATION_RATES = {
+    forest: 5.0,
+    grassland: 1.5,
+    wetland: 3.5,
+    agricultural: 1.0,
+    mangrove: 4.0,
+    tropical_rainforest: 6.5,
+    temperate_forest: 4.5,
+    boreal_forest: 3.0,
+    savanna: 0.8,
+    desert_vegetation: 0.1,
+    other: 0
+  };
+
+  const [formType, setFormType] = useState('sink');
   const [sinkData, setSinkData] = useState({
     name: '',
     vegetationType: 'forest',
     otherVegetationType: '',
     areaCovered: '',
-    carbonSequestrationRate: '',
+    carbonSequestrationRate: VEGETATION_RATES.forest, // Ensure this is always set
     additionalDetails: '',
   });
 
-  const [result, setResult] = useState(null); // To store result from the backend
+  const [result, setResult] = useState(null);
   const navigate = useNavigate();
+
+  // Effect to ensure carbonSequestrationRate is always set
+  useEffect(() => {
+    if (!sinkData.carbonSequestrationRate && sinkData.vegetationType !== 'other') {
+      setSinkData(prevData => ({
+        ...prevData,
+        carbonSequestrationRate: VEGETATION_RATES[sinkData.vegetationType] || VEGETATION_RATES.forest
+      }));
+    }
+  }, [sinkData.vegetationType, sinkData.carbonSequestrationRate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'vegetationType' && value === 'other') {
+    
+    if (name === 'vegetationType') {
+      const newRate = VEGETATION_RATES[value];
+      
       setSinkData(prevData => ({
         ...prevData,
         vegetationType: value,
-        otherVegetationType: ''
+        carbonSequestrationRate: value === 'other' ? '' : newRate,
+        otherVegetationType: value === 'other' ? '' : prevData.otherVegetationType
       }));
     } else {
       setSinkData(prevData => ({
@@ -34,11 +63,14 @@ function NeutralityForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Ensure carbonSequestrationRate is set before submission
     const payload = {
       ...sinkData,
-      carbonSequestrationRate: parseFloat(sinkData.carbonSequestrationRate),
+      carbonSequestrationRate: sinkData.carbonSequestrationRate === '' 
+        ? 0 
+        : parseFloat(sinkData.carbonSequestrationRate),
       areaCovered: parseFloat(sinkData.areaCovered),
-      timeframe: 1 // Example timeframe, adjust as needed
+      timeframe: 1
     };
 
     try {
@@ -54,18 +86,22 @@ function NeutralityForm() {
       if (response.ok) {
         const data = await response.json();
         console.log('Response:', data);
-        setResult(data.data); // Save response data
-        // Clear form fields
+        setResult(data.data);
+        
+        // Reset form with default values
         setSinkData({
           name: '',
           vegetationType: 'forest',
           otherVegetationType: '',
           areaCovered: '',
-          carbonSequestrationRate: '',
+          carbonSequestrationRate: VEGETATION_RATES.forest, // Reset to default
           additionalDetails: '',
         });
       } else {
-        console.error('Failed to submit form', response.statusText);
+        // Handle error response
+        const errorData = await response.json();
+        console.error('Failed to submit form', errorData);
+        // Optionally show error to user
       }
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -73,14 +109,16 @@ function NeutralityForm() {
   };
 
   const handleFormTypeChange = (e) => {
-    setFormType(e.target.value);
-    // Clear form fields when switching types
+    const newFormType = e.target.value;
+    setFormType(newFormType);
+    
+    // Reset form with default values
     setSinkData({
       name: '',
       vegetationType: 'forest',
       otherVegetationType: '',
       areaCovered: '',
-      carbonSequestrationRate: '',
+      carbonSequestrationRate: VEGETATION_RATES.forest, // Always set a default
       additionalDetails: '',
     });
     setResult(null);
@@ -140,33 +178,77 @@ function NeutralityForm() {
         />
       </div>
   
-      {/* Vegetation Type */}
-      <div className="mb-6">
-        <h2 className="text-2xl text-[#cad9ed] font-semibold mb-2">Vegetation Type</h2>
-        <select
-          name="vegetationType"
-          value={sinkData.vegetationType}
-          onChange={handleChange}
-          className="w-full p-3 rounded-md bg-[#342F49] text-[#cad9ed] border border-[#66C5CC] focus:ring focus:ring-[#66C5CC]"
-        >
-          <option value="forest">Forest</option>
-          <option value="grassland">Grassland</option>
-          <option value="wetland">Wetland</option>
-          <option value="agricultural">Agricultural</option>
-          <option value="mangrove">Mangrove</option>
-          <option value="other">Other</option>
-        </select>
-        {sinkData.vegetationType === 'other' && (
-          <input
-            type="text"
-            name="otherVegetationType"
-            value={sinkData.otherVegetationType}
-            onChange={handleChange}
-            placeholder="Please specify"
-            className="mt-4 w-full p-3 rounded-md bg-[#342F49] text-[#cad9ed] border border-[#66C5CC] focus:ring focus:ring-[#66C5CC]"
-          />
-        )}
-      </div>
+{/* Vegetation Type */}
+<div className="mb-6">
+  <div className="flex items-center">
+    <h2 className="text-2xl text-[#cad9ed] font-semibold mb-2 mr-2">Vegetation Type</h2>
+    <div 
+      className="group relative cursor-pointer"
+      title="Carbon sequestration rates are approximate and can vary based on specific conditions"
+    >
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        className="h-6 w-6 text-[#66C5CC] opacity-50 hover:opacity-100" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke="currentColor"
+      >
+        <path 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth={2} 
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+        />
+      </svg>
+    </div>
+  </div>
+  <select
+    name="vegetationType"
+    value={sinkData.vegetationType}
+    onChange={handleChange}
+    className="w-full p-3 rounded-md bg-[#342F49] text-[#cad9ed] border border-[#66C5CC] focus:ring focus:ring-[#66C5CC]"
+  >
+    <optgroup label="Forests">
+      <option value="tropical_rainforest">Tropical Rainforest (6.5 tons CO2/ha/year)</option>
+      <option value="temperate_forest">Temperate Forest (4.5 tons CO2/ha/year)</option>
+      <option value="boreal_forest">Boreal Forest (3.0 tons CO2/ha/year)</option>
+    </optgroup>
+    <optgroup label="Other Vegetation">
+      <option value="grassland">Grassland (1.5 tons CO2/ha/year)</option>
+      <option value="wetland">Wetland (3.5 tons CO2/ha/year)</option>
+      <option value="agricultural">Agricultural Land (1.0 tons CO2/ha/year)</option>
+      <option value="mangrove">Mangrove (4.0 tons CO2/ha/year)</option>
+      <option value="savanna">Savanna (0.8 tons CO2/ha/year)</option>
+      <option value="desert_vegetation">Desert Vegetation (0.1 tons CO2/ha/year)</option>
+    </optgroup>
+    <option value="other">Other (Manual Input)</option>
+  </select>
+
+  {/* Conditional rendering for Other Vegetation Type */}
+  {sinkData.vegetationType === 'other' && (
+    <div className="mt-4 space-y-4">
+      <input
+        type="text"
+        name="otherVegetationType"
+        value={sinkData.otherVegetationType}
+        onChange={handleChange}
+        placeholder="Specify vegetation type"
+        className="w-full p-3 rounded-md bg-[#342F49] text-[#cad9ed] border border-[#66C5CC] focus:ring focus:ring-[#66C5CC]"
+      />
+      <input
+        type="number"
+        name="carbonSequestrationRate"
+        value={sinkData.carbonSequestrationRate}
+        onChange={handleChange}
+        placeholder="Carbon Sequestration Rate (tons CO2/hectare/year)"
+        className="w-full p-3 rounded-md bg-[#342F49] text-[#cad9ed] border border-[#66C5CC] focus:ring focus:ring-[#66C5CC]"
+      />
+      <p className="text-sm text-[#66C5CC] italic">
+        Note: Please provide a scientifically backed rate or consult local environmental experts.
+      </p>
+    </div>
+  )}
+</div>
   
       {/* Area Covered */}
       <div className="mb-6">
@@ -181,18 +263,7 @@ function NeutralityForm() {
         />
       </div>
   
-      {/* Carbon Sequestration Rate */}
-      <div className="mb-6">
-        <h2 className="text-2xl text-[#cad9ed] font-semibold mb-2">Carbon Sequestration Rate (tons CO2/hectare/year)</h2>
-        <input
-          type="number"
-          name="carbonSequestrationRate"
-          value={sinkData.carbonSequestrationRate}
-          onChange={handleChange}
-          placeholder="Rate at which the sink sequesters carbon"
-          className="w-full p-3 rounded-md bg-[#342F49] text-[#cad9ed] border border-[#66C5CC] focus:ring focus:ring-[#66C5CC]"
-        />
-      </div>
+
   
       {/* Additional Details */}
       <div className="mb-6">
