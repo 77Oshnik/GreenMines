@@ -6,4 +6,5 @@ router.get('/data/:date',datafetching.fetchDateData)
 router.get('/data/:startDate/:endDate',datafetching.fetchDateRangeData)
 router.delete('/delete/:id',datafetching.deleteById)
 
+
 module.exports = router;

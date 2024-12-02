@@ -17,6 +17,7 @@ const existingSinkRoute = require("./routes/existingSinkRoute");
 const reportRoute = require("./routes/reportRoute");
 const environmentalReportRoute = require("./routes/environmentalReportRoute");
 const optimizedRouting = require ("./routes/optimizeRoute")
+const userRoute = require("./routes/userRoutes");
 // Add other routes similarly
 
 dotenv.config();
@@ -54,6 +55,7 @@ app.use("/api", existingSinkRoute);  // Routes for existing sink
 app.use("/api/reports", reportRoute);
 app.use("/api/environmental-reports", environmentalReportRoute);
 app.use("/api",optimizedRouting);
+app.use("/api",userRoute);
 
 // Add other routes similarly
 

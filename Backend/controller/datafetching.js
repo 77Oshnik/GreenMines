@@ -2,7 +2,7 @@ const Electricity = require("../models/Electricity");
 const FuelCombustion = require("../models/FuelCombustion");
 const Shipping = require("../models/Shipping");
 const Explosion = require("../models/Explosion");
-
+const User = require('../models/User')
 // Helper function to validate date format (YYYY-MM-DD)
 const isValidDate = (dateString) => {
     const regex = /^\d{4}-\d{2}-\d{2}$/; // Regex for YYYY-MM-DD format
@@ -145,3 +145,5 @@ exports.deleteById = async (req, res) => {
         res.status(500).json({ error: "Internal server error." });
     }
 };
+
+
