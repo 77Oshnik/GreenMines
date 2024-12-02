@@ -11,7 +11,8 @@ const UserSchema = new mongoose.Schema({
       type: Date,
       default: Date.now,
     },
-    profilePicture: { type: String, default: 'defaultProfilePic.jpg' }, // Profile picture field
+    profilePicture: { type: String, default: 'defaultProfilePic.jpg' },
+    CO2Goal: { type: String, default: '0' }, // Profile picture field
     role: { type: String, default: 'user' },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
