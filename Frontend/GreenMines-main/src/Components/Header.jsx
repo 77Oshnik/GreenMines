@@ -14,17 +14,17 @@ function Header() {
   }
 
   return (
-    <div className="from-[#2B263F] to-[#231E3D] bg-gradient-to-b w-full px-6 sm:px-10 lg:h-screen overflow-x-hidden relative">
-      {/*<video
+    <div className="from-[#2B263F] to-[#231E3D] bg-gradient-to-b w-full px-6 sm:px-10 lg:h-screen overflow-x-hidden">
+      <video
         autoPlay
         loop
         muted
         playsInline
         className="absolute top-0 left-0 w-full h-full object-cover"
       >
-        <source src="/path-to-your-video.mp4" type="video/mp4" />
+        <source src="MyVideo.mp4" type="video/mp4" />
         Your browser does not support the video tag.
-      </video>*/}
+      </video>
       <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col">
         <Navbar className="z-50" />
         <div className="flex-grow flex flex-col justify-center items-center px-4 sm:px-6 md:px-10 py-12 md:py-20">
