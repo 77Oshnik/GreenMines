@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import Enavbar from './Enavbar';
+import ChatAssistant from './ChatAssistant';
 
 const RouteForm = () => {
   const [vehicle, setVehicle] = useState({
@@ -157,6 +158,7 @@ const RouteForm = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 py-12 px-6 lg:px-8 flex">
+      <ChatAssistant />
       <div className="w-full flex">
         <div className="w-3/5 pr-6">
           <div className="w-full max-w-4xl bg-gray-800 rounded-lg shadow-md p-8 mt-8">

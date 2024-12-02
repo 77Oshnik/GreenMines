@@ -93,7 +93,7 @@ function Header() {
         scale: 0.95,
         boxShadow: "0px 0px 20px rgba(102, 197, 204, 0.6)"
       }}
-      onClick={() => navigate("/signin")}
+      onClick={() => navigate("/login")}
       className="absolute top-4 right-6 z-50 px-6 py-3 rounded-full 
         bg-gradient-to-r from-[#66C5CC] to-[#009688] 
         text-black font-bold text-lg 

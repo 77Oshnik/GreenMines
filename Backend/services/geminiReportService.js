@@ -261,13 +261,63 @@ The journey towards sustainability is not a destination, but a continuous proces
 
 Please format the report in a clear, structured manner with appropriate headings and subheadings.`;
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        return response.text();
-    } catch (error) {
-        console.error('Error generating environmental report:', error);
-        throw error;
+const result = await model.generateContent(prompt);
+        
+// Extract and format the AI response
+const aiResponse = result.response.text();
+const formattedResponse = formatResponse(aiResponse);
+
+// Return formatted response with status and data
+return {
+    status: 'success',
+    data: {
+        emissions: {
+            electricity: emissionsInTons.electricity,
+            explosion: emissionsInTons.explosion,
+            fuel: emissionsInTons.fuel,
+            shipping: emissionsInTons.shipping,
+            totalEmissions: (emissionsInTons.electricity + emissionsInTons.explosion + 
+                           emissionsInTons.fuel + emissionsInTons.shipping).toFixed(2),
+            carbonSequestration: totalCarbonSequestration
+        },
+        response: formattedResponse
     }
 };
+
+} catch (error) {
+console.error('Error generating environmental report:', error);
+return {
+    status: 'error',
+    message: 'Environmental report generation failed.',
+    errorDetails: error.message
+};
+}
+};
+
+// Helper function to format AI responses
+function formatResponse(aiResponse) {
+// Clean up and structure the response for readability
+aiResponse = aiResponse.replace(/\\n/g, '').trim();
+const sections = aiResponse.split('\n\n');
+
+let formattedResponse = '';
+
+sections.forEach(section => {
+if (section.startsWith('**') || section.match(/^[A-Za-z\s]+:/)) {
+    formattedResponse += `<h3>${section.replace(/\*\*/g, '').trim()}</h3>`;
+} else if (section.trim().startsWith('-') || section.trim().startsWith('*')) {
+    const bulletPoints = section.split('\n').map(point => point.replace(/^-|\*/g, '').trim());
+    formattedResponse += '<ul>';
+    bulletPoints.forEach(point => {
+        if (point) formattedResponse += `<li>${point}</li>`;
+    });
+    formattedResponse += '</ul>';
+} else {
+    formattedResponse += `<p>${section.trim()}</p>`;
+}
+});
+
+return formattedResponse;
+}
 
 module.exports = { generateEnvironmentalReportContent };

@@ -17,22 +17,16 @@ const PDFDownloadButton = ({
             format: 'a4'
         });
 
-        // Get page dimensions
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        // Function to capture full element image
+        // Enhanced capture function for charts and stats
         const captureFullElementImage = async (element, options = {}) => {
             if (!element) return null;
             
             try {
-                // Clone the element to avoid modifying original
                 const clonedElement = element.cloneNode(true);
-                
-                // Temporarily add to body to ensure full rendering
                 document.body.appendChild(clonedElement);
-                
-                // Adjust clone styles for full visibility
                 clonedElement.style.position = 'absolute';
                 clonedElement.style.left = '0';
                 clonedElement.style.top = '0';
@@ -40,7 +34,6 @@ const PDFDownloadButton = ({
                 clonedElement.style.height = 'auto';
                 clonedElement.style.overflow = 'visible';
                 
-                // Capture with high-quality settings
                 const canvas = await html2canvas(clonedElement, {
                     scale: 3,
                     useCORS: true,
@@ -51,127 +44,248 @@ const PDFDownloadButton = ({
                     ...options
                 });
 
-                // Remove cloned element
                 document.body.removeChild(clonedElement);
-                
                 return canvas.toDataURL('image/png');
             } catch (error) {
-                console.error('Error capturing full element:', error);
+                console.error('Error capturing element:', error);
                 return null;
             }
         };
 
-        // Clean and format report text
-        const cleanContent = reportContent
-            .replace(/\*+/g, '')
-            .replace(/\n{3,}/g, '\n\n')
-            .trim();
+        // Create cover page
+        const createCoverPage = () => {
+            pdf.setFillColor(26, 35, 126);
+            pdf.rect(0, 0, pageWidth, 150, 'F');
 
-        // Capture specific elements
-        const capturedImages = {
-            entries: null,
-            charts: null
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(24);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Environmental Impact Report', pageWidth/2, 70, {align: 'center'});
+
+            pdf.setFontSize(16);
+            pdf.text(`${reportType} Analysis`, pageWidth/2, 100, {align: 'center'});
+
+            pdf.setFontSize(12);
+            pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth/2, 130, {align: 'center'});
+
+            pdf.setTextColor(0, 0, 0);
         };
 
-        // Separate capture for entries and charts
-        if (statsRef?.current) {
-            // Split the stats ref into entries and charts
-            const statsElement = statsRef.current;
-            
-            // Find entries and charts sections
-            const entriesSection = statsElement.querySelector('[data-testid="entries-section"]') || 
-                                   statsElement.children[0];
-            const chartsSection = statsElement.querySelector('[data-testid="charts-section"]') || 
-                                  statsElement.children[1];
+        // Add emissions summary
+        const addEmissionsSummary = () => {
+            // Extract emissions data
+            const emissions = reportContent?.data?.emissions || {};
 
-            // Capture entries
-            if (entriesSection) {
-                capturedImages.entries = await captureFullElementImage(entriesSection);
+            pdf.setFontSize(16);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Emissions Summary', 20, 180);
+
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'normal');
+            const summaryItems = [
+                `Total Emissions: ${emissions.totalEmissions || 'N/A'} metric tons CO₂e`,
+                `Electricity Emissions: ${emissions.electricity?.toFixed(2) || 'N/A'} metric tons CO₂e`,
+                `Explosion Emissions: ${emissions.explosion?.toFixed(2) || 'N/A'} metric tons CO₂e`,
+                `Fuel Emissions: ${emissions.fuel?.toFixed(2) || 'N/A'} metric tons CO₂e`,
+                `Shipping Emissions: ${emissions.shipping?.toFixed(2) || 'N/A'} metric tons CO₂e`,
+                `Carbon Sequestration: ${emissions.carbonSequestration?.toFixed(2) || 'N/A'} tonnes CO₂e/day`
+            ];
+
+            summaryItems.forEach((item, index) => {
+                pdf.text(item, 30, 210 + (index * 20));
+            });
+        };
+
+        // Add charts
+        const addCharts = async () => {
+            if (chartRefs && chartRefs.length > 0) {
+                pdf.addPage();
+                pdf.setFontSize(16);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Visual Analysis', 20, 30);
+
+                let currentY = 60;
+                const chartWidth = pageWidth - 40;
+                const chartHeight = 200;
+
+                for (const chartRef of chartRefs) {
+                    if (chartRef.current) {
+                        const chartImage = await captureFullElementImage(chartRef.current);
+                        if (chartImage) {
+                            if (currentY + chartHeight > pageHeight) {
+                                pdf.addPage();
+                                currentY = 30;
+                            }
+                            pdf.addImage(chartImage, 'PNG', 20, currentY, chartWidth, chartHeight);
+                            currentY += chartHeight + 20;
+                        }
+                    }
+                }
+            }
+        };
+
+        // Advanced HTML content parsing
+        const parseHTMLContent = (htmlContent) => {
+            // Safely extract content
+            const extractContent = () => {
+                if (htmlContent && htmlContent.data && htmlContent.data.response) {
+                    return htmlContent.data.response;
+                }
+                
+                if (typeof htmlContent === 'string') {
+                    return htmlContent;
+                }
+                
+                return String(htmlContent);
+            };
+
+            const rawContent = extractContent();
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = rawContent;
+
+            // Enhanced structured content extraction
+            const extractStructuredContent = (node) => {
+                let content = [];
+
+                const processNode = (node) => {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        switch (node.tagName.toLowerCase()) {
+                            case 'h3':
+                                content.push({
+                                    type: 'mainHeading',
+                                    text: node.textContent.toUpperCase().trim()
+                                });
+                                break;
+                            case 'ul':
+                                content.push({
+                                    type: 'list',
+                                    items: Array.from(node.querySelectorAll('li')).map(li => li.textContent.trim())
+                                });
+                                break;
+                            case 'p':
+                                content.push({
+                                    type: 'paragraph',
+                                    text: node.textContent.trim()
+                                });
+                                break;
+                        }
+                    }
+                };
+
+                node.childNodes.forEach(processNode);
+                return content;
+            };
+
+            try {
+                return extractStructuredContent(tempDiv);
+            } catch (error) {
+                console.error('HTML parsing error:', error);
+                return rawContent;
+            }
+        };
+
+        // Add detailed report with enhanced styling
+        const addDetailedReport = (pdf, structuredContent) => {
+            let currentY = 60;
+
+            // Iterate through structured content
+            structuredContent.forEach(item => {
+                switch (item.type) {
+                    case 'mainHeading':
+                        // Main Heading Style
+                        pdf.setFontSize(18);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setTextColor(26, 35, 126); // Deep blue
+                        
+                        // Split long headings
+                        const headingSplitText = pdf.splitTextToSize(item.text, pageWidth - 40);
+                        pdf.text(headingSplitText, 20, currentY);
+                        currentY += (headingSplitText.length * 25);
+                        break;
+
+                    case 'list':
+                        // List Style
+                        pdf.setFontSize(14);
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setTextColor(0, 0, 0); // Black
+                        
+                        item.items.forEach(listItem => {
+                            // Split long list items
+                            const listSplitText = pdf.splitTextToSize(`• ${listItem}`, pageWidth - 40);
+                            pdf.text(listSplitText, 30, currentY);
+                            currentY += (listSplitText.length * 15);
+                        });
+                        currentY += 15;
+                        break;
+
+                    case 'paragraph':
+                        // Paragraph Style
+                        pdf.setFontSize(14);
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setTextColor(50, 50, 50); // Dark gray
+                        
+                        // Split paragraphs
+                        const paragraphSplitText = pdf.splitTextToSize(item.text, pageWidth - 40);
+                        pdf.text(paragraphSplitText, 20, currentY);
+                        currentY += (paragraphSplitText.length * 15);
+                        break;
+                }
+
+                // Add new page if content exceeds page height
+                if (currentY >= pageHeight - 50) {
+                    pdf.addPage();
+                    currentY = 60;
+                }
+            });
+        };
+
+        try {
+            // Generate PDF sections
+            createCoverPage();
+            addEmissionsSummary();
+
+            // Add statistics page
+            if (statsRef?.current) {
+                pdf.addPage();
+                pdf.setFontSize(16);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Detailed Statistics', 20, 30);
+                
+                const statsImage = await captureFullElementImage(statsRef.current);
+                if (statsImage) {
+                    pdf.addImage(statsImage, 'PNG', 20, 50, pageWidth - 40, 0);
+                }
             }
 
-            // Capture charts section
-            if (chartsSection) {
-                capturedImages.charts = await captureFullElementImage(chartsSection);
-            }
-        }
+            // Add charts
+            await addCharts();
 
-        // Create first page with report title and key information
-        pdf.setFontSize(16);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Environmental Impact Report', pageWidth/2, 100, {align: 'center'});
-
-        // Add report type
-        pdf.setFontSize(20);
-        pdf.text(`${reportType.charAt(0).toUpperCase() + reportType.slice(1)} Report`, pageWidth/2, 150, {align: 'center'});
-
-        // Add date
-        pdf.setFontSize(12);
-        pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, pageWidth/2, 200, {align: 'center'});
-
-        // Add brief summary or key highlights
-        pdf.setFontSize(20);
-        const summaryLines = [
-            'This report provides a comprehensive analysis of',
-            'environmental impact, including emissions from',
-            'various sources and carbon sequestration efforts.'
-        ];
-        summaryLines.forEach((line, index) => {
-            pdf.text(line, pageWidth/2, 250 + (index * 20), {align: 'center'});
-        });
-
-        // Add captured images
-        if (capturedImages.entries) {
+            // Add detailed report content
+            const structuredContent = parseHTMLContent(reportContent);
             pdf.addPage();
-            pdf.addImage(
-                capturedImages.entries, 
-                'PNG', 
-                0, 
-                0, 
-                pageWidth, 
-                pageHeight, 
-                undefined, 
-                'FAST'
-            );
+            pdf.setFontSize(16);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Detailed Report', 20, 30);
+
+            // Add structured content with enhanced styling
+            addDetailedReport(pdf, structuredContent);
+
+            // Add metadata
+            pdf.setProperties({
+                title: `${reportType} Environmental Report`,
+                subject: 'Environmental Impact Analysis',
+                author: 'GreenMines',
+                keywords: 'environmental, sustainability, emissions, carbon',
+                creator: 'GreenMines Environmental Report Generator'
+            });
+
+            // Save PDF
+            pdf.save(`GreenMines_${reportType}_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+
+        } catch (error) {
+            console.error('PDF Generation Error:', error);
+            alert('Failed to generate PDF. Please try again.');
         }
-
-        if (capturedImages.charts) {
-            pdf.addPage();
-            pdf.addImage(
-                capturedImages.charts, 
-                'PNG', 
-                0, 
-                0, 
-                pageWidth, 
-                pageHeight, 
-                undefined, 
-                'FAST'
-            );
-        }
-
-        // Add text report
-        pdf.addPage();
-        const splitText = pdf.splitTextToSize(cleanContent, pageWidth - 40);
-        const linesPerPage = Math.floor((pageHeight - 40) / 15);
-        
-        for (let i = 0; i < splitText.length; i += linesPerPage) {
-            if (i > 0) pdf.addPage();
-            
-            pdf.text(
-                splitText.slice(i, i + linesPerPage), 
-                20, 
-                40
-            );
-        }
-
-        // Add metadata
-        pdf.setProperties({
-            title: `${reportType} Environmental Report`,
-            subject: 'Environmental Impact Analysis',
-            author: 'GreenMines'
-        });
-
-        // Save PDF
-        pdf.save(`GreenMines_${reportType}_Report_${new Date().toISOString().split('T')[0]}.pdf`);
     };
 
     return (
@@ -181,7 +295,14 @@ const PDFDownloadButton = ({
             onClick={generatePDF}
             sx={{ 
                 marginTop: 2, 
-                marginBottom: 2  
+                marginBottom: 2,
+                backgroundColor: '#1a237e',
+                '&:hover': {
+                    backgroundColor: '#283593',
+                },
+                padding: '10px 20px',
+                fontSize: '1rem',
+                fontWeight: 'bold'
             }}
         >
             {children || 'Download Full Report'}

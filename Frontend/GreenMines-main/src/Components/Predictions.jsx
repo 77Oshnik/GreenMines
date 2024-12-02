@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "./Navbar"; // Assuming Navbar is in the same directory
 import axios from "axios";
+import ChatAssistant from "./ChatAssistant";
 
 function EmissionPredictionPage() {
   const [predictions, setPredictions] = useState(null);
@@ -248,6 +249,7 @@ function EmissionPredictionPage() {
     <div className="min-h-screen bg-[#342F49] px-4 sm:px-6 lg:px-8 flex flex-col items-center">
       <div className="w-full">
     <Navbar />
+    <ChatAssistant />
   </div>
       <div className="w-full max-w-4xl mt-10 mx-auto bg-[#231E3D] rounded-2xl shadow-lg overflow-hidden border-2 border-[#66C5CC]">
         <div className="p-8 md:p-12">

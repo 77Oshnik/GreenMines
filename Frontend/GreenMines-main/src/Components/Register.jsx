@@ -28,7 +28,7 @@ function Register() {
   return (
     <div className="min-h-screen bg-[#342F49] py-16 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
     <Container
-      maxWidth="lg"
+      maxWidth="sm"
       className="register-container bg-gray-900 rounded-md p-10 shadow-lg"
       style={{ minHeight: '50vh' }} // Increase the container height
     >
