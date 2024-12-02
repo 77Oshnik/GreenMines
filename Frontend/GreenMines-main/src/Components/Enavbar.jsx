@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, User } from 'lucide-react';
-import logo from "./logo.png"; 
-import { FaUserCircle } from "react-icons/fa";  // Import FaUserCircle
+import { Menu, X, ChevronDown } from 'lucide-react';
+import logo from "./logo.png";
+import { FaUserCircle } from "react-icons/fa";
 
 const navigation = [
   { name: "Home", href: "/" },
+  { name: "Dashboard", href: "/dashboard" },
   { name: "Carbon Footprint", href: "/emission" },
   { name: "Neutrality", href: "/neutralityoptions" },
-  { name: "About Us", href: "/aboutus" }
 ];
 
 function classNames(...classes) {
@@ -20,6 +20,7 @@ function Enavbar({ className }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [navs, setNavs] = useState(navigation);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const updatedNavs = navigation.map(nav => ({
@@ -28,6 +29,11 @@ function Enavbar({ className }) {
     }));
     setNavs(updatedNavs);
   }, [location.pathname]);
+
+  const handleSignOut = () => {
+    // Implement your sign out logic here
+    console.log("Signing out...");
+  };
 
   return (
     <nav className={`bg-[#2B263F] fixed top-0 left-0 w-full z-50`}>
@@ -91,11 +97,46 @@ function Enavbar({ className }) {
               </span>
             </button>
             
-            {/* Profile Icon */}
-            <FaUserCircle
-              className="text-[#66C5CC] hover:text-white cursor-pointer text-4xl"
-              onClick={() => navigate("/profile")}
-            />
+            {/* Dropdown Menu */}
+            <div className="relative">
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center text-[#66C5CC] hover:text-white transition-colors duration-200"
+                aria-haspopup="true"
+                aria-expanded={dropdownOpen}
+              >
+                <FaUserCircle className="text-4xl" />
+                <ChevronDown className="ml-2 text-lg transition-transform duration-200" />
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-3 w-60 bg-[#342F49] rounded-lg shadow-xl py-2 z-10">
+                  <Link
+                    to="/profile"
+                    className="block px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    to="/predictions"
+                    className="block px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
+                  >
+                    Predictions
+                  </Link>
+                  <Link
+                    to="/routing"
+                    className="block px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
+                  >
+                    Route
+                  </Link>
+                  <button
+                    onClick={handleSignOut}
+                    className="block w-full text-left px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -131,6 +172,33 @@ function Enavbar({ className }) {
             >
               Profile
             </div>
+            <div 
+              className="block px-6 py-3 rounded-md text-lg font-semibold text-[#66C5CC] hover:bg-[#342F49] hover:text-white cursor-pointer"
+              onClick={() => {
+                navigate("/predictions");
+                setIsOpen(false);
+              }}
+            >
+              Predictions
+            </div>
+            <div 
+              className="block px-6 py-3 rounded-md text-lg font-semibold text-[#66C5CC] hover:bg-[#342F49] hover:text-white cursor-pointer"
+              onClick={() => {
+                navigate("/routing");
+                setIsOpen(false);
+              }}
+            >
+              Route
+            </div>
+            <div 
+              className="block px-6 py-3 rounded-md text-lg font-semibold text-[#66C5CC] hover:bg-[#342F49] hover:text-white cursor-pointer"
+              onClick={() => {
+                handleSignOut();
+                setIsOpen(false);
+              }}
+            >
+              Logout
+            </div>
           </div>
         </div>
       )}
@@ -139,3 +207,4 @@ function Enavbar({ className }) {
 }
 
 export default Enavbar;
+

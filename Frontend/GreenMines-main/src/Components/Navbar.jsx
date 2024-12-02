@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Disclosure } from "@headlessui/react";
 import { HashLink } from "react-router-hash-link";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
+import { FaBars, FaTimes, FaUserCircle, FaChevronDown } from "react-icons/fa";
 import logo from "./logo.png";
 
 const navigation = [
   { name: "Home", href: "/" },
+  { name: "DashBoard", href: "/dashboard" },
   { name: "Carbon Footprint", href: "/emission" },
-  { name: "Neutrality", href: "/neutralityoptions" },
-  { name: "About Us", href: "/aboutus" }
+  { name: "Neutrality", href: "/neutralityoptions" }
 ];
 
 function classNames(...classes) {
@@ -20,6 +20,7 @@ export default function Navbar({ className }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [navs, setNavs] = useState(navigation);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const updatedNavs = navigation.map(nav => ({
@@ -28,6 +29,11 @@ export default function Navbar({ className }) {
     }));
     setNavs(updatedNavs);
   }, [location.pathname]);
+
+  const handleSignOut = () => {
+    // Implement your sign out logic here
+    console.log("Signing out...");
+  };
 
   return (
     <Disclosure as="nav" className={`bg-transparent ${className}`}>
@@ -90,11 +96,48 @@ export default function Navbar({ className }) {
                   </span>
                 </button>
                 
+                 {/* Dropdown Menu */}
+<div className="relative">
+  <button
+    onClick={() => setDropdownOpen(!dropdownOpen)}
+    className="flex items-center text-gray-300 hover:text-white transition-colors duration-200"
+    aria-haspopup="true"
+    aria-expanded={dropdownOpen}
+  >
+    <FaUserCircle className="text-5xl" /> {/* Increased icon size */}
+    <FaChevronDown className="ml-2 text-lg transition-transform duration-200" /> {/* Slightly larger arrow */}
+  </button>
+  {dropdownOpen && (
+    <div className="absolute right-0 mt-3 w-60 bg-[#342F49] rounded-lg shadow-xl py-2 z-10">
+      <a
+        href="/profile"
+        className="block px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
+      >
+        Profile
+      </a>
+      <a
+        href="/predictions"
+        className="block px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
+      >
+        Predictions
+      </a>
+      <a
+        href="/routing"
+        className="block px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
+      >
+        Route
+      </a>
+      <button
+        onClick={handleSignOut}
+        className="block w-full text-left px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
+      >
+        Logout
+      </button>
+    </div>
+  )}
+</div>
+
               </div>
-              <FaUserCircle
-                  className="text-gray-300 hover:text-white cursor-pointer text-5xl ml-8"
-                  onClick={() => navigate("/profile")}
-                />
             </div>
           </div>
 

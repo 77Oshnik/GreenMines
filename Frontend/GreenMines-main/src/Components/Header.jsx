@@ -14,7 +14,7 @@ function Header() {
   }
 
   return (
-    <div className="from-[#2B263F] to-[#231E3D] bg-gradient-to-b w-full px-6 sm:px-10 lg:h-screen overflow-x-hidden">
+    <div className="from-[#2B263F] to-[#231E3D] bg-gradient-to-b w-full px-6 sm:px-10 lg:h-screen overflow-x-hidden relative">
       {/*<video
         autoPlay
         loop
@@ -60,6 +60,90 @@ function Header() {
           </motion.div>
         </div>
       </div>
+      
+      <motion.button
+      initial={{ 
+        opacity: 0, 
+        y: -50,
+        scale: 0.5,
+        rotateX: -180
+      }}
+      animate={{ 
+        opacity: 1, 
+        y: 0,
+        scale: 1,
+        rotateX: 0,
+        transition: {
+          type: "spring",
+          stiffness: 300,
+          damping: 10,
+          delay: 0.3
+        }
+      }}
+      whileHover={{
+        scale: 1.1,
+        rotate: [0, -5, 5, -5, 5, 0],
+        transition: {
+          duration: 0.4,
+          type: "spring",
+          stiffness: 300
+        }
+      }}
+      whileTap={{ 
+        scale: 0.95,
+        boxShadow: "0px 0px 20px rgba(102, 197, 204, 0.6)"
+      }}
+      onClick={() => navigate("/signin")}
+      className="absolute top-4 right-6 z-50 px-6 py-3 rounded-full 
+        bg-gradient-to-r from-[#66C5CC] to-[#009688] 
+        text-black font-bold text-lg 
+        shadow-xl hover:shadow-2xl 
+        transition-all duration-300 ease-in-out 
+        flex items-center justify-center 
+        overflow-hidden 
+        group"
+    >
+      {/* Animated Gradient Border */}
+      <motion.span
+        initial={{ width: 0 }}
+        animate={{ 
+          width: '100%',
+          transition: {
+            delay: 0.6,
+            duration: 0.8,
+            type: "spring"
+          }
+        }}
+        className="absolute inset-0 bg-gradient-to-r from-[#66C5CC] to-[#009688] opacity-20 group-hover:opacity-40 transition-all duration-300"
+      />
+      
+      {/* Sparkle Effect */}
+      <motion.span
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ 
+          opacity: [0, 1, 0],
+          scale: [0, 1.2, 0],
+          rotate: [0, 360],
+          transition: {
+            delay: 0.7,
+            duration: 1.5,
+            repeat: Infinity
+          }
+        }}
+        className="absolute top-0 right-0 w-4 h-4 bg-white rounded-full opacity-70"
+      />
+
+      {/* Button Text with Hover Effect */}
+      <motion.span
+        initial={{ letterSpacing: '0px' }}
+        whileHover={{ 
+          letterSpacing: '2px',
+          transition: { duration: 0.3 }
+        }}
+      >
+        Sign In
+      </motion.span>
+    </motion.button>
     </div>
   )
 }
