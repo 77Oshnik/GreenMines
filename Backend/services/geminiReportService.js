@@ -5,7 +5,15 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY3);
 
 const generateEnvironmentalReportContent = async (data) => {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ 
+            model: "gemini-pro",
+            generationConfig: {
+                maxOutputTokens: 5000,  // Increased token limit
+                temperature: 0.7,        // Balanced creativity
+                topP: 0.9,               // Diverse response
+                stopSequences: []        // Allow full response
+            }
+        });
 
         // Helper function to safely parse numbers
         const parseNumber = (value) => {

@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Container, Alert, CircularProgress, Box, Grid } from '@mui/material';
 import ReportGenerator from '../Components/EnvironmentalReport/ReportGenerator';
 import ReportDisplay from '../Components/EnvironmentalReport/ReportDisplay';
 import ReportStats from '../Components/EnvironmentalReport/ReportStats';
 import PDFDownloadButton from '../Components/EnvironmentalReport/PDFDownloadButton';
+import { useLocation } from 'react-router-dom';
 import { 
     fetchDailyEnvironmentalReport, 
     fetchMonthlyEnvironmentalReport, 
@@ -14,7 +15,10 @@ const EnvironmentalReportPage = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [reportData, setReportData] = useState(null);
+    const location = useLocation();
     const [currentReportType, setCurrentReportType] = useState('daily');
+
+    
 
     // Create refs for charts and stats
     const donutChartRef = useRef(null);
@@ -22,25 +26,34 @@ const EnvironmentalReportPage = () => {
     const lineGraphRef = useRef(null);
     const statsRef = useRef(null);
 
-    const handleGenerateReport = async (type) => {
+    useEffect(() => {
+        // Check if report type was passed through navigation state
+        if (location.state && location.state.reportType) {
+          setCurrentReportType(location.state.reportType);
+          
+          // Automatically trigger report generation
+          handleGenerateReport(location.state.reportType);
+        }
+      }, [location.state]);
+
+      const handleGenerateReport = async (type) => {
         setLoading(true);
         setError(null);
         setCurrentReportType(type);
-
         try {
             const response = type === 'daily' 
-                ? await fetchDailyEnvironmentalReport()
-                : type === 'weekly'
-                ? await fetchWeeklyEnvironmentalReport()
-                : await fetchMonthlyEnvironmentalReport();
+              ? await fetchDailyEnvironmentalReport()
+              : type === 'weekly'
+              ? await fetchWeeklyEnvironmentalReport()
+              : await fetchMonthlyEnvironmentalReport();
             
             setReportData(response);
-        } catch (error) {
+          } catch (error) {
             setError('Failed to generate report. Please try again.');
             console.error('Report generation error:', error);
-        }
-        setLoading(false);
-    };
+          }
+          setLoading(false);
+        };
 
     return (
         <Container maxWidth="lg">

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
 import logo from "./logo.png"; 
+import { FaUserCircle } from "react-icons/fa";  // Import FaUserCircle
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -21,13 +22,12 @@ function Enavbar({ className }) {
   const [navs, setNavs] = useState(navigation);
 
   useEffect(() => {
-    // Only update `navs` when location.pathname changes
     const updatedNavs = navigation.map(nav => ({
       ...nav,
       current: location.pathname === nav.href
     }));
     setNavs(updatedNavs);
-  }, [location.pathname]);  // Removed `navs` from dependency array
+  }, [location.pathname]);
 
   return (
     <nav className={`bg-[#2B263F] fixed top-0 left-0 w-full z-50`}>
@@ -79,17 +79,23 @@ function Enavbar({ className }) {
             </div>
           </div>
 
-          {/* Contact Us Button */}
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:pr-0 hidden sm:flex">
+          {/* Contact Us Button and Profile Icon */}
+          <div className="flex items-center space-x-4">
             <button
               onClick={() => navigate("/contactus")}
-              className="relative text-white border rounded px-8 py-3 text-lg hover:text-white c-btn tracking-wider overflow-hidden"
+              className="hidden sm:block relative text-white border rounded px-8 py-3 text-lg hover:text-white c-btn tracking-wider overflow-hidden"
             >
               <span className="absolute inset-0 bg-gradient-to-br from-[#6664F1] to-[#C94AF0]"></span>
               <span className="relative z-10 flex justify-center items-center">
                 Contact Us
               </span>
             </button>
+            
+            {/* Profile Icon */}
+            <FaUserCircle
+              className="text-[#66C5CC] hover:text-white cursor-pointer text-4xl"
+              onClick={() => navigate("/profile")}
+            />
           </div>
         </div>
       </div>
@@ -114,6 +120,17 @@ function Enavbar({ className }) {
                 {item.name}
               </Link>
             ))}
+            
+            {/* Profile Link in Mobile Menu */}
+            <div 
+              className="block px-6 py-3 rounded-md text-lg font-semibold text-[#66C5CC] hover:bg-[#342F49] hover:text-white cursor-pointer"
+              onClick={() => {
+                navigate("/profile");
+                setIsOpen(false);
+              }}
+            >
+              Profile
+            </div>
           </div>
         </div>
       )}
