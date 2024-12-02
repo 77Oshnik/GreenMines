@@ -27,7 +27,8 @@ exports.getUserByEmail = async (req, res) => {
             email: user.email,
             role: user.role,
             createdAt: user.createdAt,
-            profilePicture : user.profilePicture
+            profilePicture : user.profilePicture,
+            CO2Goal:user.CO2Goal
         });
     } catch (err) {
         console.error(err);
@@ -83,4 +84,28 @@ exports.uploadProfilePicture = (req, res, next) => {
     }
     next(); // Proceed to the next middleware (which is the updateProfilePicture function)
   });
+};
+
+exports.updateCO2Goal = async (req , res , )=>{
+  const { id } = req.params;
+  const { CO2Goal } = req.body;
+
+  if (!CO2Goal || isNaN(CO2Goal) || CO2Goal <= 0) {
+    return res.status(400).json({ message: 'Invalid CO2 goal value' });
+  }
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.CO2Goal = CO2Goal;
+    await user.save();
+
+    res.status(200).json({ message: 'CO2 goal updated successfully', CO2Goal });
+  } catch (error) {
+    console.error('Error updating CO2 goal:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };

@@ -35,6 +35,7 @@ import ChatAssistant from './Components/ChatAssistant';
 import Profile from './Components/Profile';
 import EnvironmentalReportPage from './pages/EnvironmentalReportPage';
 import Routing from './Components/RouteFrm'
+import { MarqueeReviews } from './Components/ReviewCard';
 function App() {
   return (
     <div className="App font-link">
@@ -57,6 +58,7 @@ function App() {
             <Services id="services" />
             {/* <Experience /> */}
             <Projects id="projects" />
+            <MarqueeReviews/>
             <Clients />
             <Footer />
           </>

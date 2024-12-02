@@ -13,4 +13,5 @@ router.get('/user/:email', userController.getUserByEmail);
 // Route to handle profile picture update
 router.post('/user/update-profile-picture', userController.uploadProfilePicture, userController.updateProfilePicture);
 
+router.put('/user/update-co2-goal/:id',userController.updateCO2Goal)
 module.exports = router;
