@@ -1,23 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Enavbar from './Enavbar';
+import axios from 'axios';
 
 const Profile = () => {
-  const [user, setUser] = useState({
-    name: 'Kannadigas',
-    email: 'hddjdj@example.com',
-    joinDate: '2023-01-01',
-    currentEmission: 1000,
-    profilePicture: 'https://zesty-cajeta-af510d.netlify.app/image-33.svg',
-    mineLocation: 'Bihar, India',
-    coalMineSize: '500 acres',
-    dailyLaborers: 250,
-    transportationInfo: 'Heavy-duty trucks, 20 units',
-    position: 'Project Manager',
-    team: 'Green Team',
-    secondInCommand: 'John Doe',
-  });
+
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [newProfilePicture, setNewProfilePicture] = useState(null);
   const [emissionGoal, setEmissionGoal] = useState(800);
   const [newGoal, setNewGoal] = useState('');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const storedEmail = JSON.parse(localStorage.getItem('email'));
+      if (storedEmail) {
+        try {
+          const token = localStorage.getItem('token'); // Use token for authenticated requests
+          console.log(storedEmail)
+          const response = await axios.get(`http://localhost:5000/api/userData/${storedEmail}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          setUser(response.data); // Update user state with API response
+        } catch (error) {
+          console.error('Failed to fetch user data:', error);
+          // Optionally handle the error or redirect to login if unauthorized
+        }
+      } else {
+        console.error('No email found in localStorage');
+      }
+    };
+  
+    fetchUserData();
+  }, []);
+  
+
+  const handleProfilePictureChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewProfilePicture(file); // Set the file for preview or uploading
+      const formData = new FormData();
+      formData.append('profilePicture', file);
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(
+          'http://localhost:5000/api/update-profile-picture',
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        setUser({ ...user, profilePicture: response.data.profilePicture });
+      } catch (error) {
+        console.error('Failed to update profile picture:', error);
+      }
+    }
+  };
 
   const handleGoalChange = (e) => {
     setNewGoal(e.target.value);
@@ -32,6 +75,10 @@ const Profile = () => {
     }
   };
 
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="bg-gray-900 text-white min-h-screen w-full mt-24 overflow-x-hidden">
         <Enavbar />
@@ -42,13 +89,13 @@ const Profile = () => {
           {/* User Info Section */}
           <div className="bg-gray-800 rounded-lg shadow-md p-8">
             <img 
-              src={user.profilePicture} 
-              alt={user.name} 
+              src={user.profilePicture || 'https://cdn-icons-png.freepik.com/128/3135/3135715.png'} 
+              alt={user.name || 'USER'} 
               className="w-40 h-40 rounded-full mx-auto mb-6"
             />
-            <h2 className="text-3xl font-bold text-center mb-3">{user.name}</h2>
-            <p className="text-center text-gray-400 text-lg mb-5">{user.email}</p>
-            
+            <h2 className="text-3xl font-bold text-center mb-3">{user?.name || 'Name not available'}</h2>
+            <p className="text-center text-gray-400 text-lg mb-5">{user?.email || 'Email not available'}</p>
+                 
             {/* Added User Information */}
             <div className="mb-4">
               <label className="block text-gray-400 text-base font-bold mb-2" htmlFor="position">
@@ -91,7 +138,7 @@ const Profile = () => {
               <label className="block text-gray-400 text-base font-bold mb-2" htmlFor="currentGoal">
                 Current CO2 Emission Goal (kg/year)
               </label>
-              <p className="text-gray-200 text-lg text-2xl font-bold" id="currentGoal">{emissionGoal}</p>
+              <p className="text-gray-200 text-2xl font-bold" id="currentGoal">{emissionGoal}</p>
             </div>
             <form onSubmit={handleGoalSubmit} className="mb-4">
               <div className="mb-4">

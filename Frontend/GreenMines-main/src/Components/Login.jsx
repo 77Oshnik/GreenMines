@@ -16,6 +16,7 @@ function Login() {
   const handleLogin = async () => {
     try {
       await axios.post('http://localhost:5000/api/login', { email, password });
+      localStorage.setItem('email', JSON.stringify(email));
       setStep('verify');
     } catch (error) {
       setError('Login failed: ' + (error.response?.data?.msg || error.message));
@@ -25,8 +26,9 @@ function Login() {
   const handleVerify = async () => {
     try {
       const response = await axios.post('http://localhost:5000/api/verify-2fa', { email, twoFactorCode });
-      localStorage.setItem('token', response.data.token);
-      navigate('/emission'); 
+      const { token} = response.data; // assuming the response includes the user data
+      localStorage.setItem('token', token);
+      navigate('/profile'); // Navigate to Profile page 
     } catch (error) {
       setError('2FA verification failed: ' + (error.response?.data?.msg || error.message));
     }

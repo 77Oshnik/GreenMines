@@ -2,7 +2,7 @@ const Electricity = require("../models/Electricity");
 const FuelCombustion = require("../models/FuelCombustion");
 const Shipping = require("../models/Shipping");
 const Explosion = require("../models/Explosion");
-
+const User = require('../models/User')
 // Helper function to validate date format (YYYY-MM-DD)
 const isValidDate = (dateString) => {
     const regex = /^\d{4}-\d{2}-\d{2}$/; // Regex for YYYY-MM-DD format
@@ -143,5 +143,26 @@ exports.deleteById = async (req, res) => {
     } catch (error) {
         console.error("Error deleting entry:", error);
         res.status(500).json({ error: "Internal server error." });
+    }
+};
+
+exports.getUserByEmail = async (req, res) => {
+    const { email } = req.params; // Expect email in query params
+
+    console.log('Received email:', email);
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ msg: 'User not found in mongodb' });
+
+        res.json({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
     }
 };
