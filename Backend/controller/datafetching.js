@@ -146,23 +146,4 @@ exports.deleteById = async (req, res) => {
     }
 };
 
-exports.getUserByEmail = async (req, res) => {
-    const { email } = req.params; // Expect email in query params
 
-    console.log('Received email:', email);
-
-    try {
-        const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ msg: 'User not found in mongodb' });
-
-        res.json({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
-    }
-};
