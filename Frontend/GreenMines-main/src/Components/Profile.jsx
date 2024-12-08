@@ -419,14 +419,35 @@ const Profile = () => {
           {/* Today's Emissions */}
           <div className="bg-gray-800 rounded-lg shadow-md p-8">
             <h2 className="text-3xl font-bold mb-4">Today's Emissions</h2>
-            <p className="text-gray-200 text-2xl font-bold">
+            <p className="text-gray-200 text-6xl font-bold pt-7">
               {todaysEmissions.toFixed(2)} kg CO2
             </p>
             <ToastContainer />
           </div>
-        </div>
-      </div>
+          </div>
+          {/* YOUR CARBON CREDIT Section */}
+          <div className="bg-gray-800 rounded-lg shadow-md p-8 mt-10 w-full">
+  <h2 className="text-3xl font-bold mb-6 text-center">YOUR CARBON CREDIT</h2>
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 w-full">
+    <div className="bg-gray-700 rounded-lg p-6 w-full">
+      <h3 className="text-xl font-semibold text-gray-300 mb-4">CARBON CREDIT ALLOTTED</h3>
+      <p className="text-2xl font-bold text-gray-200">
+        { '100'}
+      </p>
     </div>
+
+    <div className="bg-gray-700 rounded-lg p-6 w-full">
+      <h3 className="text-xl font-semibold text-gray-300 mb-4">CARBON CREDIT SAVED</h3>
+      <p className="text-2xl font-bold text-gray-200">
+        { '20'}
+      </p>
+    </div>
+  </div>
+</div>
+
+  
+</div>
+</div>
   );
 };
 
