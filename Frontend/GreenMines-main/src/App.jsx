@@ -36,6 +36,7 @@ import Profile from './Components/Profile';
 import EnvironmentalReportPage from './pages/EnvironmentalReportPage';
 import Routing from './Components/RouteFrm'
 import { MarqueeReviews } from './Components/ReviewCard';
+import CoalEmission from './Components/CoalEmission';
 function App() {
   return (
     <div className="App font-link">
@@ -91,6 +92,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/environmental-reports" element={<EnvironmentalReportPage />} />
         <Route path="/routing" element={<Routing />} />
+        <Route path='/coalemission' element={<CoalEmission/>}/>
       </Routes>
       
     </div>

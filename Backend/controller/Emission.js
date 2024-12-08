@@ -3,6 +3,8 @@ const Electricity = require("../models/Electricity");
 const FuelCombustion = require("../models/FuelCombustion");
 const Shipping = require("../models/Shipping");
 const Explosion=require("../models/Explosion")
+const CoalEmission = require('../models/coalEmission');  // Import the model
+
 
 
 
@@ -219,3 +221,54 @@ exports.calculateExplosionEmissions = async (req, res) => {
     res.status(500).json({ error: "Failed to calculate emissions" });
   }
 };
+
+
+exports.coalEmission=async (req,res)=>{
+  const EMISSION_FACTORS = {
+    Lignite: 0.95, // Example value in the range 0.90–1.0
+    'Sub-bituminous': 0.90, // Example value in the range 0.85–0.95
+    Bituminous: 1.00, // Example value in the range 0.95–1.05
+    Anthracite: 1.10 // Example value in the range 1.05–1.15
+  };
+
+  try {
+    const { coalType, coalConsumption } = req.body;
+
+    // Validate coal type
+    if (!coalType || !coalConsumption) {
+      return res.status(400).json({ error: 'Missing required parameters: coalType, coalConsumption' });
+    }
+
+    if (!EMISSION_FACTORS[coalType]) {
+      return res.status(400).json({ error: 'Invalid coal type. Valid types are: Lignite, Sub-bituminous, Bituminous, Anthracite' });
+    }
+
+    const emissionFactor = EMISSION_FACTORS[coalType];
+    const carbonOxidationFactor = 0.99; // Fixed at 99%
+
+    // Calculate CO2 emissions
+    const co2Emissions = coalConsumption * emissionFactor * carbonOxidationFactor;
+
+    // Create a new document to save in the database
+    const coalEmission = new CoalEmission({
+      coalType,
+      coalConsumption,
+      emissionFactor,
+      co2Emissions
+    });
+
+    // Save the document to the database
+    await coalEmission.save();
+
+    // Respond with the calculated emissions
+    res.status(200).json({
+      coalType,
+      coalConsumption,
+      emissionFactor,
+      carbonOxidationFactor,
+      co2Emissions
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+  }
+}
