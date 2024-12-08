@@ -19,6 +19,8 @@ import {
     CalendarToday as CalendarTodayIcon, 
     Timeline as TimelineIcon 
 } from '@mui/icons-material';
+import { FaArrowLeft } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import ReportGenerator from '../Components/EnvironmentalReport/ReportGenerator';
 import ReportDisplay from '../Components/EnvironmentalReport/ReportDisplay';
 import ReportStats from '../Components/EnvironmentalReport/ReportStats';
@@ -69,13 +71,19 @@ const EnvironmentalReportPage = () => {
         setLoading(false);
     };
 
+    const navigate = useNavigate();
+    const handleBack = () => {
+        navigate(-1);
+    };
+
+
     return (
         <Box 
             sx={{ 
                 minHeight: '100vh', 
                 backgroundColor: '#f0f4f8', // Soft blue-gray background
                 py: 4,
-                background: 'linear-gradient(135deg, #f0f4f8 0%, #e6eaf4 100%)'
+                background: 'linear-gradient(135deg, #f0f4f8 30%, #cad8fa 100%)'
             }}
         >
             <Container maxWidth="lg">
@@ -100,6 +108,13 @@ const EnvironmentalReportPage = () => {
                     >
                         Environmental Impact Report
                     </Typography>
+                    <button
+        onClick={handleBack}
+        className="bg-[#5e67af] text-black mb-4 font-bold px-8 py-3 text-xl rounded-lg mt-4 self-start flex items-center space-x-2"
+    >
+        <FaArrowLeft className="w-6 h-6" />
+        <span>Go Back</span>
+    </button>
                     <Tabs
                         value={currentReportType}
                         onChange={(e, newValue) => handleGenerateReport(newValue)}

@@ -1,26 +1,49 @@
-import React, { useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import Navbar from "./Navbar"
 
 function Header() {
-  const navigate = useNavigate()
-  const ref = useRef(null)
+  const navigate = useNavigate();
+  const ref = useRef(null);
 
   const fadeIn = {
     initial: { opacity: 0, y: 50 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 1.5, ease: "easeInOut" },
-  }
+  };
+
+  const [videoOpacity, setVideoOpacity] = useState(1);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY; // Current scroll position
+      const windowHeight = window.innerHeight; // Viewport height
+      const fadeStart = windowHeight / 2; // Start fading at 50% scroll
+      const fadeEnd = windowHeight; // Fully faded out after one full viewport height
+      
+      // Calculate new opacity (0 when fully faded, 1 when fully visible)
+      const newOpacity = Math.max(
+        0,
+        1 - Math.max((scrollTop - fadeStart) / (fadeEnd - fadeStart), 0)
+      );
+
+      setVideoOpacity(newOpacity);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <div className="from-[#2B263F] to-[#231E3D] bg-gradient-to-b w-full px-6 sm:px-10 lg:h-screen overflow-x-hidden">
-      <video
+    <div className="from-[#71669b] to-[#746a9b] bg-gradient-to-b w-full px-6 sm:px-10 lg:h-screen overflow-x-hidden">
+ <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover"
+        style={{ opacity: videoOpacity }} // Dynamically adjust opacity
+        className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-300"
       >
         <source src="MyVideo.mp4" type="video/mp4" />
         Your browser does not support the video tag.

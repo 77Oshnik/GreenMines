@@ -11,7 +11,7 @@ const reviews = [
 
 export function MarqueeReviews() {
   const ReviewCard = ({ img, name, username, body }) => (
-    <figure className="relative w-64 mx-2 cursor-pointer overflow-hidden rounded-xl border p-4 
+    <figure className="relative w-64 h-50 mx-2 cursor-pointer overflow-hidden rounded-xl border p-4 
       border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]
       dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]">
       <div className="flex flex-row items-center gap-2">
@@ -21,12 +21,12 @@ export function MarqueeReviews() {
           <p className="text-xs font-medium dark:text-white/40">{username}</p>
         </div>
       </div>
-      <blockquote className="mt-2 text-sm">{body}</blockquote>
+      <blockquote className="mt-2 text-sm text-white">{body}</blockquote>
     </figure>
   );
 
   return (
-    <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-white dark:bg-black md:shadow-xl">
+    <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden bg-[#342F49]">
       <div className="absolute top-1/4 flex w-full overflow-hidden">
         <div className="flex animate-marquee">
           {[...reviews, ...reviews].map((review, index) => (
@@ -39,8 +39,10 @@ export function MarqueeReviews() {
           ))}
         </div>
       </div>
+
+     
       
-      <div className="absolute top-1/2 flex w-full overflow-hidden">
+      <div className="absolute top-1/2 flex w-full overflow-hidden mt-5">
         <div className="flex animate-marquee-reverse">
           {[...reviews.reverse(), ...reviews.reverse()].map((review, index) => (
             <ReviewCard key={`bottom-${index}`} {...review} />
@@ -54,8 +56,8 @@ export function MarqueeReviews() {
       </div>
 
       {/* Gradient Overlays */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white dark:from-black"></div>
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-white dark:from-black"></div>
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white dark:from-[#342F49]"></div>
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-white dark:from-[#342F49]"></div>
     </div>
   );
 }

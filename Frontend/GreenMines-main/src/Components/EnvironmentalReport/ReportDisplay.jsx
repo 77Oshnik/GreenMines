@@ -116,13 +116,15 @@ const ReportDisplay = ({ report }) => {
                 <Box 
                     sx={{ 
                         '& h3': {
-                            fontSize: '1.8rem',
+                            fontSize: '2rem',
+                            fontWeight: 'bold',
                             color: '#303f9f',
                             marginTop: 4,
                             marginBottom: 2,
                         },
                         '& p': {
-                            fontSize: '1.1rem',
+                            fontSize: '1.4rem',
+                            fontWeight: 'bold',
                             lineHeight: 1.7,
                             color: '#424242',
                             marginBottom: 2,
@@ -132,7 +134,8 @@ const ReportDisplay = ({ report }) => {
                             paddingLeft: 3,
                         },
                         '& li': {
-                            fontSize: '1.1rem',
+                            fontSize: '1.4rem',
+                            fontWeight: 'bold',
                             lineHeight: 1.7,
                             color: '#424242',
                             marginBottom: 1,
