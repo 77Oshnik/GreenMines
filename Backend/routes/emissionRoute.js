@@ -12,7 +12,7 @@ router.get("/electricity-consumption", electricityController.getElectricityConsu
 router.get("/fuel-combustion", fuelCombustionController.getFuelCombustion);
 router.post("/shipping-emissions", shippingController.calculateShippingEmissions);
 router.post("/explosion-emissions", explosionController.calculateExplosionEmissions);
-
+router.post("/coal-emission",electricityController.coalEmission);
 
 
 
