@@ -5,13 +5,13 @@ const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const User = require('../models/User');
-
+require('dotenv').config();
 // Email transporter setup with hardcoded email and password
 const transporter = nodemailer.createTransport({
     service: 'GMAIL',
     auth: {
-        user: 'sujal.shah23@comp.sce.edu.in', // Correct the environment variable name
-        pass: 'sujal9867000788',// Hardcoded password
+        user: process.env.AUTHMAIL , // Correct the environment variable name
+        pass:  process.env.AUTHPASS ,// Hardcoded password
     },
 });
 

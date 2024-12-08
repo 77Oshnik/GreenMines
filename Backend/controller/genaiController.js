@@ -1,5 +1,6 @@
 const axios = require("axios");
 const { fetchDateRangeDatagenai } = require("./genaidata");
+require('dotenv').config();
 
 // Cache for storing fetched data and AI responses
 class ExpiringCache {
@@ -247,7 +248,7 @@ exports.analyzeEmissionsWithGenAI = async (req, res) => {
       },
       {
         headers: {
-          Authorization: `Bearer OKICrZ8sfYP2mHbuPH31VTfZelAOhz8k5QfRzrhY`,  // Ensure the API key is correct
+          Authorization: `Bearer ${process.env.COHERE_API_KEY}`,
           "Content-Type": "application/json",
         },
       }
