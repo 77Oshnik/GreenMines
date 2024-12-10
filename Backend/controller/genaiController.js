@@ -77,32 +77,81 @@ function calculateEmissionImpact(emissionsData) {
 
   // Process each category
   ['electricity', 'fuelCombustion', 'shipping', 'explosion'].forEach(category => {
-    if (!emissionsData[category]) return;
+    const categoryData = emissionsData[category] || {};
+    
+    // Determine how to process based on category
+    impactSummary.categories[category].count = Object.keys(categoryData).length;
 
-    impactSummary.categories[category].count = emissionsData[category].length;
+    Object.values(categoryData).forEach(entry => {
+      try {
+        // Specific parsing for each category
+        if (category === 'electricity') {
+          // Handle potential Map structure for 'result'
+          const result = entry.result instanceof Map ? Object.fromEntries(entry.result) : entry.result;
 
-    emissionsData[category].forEach(entry => {
-      // Handle different emission data structures
-      if (category === 'explosion' && entry.emissions) {
-        Object.keys(entry.emissions).forEach(emissionType => {
-          const value = parseFloat(entry.emissions[emissionType]);
-          if (!isNaN(value)) {
-            impactSummary.totalEmissions[emissionType] = 
-              (impactSummary.totalEmissions[emissionType] || 0) + value;
-            impactSummary.categories[category].emissions[emissionType] = 
-              (impactSummary.categories[category].emissions[emissionType] || 0) + value;
+          // Parse electricity emissions
+          if (result?.CO2) {
+            const co2Value = parseFloat(result.CO2.value); // Convert kg to tons
+            if (!isNaN(co2Value)) {
+              impactSummary.totalEmissions.CO2 += co2Value;
+              impactSummary.categories.electricity.emissions.CO2 =
+              (impactSummary.categories.electricity.emissions.CO2 || 0) + co2Value;;
+            }
           }
-        });
-      } else if (entry.result) {
-        Object.keys(entry.result).forEach(emissionType => {
-          const value = entry.result[emissionType]?.value;
-          if (value !== undefined) {
-            impactSummary.totalEmissions[emissionType] = 
-              (impactSummary.totalEmissions[emissionType] || 0) + value;
-            impactSummary.categories[category].emissions[emissionType] = 
-              (impactSummary.categories[category].emissions[emissionType] || 0) + value;
+        }
+
+        
+        else if (category === 'fuelCombustion') {
+          // Handle potential Map structure for 'result'
+          const result = entry.result instanceof Map ? Object.fromEntries(entry.result) : entry.result;
+
+          // Parse fuel combustion emissions
+          if (result) {
+            const emissionTypes = ['CO2', 'nitrousOxideCO2e', 'methaneCO2e', 'totalDirectCO2e', 'indirectCO2e', 'lifeCycleCO2e'];
+            
+            emissionTypes.forEach(type => {
+              if (result[type]?.value !== undefined) {
+                const value = parseFloat(result[type].value);
+                if (!isNaN(value)) {
+                  if (type === 'CO2') {
+                    impactSummary.totalEmissions.CO2 += value;
+                    impactSummary.categories.fuelCombustion.emissions.CO2 = 
+                      (impactSummary.categories.fuelCombustion.emissions.CO2 || 0) + value;
+                  }
+                }
+              }
+            });
           }
-        });
+        }
+        else if (category === 'shipping') {
+          // Handle potential Map structure for 'result'
+          const result = entry.result instanceof Map ? Object.fromEntries(entry.result) : entry.result;
+
+          // Parse shipping emissions
+          if (result?.carbonEmissions) {
+            const co2Value = parseFloat(result.carbonEmissions.kilograms);
+            if (!isNaN(co2Value)) {
+              impactSummary.totalEmissions.CO2 += co2Value;
+              impactSummary.categories.shipping.emissions.CO2 = 
+                (impactSummary.categories.shipping.emissions.CO2 || 0) + co2Value;
+            }
+          }
+        } 
+        else if (category === 'explosion' && entry.emissions) {
+          const emissionTypes = ['CO2', 'CO', 'H2S', 'NOx'];
+          emissionTypes.forEach(type => {
+            if (entry.emissions[type]) {
+              const value = parseFloat(entry.emissions[type].replace(' kg', ''));
+              if (!isNaN(value)) {
+                impactSummary.totalEmissions[type] += value;
+                impactSummary.categories.explosion.emissions[type] = 
+                  (impactSummary.categories.explosion.emissions[type] || 0) + value;
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error(`Error processing ${category} entry:`, error);
       }
     });
   });
@@ -121,6 +170,7 @@ function calculateEmissionImpact(emissionsData) {
 
   return impactSummary;
 }
+
 
 exports.analyzeEmissionsWithGenAI = async (req, res) => {
   const { startDate, endDate } = req.body;
@@ -142,7 +192,7 @@ exports.analyzeEmissionsWithGenAI = async (req, res) => {
     const emissionsData = await fetchDateRangeDatagenai({ params: { startDate, endDate } });
     console.log("Fetched Emissions Data:", emissionsData);
 
-    // Initialize impactfulData object to store categorized emissions data
+    // Calculate emission impact
     const emissionImpact = calculateEmissionImpact(emissionsData);
 
     // Process each category: electricity, fuelCombustion, shipping, explosion

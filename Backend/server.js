@@ -29,10 +29,11 @@ const app = express();
 app.use(express.json()); // To parse incoming JSON
 app.use(cors()); // Enable CORS
 app.use(cors({
-    origin: 'http://localhost:3000', // Frontend URL for CORS
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000', // Use dynamic origin
     methods: 'GET,POST,PUT,DELETE',
     credentials: true,
 }));
+
 
 // Security Middleware
 const helmet = require("helmet");
