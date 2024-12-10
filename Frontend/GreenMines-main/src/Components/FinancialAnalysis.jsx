@@ -34,24 +34,69 @@ export default function FinancialAnalysis() {
 
   return (
     
-  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[50%] max-h-[1800px] mb-4">
-    <div className="flex flex-col bg-gray-900 rounded-lg shadow-md p-6">
-    <h2 className="text-lg font-bold text-white mb-4">Financial Analysis</h2>
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium text-gray-300 mb-2">Cost vs Savings Analysis</h3>
-        <div className="h-[400px] w-full"> {/* Adjust container size for the Bar Chart */}
-          <Bar data={barData} options={barOptions} />
+    <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-4 sm:p-6 w-full lg:max-w-[50%] max-h-[1800px] mb-4">
+    <div className="flex flex-col bg-gray-900 rounded-lg shadow-md p-4 sm:p-6">
+      <h2 className="text-xl sm:text-2xl font-bold text-white mb-4">Financial Analysis</h2>
+      <div className="space-y-4 sm:space-y-6">
+        <div>
+          <h3 className="text-base sm:text-lg font-medium text-gray-300 mb-2">Cost vs Savings Analysis</h3>
+          <div className="h-[300px] sm:h-[400px] w-full"> {/* Adjust container size for the Bar Chart */}
+            <Bar 
+              data={barData} 
+              options={{
+                ...barOptions,
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  ...barOptions.plugins,
+                  legend: {
+                    ...barOptions.plugins?.legend,
+                    labels: {
+                      ...barOptions.plugins?.legend?.labels,
+                      font: {
+                        size: 10,
+                        ...barOptions.plugins?.legend?.labels?.font
+                      }
+                    }
+                  }
+                },
+                scales: {
+                  ...barOptions.scales,
+                  x: {
+                    ...barOptions.scales?.x,
+                    ticks: {
+                      ...barOptions.scales?.x?.ticks,
+                      font: {
+                        size: 10,
+                        ...barOptions.scales?.x?.ticks?.font
+                      }
+                    }
+                  },
+                  y: {
+                    ...barOptions.scales?.y,
+                    ticks: {
+                      ...barOptions.scales?.y?.ticks,
+                      font: {
+                        size: 10,
+                        ...barOptions.scales?.y?.ticks?.font
+                      }
+                    }
+                  }
+                }
+              }} 
+            />
+          </div>
         </div>
-      </div>
-      <div>
-        <h3 className="text-lg font-medium text-gray-300 mb-2">ROI Potential</h3>
-        <p className="text-2xl font-bold text-green-600">22%</p>
-        <p className="text-sm text-gray-400">Estimated ROI over 5 years</p>
+        <div className="text-center sm:text-left">
+          <h3 className="text-base sm:text-lg font-medium text-gray-300 mb-2">ROI Potential</h3>
+          <p className="text-3xl sm:text-4xl font-bold text-green-600">22%</p>
+          <p className="text-xs sm:text-sm text-gray-400">Estimated ROI over 5 years</p>
+        </div>
       </div>
     </div>
   </div>
-  </div>
+  
+  
   
   );
 }

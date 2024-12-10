@@ -195,26 +195,27 @@ const fetchDataForDateRange = async (startDate, endDate) => {
   };
 
   return (
-    <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[100%] max-h-[900px] mt-6">
-      {/* Title Section */}
-      <h2 className="text-lg font-bold text-white mb-4">Carbon Sink Estimation</h2>
-      <div className="flex justify-between items-center mb-6">
-        <span className="text-white">Time Range:</span>
-        <select
-          className="bg-gray-700 text-white p-2 rounded"
-          value={selectedTimeRange}
-          onChange={(e) => setSelectedTimeRange(e.target.value)}
-        >
-          <option value="week">Last Week</option>
-          <option value="month">Last Month</option>
-          <option value="year">Last Year</option>
-        </select>
-      </div>
-      {/* Bar Chart */}
-      <div className="flex-grow w-full">
-        <Bar data={barData} options={barOptions} />
-      </div>
+    <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[100%] h-full mt-6">
+    {/* Title Section */}
+    <h2 className="text-lg font-bold text-white mb-4">Carbon Sink Estimation</h2>
+    <div className="flex justify-between items-center mb-6">
+      <span className="text-white">Time Range:</span>
+      <select
+        className="bg-gray-700 text-white p-2 rounded"
+        value={selectedTimeRange}
+        onChange={(e) => setSelectedTimeRange(e.target.value)}
+      >
+        <option value="week">Last Week</option>
+        <option value="month">Last Month</option>
+        <option value="year">Last Year</option>
+      </select>
     </div>
+    {/* Bar Chart */}
+    <div className="flex-grow w-full">
+      <Bar data={barData} options={barOptions} />
+    </div>
+  </div>
+  
   );
 }
 

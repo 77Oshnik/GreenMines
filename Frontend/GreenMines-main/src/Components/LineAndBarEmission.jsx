@@ -546,93 +546,100 @@ useEffect(() => {
   }
 
   return (
-    <div className="flex gap-8 xl:col-span-3 p-2 ml-3">
-      {/* Line Chart */}
-      <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[65%] max-h-[1800px] mt-6">
-        <h2 className="text-lg font-bold mb-4">Emission Line Chart</h2>
-        <div className="flex space-x-4 mb-4">
-          <button
-            onClick={() => setCurrentData(weekData)}
-            className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
-          >
-            Past Week
-          </button>
-          <button
-            onClick={() => {
-              // fetchLastMonthData();
-              setCurrentData(MonthData);
-            }}
-            className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
-          >
-            Past Month
-          </button>
-          <button
-            onClick={() => setCurrentData(chartData)}
-            className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg"
-          >
-            Past Year
-          </button>
-        </div>
-        <div className="h-[500px] overflow-hidden">
-          <Line data={currentData} options={{ responsive: true }} />
-        </div>
-      </div>
-
-    {/* Bar Chart */}
-<div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 w-full max-w-[35%] max-h-[1800px] mt-6">
-  <h2 className="text-lg font-bold mb-4">Emission Bar Chart</h2>
-  <div className="flex justify-between items-center mb-6">
-    <span className="text-gray-400">Emission Contribution by Source</span>
-    <span className="text-3xl font-bold">Overview</span>
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 xl:col-span-3 p-2 ml-3">
+  {/* Line Chart */}
+  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-4 lg:p-6 w-full lg:max-w-[65%] max-h-[1800px] mt-6">
+    <h2 className="text-lg font-bold mb-4">Emission Line Chart</h2>
+    <div className="flex flex-wrap gap-2 mb-4">
+      <button
+        onClick={() => setCurrentData(weekData)}
+        className="px-3 py-1 lg:px-4 lg:py-2 bg-gray-700 text-gray-300 rounded-lg text-sm lg:text-base"
+      >
+        Past Week
+      </button>
+      <button
+        onClick={() => {
+          // fetchLastMonthData();
+          setCurrentData(MonthData);
+        }}
+        className="px-3 py-1 lg:px-4 lg:py-2 bg-gray-700 text-gray-300 rounded-lg text-sm lg:text-base"
+      >
+        Past Month
+      </button>
+      <button
+        onClick={() => setCurrentData(chartData)}
+        className="px-3 py-1 lg:px-4 lg:py-2 bg-gray-700 text-gray-300 rounded-lg text-sm lg:text-base"
+      >
+        Past Year
+      </button>
+    </div>
+    <div className="h-[300px] lg:h-[500px] overflow-hidden">
+      <Line data={currentData} options={{ responsive: true, maintainAspectRatio: false }} />
+    </div>
   </div>
 
   {/* Bar Chart */}
-  <div className="flex-1">
-    <Bar
-      data={barData}
-      options={{
-        responsive: true,
-        maintainAspectRatio: false, // Allow the chart to adjust to its container
-        plugins: {
-          legend: {
-            position: 'top',
+  <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-4 lg:p-6 w-full lg:max-w-[35%] max-h-[1800px] mt-6">
+    <h2 className="text-lg font-bold mb-4">Emission Bar Chart</h2>
+    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
+      <span className="text-gray-400 text-sm lg:text-base">Emission Contribution by Source</span>
+      <span className="text-2xl lg:text-3xl font-bold mt-2 lg:mt-0">Overview</span>
+    </div>
+
+    {/* Bar Chart */}
+    <div className="flex-1 h-[300px] lg:h-auto">
+      <Bar
+        data={barData}
+        options={{
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
           },
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Sources',
-              font: {
-                size: 14,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Sources',
+                font: {
+                  size: 12,
+                },
+                color: '#ffffff',
               },
-              color: '#ffffff',
-            },
-            ticks: {
-              color: '#ffffff',
-            },
-          },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Emissions (tons CO2)',
-              font: {
-                size: 14,
+              ticks: {
+                color: '#ffffff',
+                font: {
+                  size: 10,
+                },
               },
-              color: '#ffffff',
             },
-            ticks: {
-              color: '#ffffff',
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Emissions (tons CO2)',
+                font: {
+                  size: 12,
+                },
+                color: '#ffffff',
+              },
+              ticks: {
+                color: '#ffffff',
+                font: {
+                  size: 10,
+                },
+              },
             },
           },
-        },
-      }}
-    />
+        }}
+      />
+    </div>
   </div>
 </div>
 
-    </div>
+
   );
 };
 

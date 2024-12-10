@@ -149,107 +149,111 @@ const EmissionEntries = () => {
     );
 
   return (
-    <div className="bg-gray-800 rounded-lg shadow-md p-6 mt-6 w-full max-w-full xl:max-w-none xl:flex-1 overflow-auto">
-      <h2 className="text-lg font-bold mb-4">Emission Data Entries</h2>
-      
-      {/* Filters */}
-      <div className="flex gap-4 mb-4">
-        <input
-          type="date"
-          value={dateRange.startDate}
-          onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
-          className="bg-gray-700 rounded px-2 py-1"
-        />
-        <input
-          type="date"
-          value={dateRange.endDate}
-          onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
-          className="bg-gray-700 rounded px-2 py-1"
-        />
-        <select
-          value={filters.type}
-          onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
-          className="bg-gray-700 rounded px-2 py-1"
-        >
-          <option value="all">All Types</option>
-          <option value="Electricity">Electricity</option>
-          <option value="Explosion">Explosion</option>
-          <option value="Fuel">Fuel</option>
-          <option value="Shipping">Shipping</option>
-        </select>
-        <select
-          value={filters.impact}
-          onChange={(e) => setFilters(prev => ({ ...prev, impact: e.target.value }))}
-          className="bg-gray-700 rounded px-2 py-1"
-        >
-          <option value="all">All Impacts</option>
-          <option value="Critical">Critical</option>
-          <option value="High">High</option>
-          <option value="Medium">Medium</option>
-          <option value="Low">Low</option>
-        </select>
-      </div>
+    <div className="bg-gray-800 rounded-lg shadow-md p-4 sm:p-6 mt-6 w-full max-w-full xl:max-w-none xl:flex-1 overflow-auto">
+  <h2 className="text-lg font-bold mb-4">Emission Data Entries</h2>
+  
+  {/* Filters */}
+  <div className="flex flex-col sm:flex-row gap-4 mb-4">
+    <input
+      type="date"
+      value={dateRange.startDate}
+      onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
+      className="bg-gray-700 rounded px-2 py-1 w-full sm:w-auto"
+    />
+    <input
+      type="date"
+      value={dateRange.endDate}
+      onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+      className="bg-gray-700 rounded px-2 py-1 w-full sm:w-auto"
+    />
+    <select
+      value={filters.type}
+      onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
+      className="bg-gray-700 rounded px-2 py-1 w-full sm:w-auto"
+    >
+      <option value="all">All Types</option>
+      <option value="Electricity">Electricity</option>
+      <option value="Explosion">Explosion</option>
+      <option value="Fuel">Fuel</option>
+      <option value="Shipping">Shipping</option>
+    </select>
+    <select
+      value={filters.impact}
+      onChange={(e) => setFilters(prev => ({ ...prev, impact: e.target.value }))}
+      className="bg-gray-700 rounded px-2 py-1 w-full sm:w-auto"
+    >
+      <option value="all">All Impacts</option>
+      <option value="Critical">Critical</option>
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+  </div>
 
-      {/* Table */}
-      <table className="table-auto w-full text-left">
-        <thead>
-          <tr className="text-gray-400 border-b border-gray-700">
-            <th className="py-4">Type</th>
-            <th className="py-4">Amount (tons CO₂)</th>
-            <th className="py-4">Impact</th>
-            <th className="py-4">Time</th>
-            <th className="py-4">Actions</th>
+  {/* Table */}
+  <div className="overflow-x-auto">
+    <table className="table-auto w-full text-left">
+      <thead>
+        <tr className="text-gray-400 border-b border-gray-700">
+          <th className="py-4 px-2">Type</th>
+          <th className="py-4 px-2">Amount (tons CO₂)</th>
+          <th className="py-4 px-2">Impact</th>
+          <th className="py-4 px-2">Time</th>
+          <th className="py-4 px-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {currentEntries.map((entry, index) => (
+          <tr key={index} className="border-b border-gray-700 hover:bg-gray-700 transition">
+            <td className="py-4 px-2">{entry.type}</td>
+            <td className="py-4 px-2">{entry.amount}</td>
+            <td className="py-4 px-2">
+              <span className={`px-2 py-1 rounded-full text-xs sm:text-sm text-white ${
+                entry.impact === "Critical" ? "bg-red-500" :
+                entry.impact === "High" ? "bg-yellow-500" :
+                entry.impact === "Medium" ? "bg-green-500" : "bg-blue-500"
+              }`}>
+                {entry.impact}
+              </span>
+            </td>
+            <td className="py-4 px-2">{format(new Date(entry.time), 'yyyy-MM-dd HH:mm')}</td>
+            <td className="py-4 px-2">
+              {isToday(entry.time) && (
+                <button 
+                  onClick={() => handleDelete(entry.id, entry.model)}
+                  className="bg-red-500 text-white px-2 py-1 rounded-full hover:bg-red-600 transition text-xs sm:text-sm"
+                >
+                  Delete
+                </button>
+              )}
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {currentEntries.map((entry, index) => (
-            <tr key={index} className="border-b border-gray-700 hover:bg-gray-700 transition">
-              <td className="py-4">{entry.type}</td>
-              <td className="py-4">{entry.amount}</td>
-              <td className="py-4">
-                <span className={`px-2 py-1 rounded-full text-sm text-white ${
-                  entry.impact === "Critical" ? "bg-red-500" :
-                  entry.impact === "High" ? "bg-yellow-500" :
-                  entry.impact === "Medium" ? "bg-green-500" : "bg-blue-500"
-                }`}>
-                  {entry.impact}
-                </span>
-              </td>
-              <td className="py-4">{format(new Date(entry.time), 'yyyy-MM-dd HH:mm')}</td>
-              <td className="py-4">
-                {isToday(entry.time) && (
-                  <button 
-                    onClick={() => handleDelete(entry.id, entry.model)}
-                    className="bg-red-500 text-white px-2 py-1 rounded-full hover:bg-red-600 transition"
-                  >
-                    Delete
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        ))}
+      </tbody>
+    </table>
+  </div>
 
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-4">
-        <button
-          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-600"
-        >
-          Previous
-        </button>
-        <span>Page {currentPage} of {totalPages}</span>
-        <button
-          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-600"
-        >
-          Next
-        </button>
-      </div>
-    </div>
+  {/* Pagination */}
+  <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-4">
+    <button
+      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+      disabled={currentPage === 1}
+      className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-600 w-full sm:w-auto"
+    >
+      Previous
+    </button>
+    <span className="text-sm sm:text-base">Page {currentPage} of {totalPages}</span>
+    <button
+      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+      disabled={currentPage === totalPages}
+      className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-600 w-full sm:w-auto"
+    >
+      Next
+    </button>
+  </div>
+</div>
+
+
   );
 };
 
