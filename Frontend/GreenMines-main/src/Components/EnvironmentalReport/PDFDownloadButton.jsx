@@ -23,7 +23,7 @@ const PDFDownloadButton = ({
         // Enhanced capture function for charts and stats
         const captureFullElementImage = async (element, options = {}) => {
             if (!element) return null;
-            
+        
             try {
                 const clonedElement = element.cloneNode(true);
                 document.body.appendChild(clonedElement);
@@ -33,7 +33,10 @@ const PDFDownloadButton = ({
                 clonedElement.style.width = 'auto';
                 clonedElement.style.height = 'auto';
                 clonedElement.style.overflow = 'visible';
-                
+        
+                // Adding a small delay to ensure the chart is fully rendered
+                await new Promise(resolve => setTimeout(resolve, 2500));  // Adjust delay as needed
+        
                 const canvas = await html2canvas(clonedElement, {
                     scale: 3,
                     useCORS: true,
@@ -43,7 +46,7 @@ const PDFDownloadButton = ({
                     backgroundColor: '#ffffff',
                     ...options
                 });
-
+        
                 document.body.removeChild(clonedElement);
                 return canvas.toDataURL('image/png');
             } catch (error) {
@@ -51,6 +54,7 @@ const PDFDownloadButton = ({
                 return null;
             }
         };
+        
 
         // Create cover page
         const createCoverPage = () => {
@@ -96,33 +100,74 @@ const PDFDownloadButton = ({
             });
         };
 
-        // Add charts
-        const addCharts = async () => {
-            if (chartRefs && chartRefs.length > 0) {
-                pdf.addPage();
-                pdf.setFontSize(16);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('Visual Analysis', 20, 30);
-
-                let currentY = 60;
-                const chartWidth = pageWidth - 40;
-                const chartHeight = 200;
-
-                for (const chartRef of chartRefs) {
-                    if (chartRef.current) {
-                        const chartImage = await captureFullElementImage(chartRef.current);
-                        if (chartImage) {
-                            if (currentY + chartHeight > pageHeight) {
-                                pdf.addPage();
-                                currentY = 30;
-                            }
-                            pdf.addImage(chartImage, 'PNG', 20, currentY, chartWidth, chartHeight);
-                            currentY += chartHeight + 20;
-                        }
+       //Add Charts 
+       const addCharts = async () => {
+        try {
+          if (chartRefs && chartRefs.length > 0) {
+            pdf.addPage();
+            pdf.setFontSize(16);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Visual Analysis', 20, 30);
+      
+            let currentY = 60;
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const chartWidth = pageWidth - 40; // Leave margins
+            const chartHeight = 250; // Adjusted for better fit
+      
+            for (const chartRef of chartRefs) {
+              if (chartRef.current) {
+                try {
+                  // Key modification: Ensure full chart visibility
+                  const canvas = chartRef.current.querySelector('canvas');
+                  
+                  if (!canvas) {
+                    console.error('No canvas found in chart ref');
+                    continue;
+                  }
+      
+                  // Capture the canvas directly
+                  const chartImage = canvas.toDataURL('image/png');
+      
+                  if (chartImage) {
+                    if (currentY + chartHeight > pageHeight) {
+                      pdf.addPage();
+                      currentY = 30;
                     }
+      
+                    try {
+                      // Remove the data URL prefix
+                      const base64Image = chartImage.split(',')[1];
+                      
+                      pdf.addImage(
+                        base64Image, 
+                        'PNG', 
+                        20,  // x-coordinate 
+                        currentY, 
+                        chartWidth, 
+                        chartHeight,
+                        '', 
+                        'FAST'
+                      );
+                      
+                      currentY += chartHeight + 20; // Space between charts
+                    } catch (addImageError) {
+                      console.error('Error adding image to PDF:', addImageError);
+                    }
+                  } else {
+                    console.error('No chart image captured');
+                  }
+                } catch (captureError) {
+                  console.error('Error capturing chart image:', captureError);
                 }
+              }
             }
-        };
+          }
+        } catch (overallError) {
+          console.error('Overall error in addCharts:', overallError);
+        }
+      };
+        
 
         // Advanced HTML content parsing
         const parseHTMLContent = (htmlContent) => {
@@ -250,7 +295,7 @@ const PDFDownloadButton = ({
                 pdf.setFontSize(16);
                 pdf.setFont('helvetica', 'bold');
                 pdf.text('Detailed Statistics', 20, 30);
-                
+            
                 const statsImage = await captureFullElementImage(statsRef.current);
                 if (statsImage) {
                     pdf.addImage(statsImage, 'PNG', 20, 50, pageWidth - 40, 0);

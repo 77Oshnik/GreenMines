@@ -37,6 +37,9 @@ import EnvironmentalReportPage from './pages/EnvironmentalReportPage';
 import Routing from './Components/RouteFrm'
 import { MarqueeReviews } from './Components/ReviewCard';
 import CoalEmission from './Components/CoalEmission';
+import EvSavingsCalculator from './Components/EvSavingsCalculator';
+import MCS from './Components/MCS';
+import MCSCalculator from './Components/MCS';
 function App() {
   return (
     <div className="App font-link">
@@ -78,6 +81,7 @@ function App() {
         <Route path="/renewable" element={<Renewable />} />
         <Route path="/chatbot" element={<ChatBot/>} />
         <Route path="/CCS" element={<CCSCalculator/>}/>
+        <Route path="/MCS" element={<MCS/>}/>
         <Route path="/emissions-analysis" element={<EmissionsAnalysisPage />} />
         <Route path="/afolu" element={<AFOLUForm />} />
         <Route path="/predictions" element={<Prediction />} />
@@ -93,6 +97,7 @@ function App() {
         <Route path="/environmental-reports" element={<EnvironmentalReportPage />} />
         <Route path="/routing" element={<Routing />} />
         <Route path='/coalemission' element={<CoalEmission/>}/>
+        <Route path='/ev' element={<EvSavingsCalculator/>}/>
       </Routes>
       
     </div>
