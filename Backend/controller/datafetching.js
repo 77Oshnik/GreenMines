@@ -2,7 +2,8 @@ const Electricity = require("../models/Electricity");
 const FuelCombustion = require("../models/FuelCombustion");
 const Shipping = require("../models/Shipping");
 const Explosion = require("../models/Explosion");
-const User = require('../models/User')
+const User = require('../models/User');
+const CoalBurn = require('../models/coalEmission')
 // Helper function to validate date format (YYYY-MM-DD)
 const isValidDate = (dateString) => {
     const regex = /^\d{4}-\d{2}-\d{2}$/; // Regex for YYYY-MM-DD format
@@ -89,11 +90,12 @@ exports.fetchDateRangeData = async (req, res) => {
         }
 
         // Fetch data across all models for the given date range
-        const [electricityData, fuelData, shippingData, explosionData] = await Promise.all([
+        const [electricityData, fuelData, shippingData, explosionData ,coalburnData] = await Promise.all([
             Electricity.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
             FuelCombustion.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
             Shipping.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
             Explosion.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
+            CoalBurn.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
         ]);
 
 
@@ -102,6 +104,7 @@ exports.fetchDateRangeData = async (req, res) => {
             fuelCombustion: fuelData,
             shipping: shippingData,
             explosion: explosionData,
+            coalBurn : coalburnData,
         }); // Return the response object
     } catch (error) {
         console.error("Error fetching data:", error.message);

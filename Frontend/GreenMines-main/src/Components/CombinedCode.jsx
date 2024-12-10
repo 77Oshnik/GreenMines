@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import CoalEmission from './CoalEmission';
 
 import ChatAssistant from './ChatAssistant';
 const stateOptions = [
@@ -434,6 +435,15 @@ function CombinedCode() {
         )}
         </div>
 
+        <div className="p-6 bg-[#2B263F] rounded-lg shadow-lg border border-[#66C5CC] mb-8 ">
+  <h1 className="text-3xl font-bold text-[#cad9ed] mb-8 text-center">Coal Burning Emissions</h1>
+  
+  {/* CoalEmission Component */}
+  <div className="space-y-6">
+    <CoalEmission />
+  </div>
+</div>
+
         
 
         {error && (
@@ -444,10 +454,6 @@ function CombinedCode() {
         )}
       </div>
       
-
-      {/* <div className='pt-20 pb-25'>
-      <GraphPage />
-      </div> */}
     </div>
     
   );

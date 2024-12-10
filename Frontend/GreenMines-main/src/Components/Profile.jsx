@@ -78,7 +78,6 @@ const Profile = () => {
 
     const calculateCO2Sum = (data) => {
       let sum = 0;
-    
       if (data && typeof data === 'object') {
         // Handle electricity category
         if (Array.isArray(data.electricity)) {
@@ -112,6 +111,7 @@ const Profile = () => {
           });
         }
     
+        
         // Handle shipping category
         if (Array.isArray(data.shipping)) {
           data.shipping.forEach((item) => {
@@ -121,7 +121,16 @@ const Profile = () => {
             }
           });
         }
-      }
+
+          if (Array.isArray(data.coalBurn)) {
+            data.coalBurn.forEach((item) => {
+              if (item.co2Emissions) {
+                const co2Value = parseFloat(item.co2Emissions);
+                sum += !isNaN(co2Value) ? co2Value : 0;
+              }
+            });
+          }
+        }
     
       // Handle existingSinkData for sequestration
       if (data && data.existingSinkData && Array.isArray(data.existingSinkData)) {
@@ -150,7 +159,6 @@ const Profile = () => {
     console.log("Checking emissions risk...");
 
     const goal = CO2Goal;
-    console.log("CO2 Goal:", goal); // Log CO2Goal
     console.log("Today's Emissions:", todaysEmissionCO2); // Log today's emissions
 
     if (!goal || todaysEmissionCO2 <= 0) {
@@ -184,9 +192,9 @@ const Profile = () => {
         });
         break;
   
-      case (todaysEmissionCO2 >= goal * 1.2):
+      case (todaysEmissionCO2 >= goal ):
         console.log('Moderate risk: Emissions are 1.2 times the target');
-        toast.info("Moderate risk! Today's CO2 emissions are 1.2 times the target!", {
+        toast.info("Moderate risk! Today's CO2 emissions are more than the daily target!", {
           position: "top-right", // Use string directly instead of toast.POSITION.TOP_RIGHT
           autoClose: 5000,
           hideProgressBar: true,
