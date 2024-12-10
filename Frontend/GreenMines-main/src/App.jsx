@@ -37,6 +37,7 @@ import EnvironmentalReportPage from './pages/EnvironmentalReportPage';
 import Routing from './Components/RouteFrm'
 import { MarqueeReviews } from './Components/ReviewCard';
 import CoalEmission from './Components/CoalEmission';
+import EvSavingsCalculator from './Components/EvSavingsCalculator';
 function App() {
   return (
     <div className="App font-link">
@@ -93,6 +94,7 @@ function App() {
         <Route path="/environmental-reports" element={<EnvironmentalReportPage />} />
         <Route path="/routing" element={<Routing />} />
         <Route path='/coalemission' element={<CoalEmission/>}/>
+        <Route path='/ev' element={<EvSavingsCalculator/>}/>
       </Routes>
       
     </div>
