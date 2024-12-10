@@ -38,6 +38,15 @@ const renewableSchema = new mongoose.Schema({
   timeToAchieveNeutrality: {
     type: Number,
   },
+  carbonCreditsSavedPerDay: {
+    type: Number,
+  },
+  carbonCreditsSavedPerYear: {
+    type: Number,
+  },
+  costOfCarbonCreditsSavedPerYear: {
+    type: Number,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

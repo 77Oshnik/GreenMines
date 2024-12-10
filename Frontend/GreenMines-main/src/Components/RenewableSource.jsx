@@ -167,6 +167,14 @@ const RenewableEnergyForm = () => {
             <li><strong>Land Provided:</strong> {result.landProvided} hectares</li>
             <li><strong>Time to Achieve Neutrality:</strong> {result.timeToAchieveNeutrality}</li>
           </ul>
+          <hr className="my-8 border-t-2 border-[#66C5CC]" />
+
+          <h3 className="text-2xl font-bold text-[#66C5CC] mb-4">Cost Savings After Achieving Neutrality</h3>
+          <ul className="space-y-4 text-lg font-semibold text-white">
+            <li><strong>Carbon Credits Saved Per Day:</strong> {result.carbonCreditsSavedPerDay} credits</li>
+            <li><strong>Carbon Credits Saved in a Year:</strong> {result.carbonCreditsSavedPerYear} credits</li>
+            <li><strong>Cost of Carbon Credits Saved in a Year:</strong> {result.costOfCarbonCreditsSavedPerYear}</li>
+          </ul>
         </div>
       )}
     </div>

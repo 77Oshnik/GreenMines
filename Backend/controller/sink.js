@@ -193,6 +193,11 @@ exports.createSink = async (req, res) => {
         // Avoid edge cases where calculations result in zero values
         if (totalReductionPerDay <= 0) totalReductionPerDay = 0.01;
 
+        const carbonCreditPerTon = 300; // Example: ₹300 per ton of carbon credit
+        const carbonCreditsSavedPerDay = totalReductionPerDay; // Each ton of CO2 reduction equals one carbon credit
+        const carbonCreditsSavedPerYear = carbonCreditsSavedPerDay * 365; // Total for a year
+        const costOfCarbonCreditsSavedPerYear = carbonCreditsSavedPerYear * carbonCreditPerTon; // Total cost savings in a year
+
         res.json({
             solutionName,
             selectedRenewable,
@@ -201,6 +206,9 @@ exports.createSink = async (req, res) => {
             totalCo2ReductionPerDay: totalReductionPerDay.toFixed(2),
             landProvided: availableLandNum.toFixed(2),
             timeToAchieveNeutrality: `${timeToAchieveNeutrality} day${timeToAchieveNeutrality > 1 ? 's' : ''}`,
+            carbonCreditsSavedPerDay: carbonCreditsSavedPerDay.toFixed(2),
+            carbonCreditsSavedPerYear: carbonCreditsSavedPerYear.toFixed(2),
+            costOfCarbonCreditsSavedPerYear: `₹${costOfCarbonCreditsSavedPerYear.toLocaleString()}`,
         });
     } catch (error) {
         console.error('Error calculating renewable impact:', error);
