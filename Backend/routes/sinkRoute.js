@@ -10,6 +10,7 @@ router.post("/sinks", sinkController.createSink);
 router.post("/existing-sinks", existingSinkController.createExistingSink);
 router.post("/renewable",renwableController.calculateRenewableImpact)
 router.post("/ccs",sinkController.calculateCCS)
+router.post("/mcs",sinkController.calculateMCS)
 router.post("/ev",Evemission.calculateEmissionSavings)
 
 module.exports = router;
