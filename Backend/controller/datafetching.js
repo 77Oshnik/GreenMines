@@ -45,11 +45,13 @@ exports.fetchDateData = async (req, res) => {
         const endDate = new Date(date);
         endDate.setHours(23, 59, 59, 999);
 
-        const [electricityData, fuelData, shippingData, explosionData] = await Promise.all([
+        const [electricityData, fuelData, shippingData, explosionData , coalBurnData] = await Promise.all([
             fetchModelData(Electricity, startDate, endDate),
             fetchModelData(FuelCombustion, startDate, endDate),
             fetchModelData(Shipping, startDate, endDate),
-            fetchModelData(Explosion, startDate, endDate)
+            fetchModelData(Explosion, startDate, endDate),
+            fetchModelData(CoalBurn, startDate, endDate)
+
         ]);
         
         console.log({ electricityData, fuelData, shippingData, explosionData }); // Log fetched data
@@ -60,7 +62,8 @@ exports.fetchDateData = async (req, res) => {
             electricity: electricityData,
             fuelCombustion: fuelData,
             shipping: shippingData,
-            explosion: explosionData
+            explosion: explosionData,
+            coalBurn:coalBurnData,
         });
 
     } catch (error) {
