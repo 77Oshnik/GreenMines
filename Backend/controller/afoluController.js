@@ -4,7 +4,12 @@ require('dotenv').config();
 
 // Gemini API initialization
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY2); // Replace with your Gemini API Key
-const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // Use your desired Gemini model
+const model = genAI.getGenerativeModel({
+    model: "gemini-pro", // Use your desired Gemini model
+    maxTokens: 4500 // Adjust this based on your required token limit
+});
+
+
 
 // AFOLU Controller
 exports.afolu = async (req, res) => {
@@ -34,7 +39,8 @@ exports.afolu = async (req, res) => {
         - New Land Use: ${newLandUse}
 
         Goals:
-        - Assess the carbon emissions and environmental impact from the land clearing process.
+        - Quantify the carbon emissions caused by clearing the land, considering factors such as biomass loss, soil disturbance, and method of clearing.
+        - Assess the overall environmental impact from the land clearing process.
         - Recommend mitigation strategies to reduce emissions.
         - Suggest alternative methods for land clearing that align with sustainability goals.
 
@@ -45,6 +51,7 @@ exports.afolu = async (req, res) => {
         - Practical mitigation strategies and alternative clearing methods.
         - Actionable next steps or resources for implementing the recommendations.
         `;
+
 
         // Call the Gemini API to generate a response
         const result = await model.generateContent(afoluPrompt);

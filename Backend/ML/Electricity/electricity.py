@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.ensemble import RandomForestRegressor
+from collections import defaultdict
 import joblib
 import os
 import logging
@@ -98,3 +99,58 @@ def assess_risk(predicted_co2):
         return "High Risk", predicted_co2
     else:
         return "Severe Risk", predicted_co2
+
+def calculate_monthly_summary_and_format(daily_predictions):
+    
+
+        monthly_emissions = defaultdict(lambda: defaultdict(list))
+        monthly_risk_summary = defaultdict(lambda: defaultdict(int))
+        formatted_output = []
+
+        months = {
+            "January": range(1, 32),
+            "February": range(32, 60),
+            "March": range(60, 91),
+            "April": range(91, 121),
+            "May": range(121, 152),
+            "June": range(152, 182),
+            "July": range(182, 213),
+            "August": range(213, 244),
+            "September": range(244, 274),
+            "October": range(274, 305),
+            "November": range(305, 335),
+            "December": range(335, 366)
+        }
+
+        for prediction in daily_predictions:
+            entry_number = prediction['Entry No ']
+            month = None
+            for m, entry_range in months.items():
+                if entry_number in entry_range:
+                    month = m
+                    break
+
+            if month:
+                monthly_emissions[month]['emissions'].append(prediction['predicted_co2'])
+                monthly_risk_summary[month][prediction['risk_level']] += 1
+
+        for month in months:
+            if monthly_emissions[month]['emissions']:
+                avg_emissions = sum(monthly_emissions[month]['emissions']) / len(monthly_emissions[month]['emissions'])
+            else:
+                avg_emissions = 0
+
+            month_summary = {
+                "Month": month,
+                "Average Emissions": avg_emissions,
+                "Risk Levels": {}
+            }
+
+            risk_counts = monthly_risk_summary[month]
+            total_risks = sum(risk_counts.values())
+            for risk_level, count in risk_counts.items():
+                month_summary["Risk Levels"][risk_level] = f"{(count / total_risks) * 100:.2f}%"
+
+            formatted_output.append(month_summary)
+
+        return formatted_output

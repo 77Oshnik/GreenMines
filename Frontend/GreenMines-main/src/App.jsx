@@ -40,6 +40,7 @@ import CoalEmission from './Components/CoalEmission';
 import EvSavingsCalculator from './Components/EvSavingsCalculator';
 import MCS from './Components/MCS';
 import MCSCalculator from './Components/MCS';
+import RequiredLand from "./Components/RequiredLand"
 function App() {
   return (
     <div className="App font-link">
@@ -97,7 +98,9 @@ function App() {
         <Route path="/environmental-reports" element={<EnvironmentalReportPage />} />
         <Route path="/routing" element={<Routing />} />
         <Route path='/coalemission' element={<CoalEmission/>}/>
+
         <Route path='/ev' element={<EvSavingsCalculator/>}/>
+        <Route path='/requiredland' element={<RequiredLand/>}/>
       </Routes>
       
     </div>

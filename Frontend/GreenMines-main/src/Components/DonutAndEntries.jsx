@@ -11,13 +11,15 @@ const DonutAndEntries = ({ data }) => {
   const fuelCO2 = data.fuelCombustion.reduce((total, item) => total + item.result.CO2.value, 0);
   const shippingCO2 = data.shipping.reduce((total, item) => total + parseFloat(item.result.carbonEmissions.kilograms), 0);
   const explosionCO2 = data.explosion.reduce((total, item) => total + parseFloat(item.emissions.CO2), 0);
+  const coalCO2 = data.coalBurn.reduce((total, item) => total + parseFloat(item.co2Emissions), 0);
+
 
   // Data for the Doughnut Chart
   const doughnutData = {
-    labels: ["Electricity", "Explosion", "Fuel", "Shipping"],
+    labels: ["Electricity", "Explosion", "Fuel", "Shipping","coalBurn"],
     datasets: [
       {
-        data: [ electricityCO2 ,explosionCO2 ,fuelCO2, shippingCO2],
+        data: [ electricityCO2 ,explosionCO2 ,fuelCO2, shippingCO2,coalCO2],
         backgroundColor: ["#0046b9", "#11c610", "#d5d502", "#6302d5"],
         hoverBackgroundColor: ["#0046b9", "#11c610", "#d5d502", "#6302d5"],
       },

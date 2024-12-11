@@ -68,13 +68,13 @@ const LineAndBarEmission = ({data}) => {
   const calculateEmissionsByDay = (data) => {
     // Initialize emissionsByDay with all the days of the week
     const emissionsByDay = {
-      Sunday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
-      Monday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
-      Tuesday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
-      Wednesday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
-      Thursday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
-      Friday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
-      Saturday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 },
+      Sunday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0 },
+      Monday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
+      Tuesday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
+      Wednesday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
+      Thursday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
+      Friday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
+      Saturday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
     };
   
     const addEmissionToDay = (date, emission, category) => {
@@ -107,6 +107,11 @@ const LineAndBarEmission = ({data}) => {
       const co2Emission = parseFloat(entry.emissions.CO2);
       addEmissionToDay(entry.createdAt, co2Emission, 'explosion');
     });
+
+    data.coalBurn.forEach(entry => {
+      const co2Emission = parseFloat(entry.co2Emissions);
+      addEmissionToDay(entry.createdAt, co2Emission, 'coalBurn');
+    });
   
     return emissionsByDay;
   };
@@ -121,7 +126,7 @@ const LineAndBarEmission = ({data}) => {
   // Ensure fetchWeekData is not null before calling the function
   const totalEmissionsByDay = fetchWeekData ? calculateEmissionsByDay(fetchWeekData) : null;
   
-  console.log(totalEmissionsByDay);
+  console.log("weeks total",totalEmissionsByDay);
   
   const weekData = {
     labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
@@ -186,186 +191,212 @@ const LineAndBarEmission = ({data}) => {
         backgroundColor: "#6302d5",
         tension: 0.4,
       },
+      {
+        label: "coalBurn",
+        data: [
+          (totalEmissionsByDay && totalEmissionsByDay.Monday ? totalEmissionsByDay.Monday.coalBurn : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Tuesday ? totalEmissionsByDay.Tuesday.coalBurn : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Wednesday ? totalEmissionsByDay.Wednesday.coalBurn : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Thursday ? totalEmissionsByDay.Thursday.coalBurn : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Friday ? totalEmissionsByDay.Friday.coalBurn : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Saturday ? totalEmissionsByDay.Saturday.coalBurn : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Sunday ? totalEmissionsByDay.Sunday.coalBurn : 0),
+        ],
+        borderColor: "#FFFFFF",
+        backgroundColor: "#FFFFFF",
+        tension: 0.4,
+      },
     ],
   };
   
   
   
+  const [MonthData,setMonthData]=useState(null);
   // console.log(weekData);
   const [fetchMonthData, setFetchMonthData] = useState(null);
-  const [MonthData,setMonthData]=useState(null);
 
   // Function to fetch last month's data
   const fetchLastThirtyDaysData = async () => {
     try {
-      // Get today's date
       const today = new Date();
-  
-      // Calculate 30 days ago from today
+
+      // Calculate 30 days ago
       const thirtyDaysAgo = new Date(today);
       thirtyDaysAgo.setDate(today.getDate() - 30);
-      
-      // Format dates as YYYY-MM-DD for the API request
-      const startDate = thirtyDaysAgo.toISOString().split('T')[0];
-      const endDate = today.toISOString().split('T')[0];
-  
-      // Fetch data from the backend
-      const response = await axios.get(`http://localhost:5000/api/data/${startDate}/${endDate}`);
-      
-      console.log('Last 30 days data:', response.data);
+
+      const startDate = thirtyDaysAgo.toISOString().split("T")[0];
+      const endDate = today.toISOString().split("T")[0];
+
+      // Fetch data from API
+      const response = await axios.get(
+        `http://localhost:5000/api/data/${startDate}/${endDate}`
+      );
+
+      console.log("Last 30 days data:", response.data);
       setFetchMonthData(response.data);
-  
     } catch (error) {
-      console.error('Error fetching last 30 days data:', error);
-      return null;
+      console.error("Error fetching last 30 days data:", error);
     }
   };
-  
 
-  // Use useEffect to call the function when the page loads (component mount)
   useEffect(() => {
     fetchLastThirtyDaysData();
   }, []);
 
-console.log("month data",fetchMonthData);
-const parseData = (data) => {
-  // If data is null or undefined, return a default dataset
-  if (!data || Object.values(data).some(arr => arr == null)) {
-    return {
-      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+  const parseData = (data) => {
+    if (!data || Object.values(data).some((arr) => arr == null)) {
+      return {
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+        datasets: [
+          {
+            label: "Electricity",
+            data: [0, 0, 0, 0],
+            borderColor: "#0046b9",
+            backgroundColor: "#0046b9",
+            tension: 0.4,
+          },
+          {
+            label: "Fuel Combustion",
+            data: [0, 0, 0, 0],
+            borderColor: "#FF6384",
+            backgroundColor: "#FF6384",
+            tension: 0.4,
+          },
+          {
+            label: "Shipping",
+            data: [0, 0, 0, 0],
+            borderColor: "#36A2EB",
+            backgroundColor: "#36A2EB",
+            tension: 0.4,
+          },
+          {
+            label: "Explosions",
+            data: [0, 0, 0, 0],
+            borderColor: "#FFCE56",
+            backgroundColor: "#FFCE56",
+            tension: 0.4,
+          },
+          {
+            label: "coalBurn",
+            data: [0, 0, 0, 0],
+            borderColor: "#FFFFFF",
+            backgroundColor: "#FFFFFF",
+            tension: 0.4,
+          },
+        ],
+      };
+    }
+
+    const parseNumeric = (value) => {
+      if (typeof value === "string") {
+        const matches = value.match(/[-+]?(\d*\.\d+|\d+)/);
+        return matches ? parseFloat(matches[0]) : 0;
+      }
+      return Number(value) || 0;
+    };
+
+    const getAllDates = (dataArray, dateKey = "createdAt") =>
+      dataArray.map((item) => new Date(item[dateKey]));
+
+    const generateWeeks = (startDate, numWeeks = 4) => {
+      const weeks = [];
+      let currentWeekStart = new Date(startDate);
+
+      for (let i = 0; i < numWeeks; i++) {
+        const currentWeekEnd = new Date(currentWeekStart);
+        currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
+
+        weeks.push({
+          start: new Date(currentWeekStart),
+          end: currentWeekEnd,
+        });
+
+        currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+      }
+
+      return weeks;
+    };
+
+    const getWeekSums = (
+      dataArray,
+      dateKey = "createdAt",
+      valueKey = "result.CO2.value"
+    ) => {
+      if (!dataArray || dataArray.length === 0) return new Array(4).fill(0);
+
+      const allDates = getAllDates(dataArray, dateKey);
+      const weeks = generateWeeks(allDates[0], 4);
+
+      return weeks.map((week) =>
+        dataArray
+          .filter((item) => {
+            const itemDate = new Date(item[dateKey]);
+            return itemDate >= week.start && itemDate <= week.end;
+          })
+          .reduce((sum, item) => {
+            const value = getNestedValue(item, valueKey);
+            return sum + parseNumeric(value);
+          }, 0)
+      );
+    };
+
+    const getNestedValue = (obj, path) => {
+      return path
+        .split(".")
+        .reduce((o, key) => (o && o[key] !== undefined ? o[key] : undefined), obj);
+    };
+
+    const monthData = {
+      labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
       datasets: [
         {
           label: "Electricity",
-          data: [0, 0, 0, 0],
+          data: getWeekSums(data.electricity, "createdAt", "result.CO2.value"),
           borderColor: "#0046b9",
           backgroundColor: "#0046b9",
-          tension: 0.4
+          tension: 0.4,
         },
         {
           label: "Fuel Combustion",
-          data: [0, 0, 0, 0],
+          data: getWeekSums(
+            data.fuelCombustion,
+            "createdAt",
+            "result.CO2.value"
+          ),
           borderColor: "#FF6384",
           backgroundColor: "#FF6384",
-          tension: 0.4
+          tension: 0.4,
         },
         {
           label: "Shipping",
-          data: [0, 0, 0, 0],
+          data: getWeekSums(
+            data.shipping,
+            "createdAt",
+            "result.carbonEmissions.kilograms"
+          ),
           borderColor: "#36A2EB",
           backgroundColor: "#36A2EB",
-          tension: 0.4
+          tension: 0.4,
         },
         {
           label: "Explosions",
-          data: [0, 0, 0, 0],
+          data: getWeekSums(data.explosion, "createdAt", "emissions.CO2"),
           borderColor: "#FFCE56",
           backgroundColor: "#FFCE56",
-          tension: 0.4
-        }
-      ]
+          tension: 0.4,
+        },
+        {
+          label: "coalBurn",
+          data: getWeekSums(data.coalBurn, "createdAt", "co2Emissions"),
+          borderColor: "#FFFFFF",
+          backgroundColor: "#FFFFFF",
+          tension: 0.4,
+        },
+      ],
     };
-  }
 
-  const parseNumeric = (value) => {
-    if (typeof value === 'string') {
-      // Extract first numeric value, handle various formats
-      const matches = value.match(/[-+]?(\d*\.\d+|\d+)/);
-      return matches ? parseFloat(matches[0]) : 0;
-    }
-    return Number(value) || 0;
+    return monthData;
   };
-
-  const getAllDates = (dataArray, dateKey = 'createdAt') =>
-    dataArray.map(item => new Date(item[dateKey]));
-
-  const generateWeeks = (dates) => {
-    if (dates.length === 0) return [];
-
-    const sortedDates = dates.sort((a, b) => a - b);
-    const startDate = new Date(sortedDates[0].getFullYear(), sortedDates[0].getMonth(), 1);
-    const endDate = new Date(sortedDates[sortedDates.length - 1].getFullYear(),
-                              sortedDates[sortedDates.length - 1].getMonth() + 1, 0);
-
-    const weeks = [];
-    let currentWeekStart = new Date(startDate);
-
-    while (currentWeekStart <= endDate) {
-      const currentWeekEnd = new Date(currentWeekStart);
-      currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
-
-      weeks.push({
-        start: new Date(currentWeekStart),
-        end: currentWeekEnd > endDate ? endDate : currentWeekEnd
-      });
-
-      currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-    }
-
-    return weeks;
-  };
-
-  const getWeekSums = (dataArray, dateKey = 'createdAt', valueKey = 'result.CO2.value') => {
-    // If dataArray is null or empty, return an array of zeros
-    if (!dataArray || dataArray.length === 0) return new Array(4).fill(0);
-
-    const allDates = getAllDates(dataArray, dateKey);
-    const weeks = generateWeeks(allDates);
-
-    return weeks.map(week =>
-      dataArray
-        .filter(item => {
-          const itemDate = new Date(item[dateKey]);
-          return itemDate >= week.start && itemDate <= week.end;
-        })
-        .reduce((sum, item) => {
-          const value = getNestedValue(item, valueKey);
-          return sum + parseNumeric(value);
-        }, 0)
-    );
-  };
-
-  const getNestedValue = (obj, path) => {
-    return path.split('.').reduce((o, key) => (o && o[key] !== undefined) ? o[key] : undefined, obj);
-  };
-
-  const monthData = {
-    labels: generateWeeks(getAllDates(data.electricity)).map((week, index) => `Week ${index + 1}`),
-    datasets: [
-      {
-        label: "Electricity",
-        data: getWeekSums(data.electricity, 'createdAt', 'result.CO2.value'),
-        borderColor: "#0046b9",
-        backgroundColor: "#0046b9",
-        tension: 0.4
-      },
-      {
-        label: "Fuel Combustion",
-        data: getWeekSums(data.fuelCombustion, 'createdAt', 'result.CO2.value'),
-        borderColor: "#FF6384",
-        backgroundColor: "#FF6384",
-        tension: 0.4
-      },
-      {
-        label: "Shipping",
-        data: getWeekSums(data.shipping, 'createdAt', 'result.carbonEmissions.kilograms'),
-        borderColor: "#36A2EB",
-        backgroundColor: "#36A2EB",
-        tension: 0.4
-      },
-      {
-        label: "Explosions",
-        data: getWeekSums(data.explosion, 'createdAt', 'emissions.CO2'),
-        borderColor: "#FFCE56",
-        backgroundColor: "#FFCE56",
-        tension: 0.4
-      }
-    ]
-  };
-
-  return monthData;
-};
-
-
 
 useEffect(() => {
   if (fetchMonthData !== null) {
@@ -485,6 +516,13 @@ const formatDataForChart = (rawData) => {
         borderColor: "#6302d5",
         backgroundColor: "#6302d5",
         tension: 0.4,
+      },
+      {
+        label: "Shipping",
+        data: calculateMonthlyCO2Sums(rawData.coalBurn),
+        borderColor: "#FFFFFF",
+        backgroundColor: "#FFFFFF",
+        tension: 0.4,
       }
     ]
   };
@@ -517,17 +555,20 @@ useEffect(() => {
 
   const [currentData, setCurrentData] = useState(weekData);
   
+console.log("one day",data);
 
   const electricityCO2 = data.electricity.reduce((total, item) => total + item.result.CO2.value, 0);
   const fuelCO2 = data.fuelCombustion.reduce((total, item) => total + item.result.CO2.value, 0);
   const shippingCO2 = data.shipping.reduce((total, item) => total + parseFloat(item.result.carbonEmissions.kilograms), 0);
   const explosionCO2 = data.explosion.reduce((total, item) => total + parseFloat(item.emissions.CO2), 0);
+  const coalCO2 = data.coalBurn.reduce((total, item) => total + parseFloat(item.co2Emissions), 0);
+
   const barData={
-    labels: ['Electricity', 'Explosion', 'Fuel', 'Shipping'],
+    labels: ['Electricity', 'Explosion', 'Fuel', 'Shipping','colaBurn'],
     datasets: [
       {
         label: 'Emission (tons CO2)',
-        data: [electricityCO2, explosionCO2, fuelCO2,shippingCO2 ], // Example data
+        data: [electricityCO2, explosionCO2, fuelCO2,shippingCO2,coalCO2], // Example data
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)',
           'rgba(54, 162, 235, 0.6)',

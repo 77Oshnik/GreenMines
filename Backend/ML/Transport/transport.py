@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
+from collections import defaultdict
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder
@@ -97,3 +98,70 @@ def predict_emissions_and_risk(days_data):
         results.append({'Day': day, 'Results': day_results})
 
     return results
+
+def calculate_monthly_summary_and_format(daily_predictions):
+    # Initialize structures for monthly aggregation
+    monthly_emissions = defaultdict(lambda: defaultdict(list))
+    monthly_risk_summary = defaultdict(lambda: defaultdict(int))
+    transport_methods = defaultdict(set)
+    formatted_output = []
+
+    # Define the months and their corresponding day ranges
+    months = {
+        "January": range(1, 32),
+        "February": range(32, 60),
+        "March": range(60, 91),
+        "April": range(91, 121),
+        "May": range(121, 152),
+        "June": range(152, 182),
+        "July": range(182, 213),
+        "August": range(213, 244),
+        "September": range(244, 274),
+        "October": range(274, 305),
+        "November": range(305, 335),
+        "December": range(335, 366)
+    }
+
+    # Process each day's data
+    for prediction in daily_predictions:
+        day_number = prediction['Day']
+        month = None
+        for m, day_range in months.items():
+            if day_number in day_range:
+                month = m
+                break
+
+        if month:
+            for transport_data in prediction['Results']:
+                # Aggregate monthly emissions
+                monthly_emissions[month]['emissions'].append(transport_data['Predicted Emission'])
+
+                # Count risk levels for monthly risk summary
+                monthly_risk_summary[month][transport_data['Risk Level']] += 1
+
+                # Collect transport methods
+                transport_methods[month].add(transport_data['Trasport Method'])
+
+    # Calculate monthly averages for emissions
+    for month in months:
+        if monthly_emissions[month]['emissions']:
+            avg_emissions = sum(monthly_emissions[month]['emissions']) / len(monthly_emissions[month]['emissions'])
+        else:
+            avg_emissions = 0
+
+        month_summary = {
+            "Month": month,
+            "Transport Methods": list(transport_methods[month]),
+            "Average Emissions": avg_emissions,
+            "Risk Levels": {}
+        }
+
+        # Summarize risk levels for the month
+        risk_counts = monthly_risk_summary[month]
+        total_risks = sum(risk_counts.values())
+        for risk_level, count in risk_counts.items():
+            month_summary["Risk Levels"][risk_level] = f"{(count / total_risks) * 100:.2f}%"
+
+        formatted_output.append(month_summary)
+
+    return formatted_output

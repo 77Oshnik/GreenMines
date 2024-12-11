@@ -130,7 +130,7 @@ useEffect(() => {
       
       // Make the API call with the current timestamp
       const response = await axios.get(`http://localhost:5000/api/data/${formattedDate}`);
-      console.log(response.data);
+      console.log("one day",response.data);
       
       setData(response.data);
       

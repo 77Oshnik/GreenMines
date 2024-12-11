@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import RequiredLand from './RequiredLand';
+
 
 function NeutralityForm() {
 
@@ -17,7 +19,7 @@ function NeutralityForm() {
     other: 0
   };
 
-  const [formType, setFormType] = useState('sink');
+  const [formType, setFormType] = useState('existing');
   const [sinkData, setSinkData] = useState({
     name: '',
     vegetationType: 'forest',
@@ -131,6 +133,7 @@ function NeutralityForm() {
   const radioStyle = "mr-4 text-white font-bold";
 
   return (
+    <>
     <div className="p-6 md:p-10 mt-24 lg:p-20 min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#342F49] to-[#2B263F] relative overflow-hidden">
     <div className="absolute inset-0 -z-10">
       <div className="absolute inset-0 bg-gradient-to-r from-[#66C5CC] to-[#55B2B6] opacity-30 animate-gradient overflow-hidden"></div>
@@ -299,7 +302,10 @@ function NeutralityForm() {
     
     )}
   </div>
-  
+  <div>
+  <RequiredLand/>
+  </div>
+  </>
   );
 }
 
