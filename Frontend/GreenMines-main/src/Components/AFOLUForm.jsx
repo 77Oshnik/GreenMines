@@ -265,8 +265,8 @@ const AFOLUForm = () => {
       </div>
       {responseMessage && (
   <div className="mt-10 bg-[#483c8065] rounded-lg p-10 border-2 border-[#66C5CC]">
-    <h2 className="text-3xl font-bold text-[#66C5CC] mb-4">Environmental Impact Analysis:</h2>
-    <div className="text-lg font-semibold text-white">
+    <h2 className="text-4xl font-bold text-[#66C5CC] mb-4">Environmental Impact Analysis:</h2>
+    <div className="text-xl font-semibold text-white ">
       {renderHTMLContent(responseMessage)}
     </div>
   </div>
