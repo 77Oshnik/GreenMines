@@ -1,24 +1,22 @@
-# fuel.py
 import pandas as pd
 import numpy as np
-import joblib as joblib
-import json as json
-import os as os
+import joblib
+import json
+import os
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
+from collections import defaultdict
 
 label_encoder = LabelEncoder()
 scaler = StandardScaler()
 model = RandomForestRegressor()
 
-
 # Load the LabelEncoder and scaler from files
 base_dir = os.path.dirname(os.path.abspath(__file__))
-scaler_path = os.path.join(base_dir,  'fuel_scaler.pkl')
+scaler_path = os.path.join(base_dir, 'fuel_scaler.pkl')
 label_encoder_path = os.path.join(base_dir, 'fuel_label_encoder.pkl')
 model_path = os.path.join(base_dir, 'fuel_model.pkl')
-
 
 model = joblib.load(model_path)
 scaler = joblib.load(scaler_path)
@@ -107,3 +105,72 @@ def predict_emissions_and_risk(daily_fuel_data):
     }
 
     return response
+def calculate_monthly_summary_and_format(daily_predictions):
+    # Initialize structures for monthly aggregation
+    monthly_emissions = defaultdict(lambda: defaultdict(list))
+    monthly_risk_summary = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
+    fuel_types = defaultdict(set)
+    formatted_output = []
+
+    # Define the months and their corresponding day ranges
+    months = {
+        "January": range(1, 31),
+        "February": range(31, 60),
+        "March": range(61, 91),
+        "April": range(91, 121),
+        "May": range(121, 151),
+        "June": range(151, 181),
+        "July": range(181, 212),
+        "August": range(212, 243),
+        "September": range(243, 273),
+        "October": range(273, 304),
+        "November": range(304, 334),
+        "December": range(334, 365)
+    }
+
+    # Process each day's data
+    for prediction in daily_predictions['predictions']:
+        day_number = prediction['day']
+        month = None
+        for m, day_range in months.items():
+            if day_number in day_range:
+                month = m
+                break
+
+        if month:
+            fuel_data = prediction['fuel_data']
+            # Aggregate monthly emissions
+            for emission_type, value in fuel_data['emissions'].items():
+                monthly_emissions[month][emission_type].append(value)
+
+            # Count risk levels for monthly risk summary
+            for emission_type, risk_level in fuel_data['risk_levels'].items():
+                monthly_risk_summary[month][emission_type][risk_level] += 1
+
+            # Collect fuel types
+            fuel_types[month].add(fuel_data['fuel_type'])
+
+    # Calculate monthly averages for emissions
+    for month in months:
+        month_summary = {
+            "Month": month,
+            "Fuel Types": list(fuel_types[month]),
+            "Emissions": {emission_type: 0 for emission_type in ["CO2 (kg)", "Nitrous Oxide CO2e (kg)", "Methane CO2e (kg)", "Total Direct CO2e (kg)", "Indirect CO2e (kg)", "Life Cycle CO2e (kg)"]},
+            "Risk Levels": {}
+        }
+
+        # Calculate average emissions for the month
+        for emission_type, values in monthly_emissions[month].items():
+            month_summary["Emissions"][emission_type] = sum(values) / len(values) if values else 0
+
+        # Summarize risk levels for the month
+        for emission_type, risk_levels in monthly_risk_summary[month].items():
+            total_risks = sum(risk_levels.values())
+            risk_summary = {}
+            for risk_level, count in risk_levels.items():
+                risk_summary[risk_level] = f"{risk_level} - {(count / total_risks) * 100:.2f}%"
+            month_summary["Risk Levels"][emission_type] = risk_summary
+
+        formatted_output.append(month_summary)
+
+    return formatted_output
