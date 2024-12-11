@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import CoalEmission from './CoalEmission';
-
+import MethaneMonitoring from './MethaneLeaks';
 import ChatAssistant from './ChatAssistant';
 const stateOptions = [
   'andhra pradesh', 'chattisgarh', 'jharkhand', 'madhya pradesh',
@@ -444,6 +444,14 @@ function CombinedCode() {
   </div>
 </div>
 
+<div className="p-6 bg-[#2B263F] rounded-lg shadow-lg border border-[#66C5CC] mb-8 ">
+  <h1 className="text-3xl font-bold text-[#cad9ed] mb-8 text-center">Methane Emissions</h1>
+  
+  {/* CoalEmission Component */}
+  <div className="space-y-6">
+    <MethaneMonitoring />
+  </div>
+</div>
         
 
         {error && (
