@@ -238,7 +238,7 @@ const PDFDownloadButton = ({
                 switch (item.type) {
                     case 'mainHeading':
                         // Main Heading Style
-                        pdf.setFontSize(18);
+                        pdf.setFontSize(20);
                         pdf.setFont('helvetica', 'bold');
                         pdf.setTextColor(26, 35, 126); // Deep blue
                         
@@ -250,7 +250,7 @@ const PDFDownloadButton = ({
 
                     case 'list':
                         // List Style
-                        pdf.setFontSize(14);
+                        pdf.setFontSize(16);
                         pdf.setFont('helvetica', 'normal');
                         pdf.setTextColor(0, 0, 0); // Black
                         
@@ -265,7 +265,7 @@ const PDFDownloadButton = ({
 
                     case 'paragraph':
                         // Paragraph Style
-                        pdf.setFontSize(14);
+                        pdf.setFontSize(16);
                         pdf.setFont('helvetica', 'normal');
                         pdf.setTextColor(50, 50, 50); // Dark gray
                         

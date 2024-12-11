@@ -11,7 +11,19 @@ const sinkSchema = new mongoose.Schema({
   vegetationType: {
     type: String,
     required: true,
-    enum: ['forest', 'grassland', 'wetland', 'agricultural', 'mangrove', 'other'], // Example vegetation types
+    enum: [
+      'forest',
+      'grassland',
+      'wetland',
+      'agricultural',
+      'mangrove',
+      'tropical_rainforest',
+      'temperate_forest',
+      'boreal_forest',
+      'savanna',
+      'desert_vegetation',
+      'other',
+    ], // Example vegetation types
     default: 'forest',
   },
   areaCovered: {

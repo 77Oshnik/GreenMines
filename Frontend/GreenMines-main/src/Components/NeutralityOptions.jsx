@@ -49,6 +49,14 @@ export default function CarbonNeutralityOptions() {
       impact: 1800,
       detailsUrl: "/emissions-analysis",
     },
+    {
+      icon: <Tree className="w-12 h-12 text-[#66C5CC]" />,
+      title: "EV Fuel Saver",
+      description: "FuelSave EV Optimizer calculates fuel savings and cost reductions when switching to electric vehicles. It analyzes fuel consumption, distance, and EV efficiency, offering insights into economic and environmental benefits for sustainable transportation..",
+      effectiveness: 65,
+      impact: 1800,
+      detailsUrl: "/ev",
+    },
   ];
 
   return (
