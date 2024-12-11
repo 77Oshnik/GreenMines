@@ -97,7 +97,7 @@ function App() {
         <Route path="/environmental-reports" element={<EnvironmentalReportPage />} />
         <Route path="/routing" element={<Routing />} />
         <Route path='/coalemission' element={<CoalEmission/>}/>
-        <Route path='/methane-emission' element={<MethaneLeaks/>}/>
+
         <Route path='/ev' element={<EvSavingsCalculator/>}/>
       </Routes>
       

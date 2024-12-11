@@ -56,14 +56,10 @@ const MethaneMonitoring = () => {
   const { miningType } = formData;
 
   return (
-    <div className="min-h-screen bg-[#342F49] py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-      <div className="w-full max-w-4xl mx-auto bg-[#231E3D] rounded-2xl shadow-lg overflow-hidden border-2 border-[#66C5CC]">
-        <div className="p-8 md:p-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#66C5CC] mb-8 text-center">
-            Methane Monitoring Dashboard
-          </h2>
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+      
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-8 w-full">
             <div>
               <label className="block text-xl font-medium text-[#66C5CC] mb-2" htmlFor="miningType">
                 Mining Type
@@ -222,8 +218,7 @@ const MethaneMonitoring = () => {
               </ul>
             </div>
           )}
-        </div>
-      </div>
+        
     </div>
   );
 };
