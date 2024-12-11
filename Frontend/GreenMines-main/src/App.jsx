@@ -40,6 +40,7 @@ import CoalEmission from './Components/CoalEmission';
 import EvSavingsCalculator from './Components/EvSavingsCalculator';
 import MCS from './Components/MCS';
 import MCSCalculator from './Components/MCS';
+import RequiredLand from "./Components/RequiredLand"
 function App() {
   return (
     <div className="App font-link">
