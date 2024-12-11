@@ -94,56 +94,84 @@ function EmissionsPerTon() {
   };
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-md text-white">
-      <h2 className="text-2xl font-bold mb-4">Emissions Per Ton of Coal Mined</h2>
-      <form onSubmit={handleSubmit} className="mb-4 flex flex-col gap-4 sm:flex-row items-center">
+    <div className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md text-white w-full max-w-9xl mx-auto">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-center">Emissions Per Ton of Coal Mined</h2>
+      <form onSubmit={handleSubmit} className="mb-4 flex flex-col h-400px sm:flex-row gap-4">
         <input
           type="number"
           placeholder="Enter coal mined (tons)"
           value={coalMined}
           onChange={(e) => setCoalMined(e.target.value)}
-          className="p-2 rounded-md text-black w-full sm:w-1/3"
+          className="p-2 rounded-md text-black w-full font-bold sm:flex-1"
         />
         <select
           value={selectedRange}
           onChange={(e) => setSelectedRange(e.target.value)}
-          className="p-2 rounded-md text-black w-full sm:w-1/3"
+          className="p-2 rounded-md text-black w-full sm:w-auto"
         >
           <option value="day">Day</option>
           <option value="week">Week</option>
           <option value="month">Month</option>
           <option value="year">Year</option>
         </select>
-        <button type="submit" className="bg-green-500 px-4 py-2 rounded-md w-full sm:w-1/3">
+        <button type="submit" className="bg-green-500 px-4 py-2 rounded-md w-full sm:w-auto">
           Calculate
         </button>
       </form>
 
       {emissionsData.totalCO2 && coalMined && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          <div>
-            <h3 className="text-lg font-bold">Summary</h3>
-            <p>Total Emissions: {emissionsData.totalCO2.toFixed(2)} tCO2</p>
-            <p>Emissions per Ton: {(emissionsData.totalCO2 / coalMined).toFixed(2)} tCO2/ton</p>
-            <ul className="mt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 text-xl gap-6 mt-6">
+          <div className="bg-gray-700 p-4 rounded-lg text-xl">
+            <h3 className="text-3x1 font-bold mb-2">Summary</h3>
+            <p className="mb-1">Total Emissions: {emissionsData.totalCO2.toFixed(2)} tCO2</p>
+            <p className="mb-2">Emissions per Ton: {(emissionsData.totalCO2 / parseFloat(coalMined)).toFixed(2)} tCO2/ton</p>
+            <ul className="space-y-1">
               <li>Electricity: {emissionsData.electricity.toFixed(2)} tCO2</li>
               <li>Fuel Combustion: {emissionsData.fuelCombustion.toFixed(2)} tCO2</li>
               <li>Shipping: {emissionsData.shipping.toFixed(2)} tCO2</li>
               <li>Explosion: {emissionsData.explosion.toFixed(2)} tCO2</li>
             </ul>
           </div>
-          <div>
-            <h3 className="text-lg font-bold">Suggestions</h3>
+          <div className="bg-gray-700 p-4 rounded-lg">
+            <h3 className="text-xl font-bold mb-2">Suggestions</h3>
             <p>{getSuggestions()}</p>
           </div>
         </div>
       )}
 
-      {chartData && (
-        <div className="mt-6">
-          <Line data={chartData} options={{ maintainAspectRatio: false }} />
-        </div>
-      )}
+{chartData && (
+  <div className="mt-6 bg-gray-700 p-4 rounded-lg">
+    <Line 
+      data={chartData} 
+      options={{ 
+        maintainAspectRatio: false,
+        responsive: true,
+        scales: {
+          x: { ticks: { color: 'white' } },
+          y: { ticks: { color: 'white' } }
+        },
+        plugins: {
+          legend: { labels: { color: 'white' } }
+        }
+      }} 
+      height={300} 
+      datasetIdKey="id"
+      datasets={[
+        {
+          borderColor: 'rgba(75, 192, 192, 1)', // Vibrant turquoise
+          backgroundColor: 'rgba(75, 192, 192, 0.2)', 
+          borderWidth: 3,
+        },
+        {
+          borderColor: 'rgba(255, 99, 132, 1)', // Vibrant red
+          backgroundColor: 'rgba(255, 99, 132, 0.2)', 
+          borderWidth: 3,
+        }
+      ]}
+    />
+  </div>
+)}
+
     </div>
   );
 }
