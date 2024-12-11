@@ -89,6 +89,22 @@ const generateEnvironmentalReportContent = async (data) => {
         }, 0);
         console.log('Total Shipping Emissions:', totalShippingEmissions);
 
+        // Calculate coal Emissions
+        const totalCoalEmissions = data.coal.reduce((sum, item) => {
+            try {
+                if (item.co2Emissions) {
+                    const value = parseNumber(item.co2Emissions);
+                    console.log('Individual Coal CO2:', value);
+                    return sum + value;
+                }
+                return sum;
+            } catch (error) {
+                console.error('Error processing coal item:', error);
+                return sum;
+            }
+        }, 0);
+        console.log('Total coal Emissions:', totalCoalEmissions);
+
         const totalCarbonSequestration = data.sinks.reduce((sum, item) => {
             const dailyRate = item.dailySequestrationRate || 
                 (item.carbonSequestrationRate / 365);
@@ -132,17 +148,28 @@ const generateEnvironmentalReportContent = async (data) => {
             co2Emissions: parseNumber(item.result.carbonEmissions.kilograms) 
         }));
 
+        const formatCoalData = data.coal.map(item => ({
+            type: item.coalType,
+            consumption: item.coalConsumption,
+            factor: item.emissionFactor,
+            co2factor: item.carbonOxidationFactor,
+            emissions: item.co2Emissions,
+            co2Emissions: parseNumber(item.co2Emissions)
+        }));
+
         // Log the raw data for debugging
         console.log('Raw Electricity Data:', JSON.stringify(data.electricity[0]?.result));
         console.log('Raw Explosion Data:', JSON.stringify(data.explosion[0]?.emissions));
         console.log('Raw Fuel Data:', JSON.stringify(data.fuelCombustion[0]?.result));
         console.log('Raw Shipping Data:', JSON.stringify(data.shipping[0]?.result));
+        console.log('Raw coal Data:', JSON.stringify(data.coal[0]?.co2Emissions));
 
         const emissionsInTons = {
             electricity: totalElectricityEmissions / 1000, // Convert kg to metric tons
             explosion: totalExplosionEmissions / 1000,
             fuel: totalFuelEmissions / 1000,
-            shipping: totalShippingEmissions / 1000
+            shipping: totalShippingEmissions / 1000,
+            coal: totalCoalEmissions /1000
         };
 
         console.log('\nFinal Emissions in Metric Tons:', emissionsInTons);

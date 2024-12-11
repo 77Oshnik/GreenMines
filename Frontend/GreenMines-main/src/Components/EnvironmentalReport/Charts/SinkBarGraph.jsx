@@ -19,12 +19,17 @@ ChartJS.register(
     Legend
 );
 
-const EmissionBarGraph = ({ data }) => {
-   
+const SinkBarGraph = ({ data }) => {
+    // Calculate total emissions for all sources
+    const calculateTotalEmissions = () => {
+        const emissionSources = [
+            ...(data.electricity || []),
+            ...(data.explosion || []),
+            ...(data.fuelCombustion || []),
+            ...(data.shipping || [])
+        ];
 
-     // Calculate totals for each category
-     const calculateTotalEmissions = (items) => {
-        return items.reduce((sum, item) => {
+        return emissionSources.reduce((sum, item) => {
             let co2Value = 0;
             if (item.result && item.result.CO2) {
                 co2Value = parseFloat(item.result.CO2.value) / 1000; // Convert to tons
@@ -32,31 +37,32 @@ const EmissionBarGraph = ({ data }) => {
                 co2Value = parseFloat(item.emissions.CO2) / 1000;
             } else if (item.result && item.result.carbonEmissions) {
                 co2Value = parseFloat(item.result.carbonEmissions.kilograms) / 1000;
-            } else if (item.co2Emissions) {
-                co2Value = parseFloat(item.co2Emissions) / 1000;
             }
             return sum + (isNaN(co2Value) ? 0 : co2Value);
         }, 0);
     };
 
+    // Calculate total absorption from sinks
+    const calculateTotalAbsorption = () => {
+        return data.sinks.reduce((sum, sink) => {
+            const dailyRate = sink.dailySequestrationRate || (sink.carbonSequestrationRate / 365);
+            return sum + (dailyRate * sink.areaCovered); // Total absorbed CO2 in tons
+        }, 0);
+    };
+
+    // Prepare Data for Graph
+    const totalEmissions = calculateTotalEmissions(); // Call the function correctly
+    const totalAbsorption = calculateTotalAbsorption();
+
     const barData = {
-        labels: ['Electricity', 'Explosion', 'Fuel Combustion', 'Shipping', 'Coal'],
+        labels: ['Total Emissions', 'Total Absorbed Sinks'],
         datasets: [{
-            label: 'Emissions (kg CO2)',
-            data: [
-                calculateTotalEmissions(data.electricity),
-                calculateTotalEmissions(data.explosion),
-                calculateTotalEmissions(data.fuelCombustion),
-                calculateTotalEmissions(data.shipping),
-                calculateTotalEmissions(data.coal)
-            ],
+            label: 'CO2 (tons)',
+            data: [totalEmissions, totalAbsorption],
             backgroundColor: [
-                'rgba(255, 99, 132, 0.8)',   // Bright Pink
-                'rgba(54, 162, 235, 0.8)',  // Bright Blue
-                'rgba(255, 159, 64, 0.8)',  // Vibrant Orange
-                'rgba(75, 192, 192, 0.8)',  // Teal
-                'rgba(153, 102, 255, 0.8)'  // Lavender
-            ],
+                'rgba(255, 99, 132, 0.6)', // Color for total emissions
+                'rgba(75, 192, 192, 0.6)'  // Color for total absorption
+            ]
         }]
     };
 
@@ -74,7 +80,7 @@ const EmissionBarGraph = ({ data }) => {
             },
             title: {
                 display: true,
-                text: 'Emissions Comparison',
+                text: 'Total Emissions vs. Total Absorbed Sinks',
                 font: {
                     size: 16
                 }
@@ -88,9 +94,9 @@ const EmissionBarGraph = ({ data }) => {
             height: '500px', // Ensure sufficient height
             backgroundColor: 'white' 
         }}>
-            <Bar data={barData} options={options} />;
-            </div>
-            );
+            <Bar data={barData} options={options} />
+        </div>
+    );
 };
 
-export default EmissionBarGraph;
+export default SinkBarGraph;

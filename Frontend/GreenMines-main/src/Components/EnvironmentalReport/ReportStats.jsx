@@ -2,6 +2,7 @@ import React from 'react';
 import EmissionDonutChart from './Charts/EmissionDonutChart';
 import EmissionBarGraph from './Charts/EmissionBarGraph';
 import EmissionMultiLineGraph from './Charts/EmissionMultiLineGraph';
+import SinkBarGraph from './Charts/SinkBarGraph';
 import { Grid, Card, CardContent, Typography, Box, Divider, Alert } from '@mui/material';
 
 const ReportStats = ({ data, reportType, chartRefs }) => {
@@ -398,6 +399,24 @@ const ReportStats = ({ data, reportType, chartRefs }) => {
                                 </CardContent>
                             </Card>
                         </Grid>
+                        <Grid item xs={12}>
+    <Card>
+        {/* <CardContent>
+        
+                                    <div 
+                                        ref={chartRefs.sinkGraphRef}
+                                        style={{ 
+                                            width: '100%', 
+                                            height: '500px',
+                                            overflow: 'visible' 
+                                        }}
+                                    >
+            <SinkBarGraph data={data} /> 
+            </div>
+        </CardContent> */}
+    </Card>
+</Grid>
+
                     </Grid>
                 </Box>
             </div>

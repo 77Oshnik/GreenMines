@@ -28,3 +28,12 @@ export const fetchMonthlyEnvironmentalReport = async () => {
         throw error;
     }
 };
+
+export const fetchYearlyEnvironmentalReport = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/yearly`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
