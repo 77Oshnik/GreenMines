@@ -19,6 +19,7 @@ import ReportsAndAlerts from "./ReportsAndAlerts";
 import DonutAndEntries from "./DonutAndEntries";
 import LineAndBarEmission from "./LineAndBarEmission";
 import SinkGraphs from "./SinkGraphs";
+import EmissionsPerTon from "./EmissionsPerTon";
 import { useEffect,useState } from "react";
 import axios from "axios";
 import ChatAssistant from "./ChatAssistant";
@@ -164,9 +165,14 @@ if (!data) {
       {/* Dashboard Grid Layout */}
       <div className="px-10">
         <OverviewSection />
+      <div className="px-10 mt-10 xl:col-span-3">  
+        <EmissionsPerTon />
+      </div>
       </div>
       <div className="grid grid-cols-1 gap-8 px-4 sm:px-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
        <DonutAndEntries data={data}/>
+
+
 
           {/* Tabs */}
           <div className="flex flex-wrap gap-8 p-1 justify-between xl:col-span-3">
