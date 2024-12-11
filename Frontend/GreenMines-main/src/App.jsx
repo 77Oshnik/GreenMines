@@ -39,7 +39,7 @@ import { MarqueeReviews } from './Components/ReviewCard';
 import CoalEmission from './Components/CoalEmission';
 import EvSavingsCalculator from './Components/EvSavingsCalculator';
 import MCS from './Components/MCS';
-import MCSCalculator from './Components/MCS';
+import MethaneLeaks from './Components/MethaneLeaks';
 function App() {
   return (
     <div className="App font-link">
@@ -97,6 +97,7 @@ function App() {
         <Route path="/environmental-reports" element={<EnvironmentalReportPage />} />
         <Route path="/routing" element={<Routing />} />
         <Route path='/coalemission' element={<CoalEmission/>}/>
+        <Route path='/methane-emission' element={<MethaneLeaks/>}/>
         <Route path='/ev' element={<EvSavingsCalculator/>}/>
       </Routes>
       
