@@ -2,83 +2,63 @@ import React, { useState } from "react";
 import Navbar from "./Navbar"; // Assuming Navbar is in the same directory
 import axios from "axios";
 import ChatAssistant from "./ChatAssistant";
+import { toast } from 'react-toastify'; // Ensure you have this import
 
 function EmissionPredictionPage() {
   const [predictions, setPredictions] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()-1); // Default to current year
   const [selectedCategory, setSelectedCategory] = useState("fuel");
 
-  const today = new Date().toISOString().split("T")[0]; // Current date in YYYY-MM-DD format
+  const handleYearChange = (e) => {
+    const inputYear = parseInt(e.target.value, 10);
+    const currentYear = new Date().getFullYear();
 
-  const handleStartDateChange = (e) => {
-    const selectedDate = e.target.value; // Get the date in YYYY-MM-DD format
-    setStartDate(selectedDate);
-
-    // Calculate the end date as 6 days later
-    const endDateObj = new Date(selectedDate);
-    endDateObj.setDate(endDateObj.getDate() + 6);
-
-    // Cap the end date to today's date if it exceeds today
-    const todayDate = new Date(today);
-    if (endDateObj > todayDate) {
-      setEndDate(today); // Use today if the calculated end date exceeds today's date
+    if (inputYear < currentYear) {
+      setSelectedYear(inputYear);
+      setError(null);  // Clear the error if the year is valid
     } else {
-      const formattedEndDate = endDateObj.toISOString().split("T")[0]; // Format end date to YYYY-MM-DD
-      setEndDate(formattedEndDate);
+      setError("Year cannot be greater than the current year.");  // Set error message
     }
   };
 
   const fetchData = async () => {
-    if (!startDate || !endDate) {
-      setError("Please select a valid date range.");
-      return;
-    }
-  
+    const startDate = `${selectedYear}-01-01`;
+    const endDate = `${selectedYear}-12-31`;
+
     setLoading(true);
     setError(null);
-  
+
     try {
       // Fetching data from your Flask API
-      const response = await axios.get(`http://localhost:5000/api/data/${startDate}/${endDate}`);
-  
+      const response = await axios.get(
+        `http://localhost:5000/api/data/${startDate}/${endDate}`
+      );
+
       const categoryData = response.data[selectedCategory] || [];
-  
+
       // Check if there's no data for the selected category
       if (categoryData.length === 0) {
-        setError(`No data available for the selected category (${selectedCategory}) in the past 7 days.`);
+        setError(
+          `No data available for the selected category (${selectedCategory}) for the year ${selectedYear}.`
+        );
         setPredictions(null);
         return;
       }
-  
+
       // Format the data
       const formattedData = formatDataForCategory(selectedCategory, categoryData);
-  
-  
+
+     
       // Send the formatted data to Flask
       const flaskRoute = getFlaskRoute(selectedCategory);
       const apiResponse = await axios.post(flaskRoute, formattedData);
+
       
-  
       setPredictions(apiResponse.data);
     } catch (err) {
-      console.error("Full error details:", err);
-      
-      if (err.response) {
-        // The request was made and the server responded with a status code
-        console.error("Error response data:", err.response.data);
-        console.error("Error response status:", err.response.status);
-        console.error("Error response headers:", err.response.headers);
-      } else if (err.request) {
-        // The request was made but no response was received
-        console.error("Error request:", err.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Error message:", err.message);
-      }
-  
+      console.error("Error:", err);
       setError("An unexpected error occurred. Please check the console for details.");
     } finally {
       setLoading(false);
@@ -257,27 +237,17 @@ function EmissionPredictionPage() {
             Emission Prediction Dashboard
           </h1>
 
-          {/* Date Range Section */}
-          <div className="flex flex-col md:flex-row gap-6 mb-6">
-            <div className="flex-1">
-              <label className="block text-[#4da5aa] mb-2">Start Date</label>
-              <input
-                type="date"
-                className="w-full p-3 rounded-lg border border-[#66C5CC] bg-[#342F49] text-white"
-                value={startDate}
-                max={today}
-                onChange={handleStartDateChange}
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-[#4da5aa] mb-2">End Date</label>
-              <input
-                type="date"
-                className="w-full p-3 rounded-lg border border-[#66C5CC] bg-[#342F49] text-white"
-                value={endDate}
-                readOnly
-              />
-            </div>
+           {/* Year Selection Section */}
+           <div className="mb-6">
+            <label className="block text-[#4da5aa] mb-2">Select Year</label>
+            <input
+              type="number"
+              className="w-full p-3 rounded-lg border border-[#66C5CC] bg-[#342F49] text-white"
+              value={selectedYear}
+              min="1900" // Optional: Earliest year you want to allow
+              max={new Date().getFullYear()}
+              onChange={handleYearChange}
+            />
           </div>
 
           {/* Radio Button Section */}
