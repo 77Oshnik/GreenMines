@@ -1,5 +1,4 @@
-const SurfaceMethane = require('../models/SurfaceMethane');
-const UndergroundMethane = require('../models/UndergroundMethane');
+const Methane = require('../models/Methane');
 
 // Function to calculate emissions for both mining types
 exports.calculateEmissions = async (req, res) => {
@@ -25,7 +24,7 @@ exports.calculateEmissions = async (req, res) => {
             });
 
             // Save to database
-            const newEntry = new SurfaceMethane({
+            const newEntry = new Methane({
                 miningType,
                 surfaceCoalProduction,
                 surfaceEmissionFactor,
@@ -43,7 +42,7 @@ exports.calculateEmissions = async (req, res) => {
             });
 
             // Save to database
-            const newEntry = new UndergroundMethane({
+            const newEntry = new Methane({
                 miningType,
                 undergroundCoalProduction,
                 undergroundEmissionFactor,
