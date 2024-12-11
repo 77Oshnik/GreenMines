@@ -19,7 +19,7 @@ function NeutralityForm() {
     other: 0
   };
 
-  const [formType, setFormType] = useState('existing');
+  const [formType, setFormType] = useState('sink');
   const [sinkData, setSinkData] = useState({
     name: '',
     vegetationType: 'forest',

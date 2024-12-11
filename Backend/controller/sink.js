@@ -329,110 +329,120 @@ exports.calculateCCS = async (req, res) => {
   }
 };
 
-
 exports.calculateMCS = async (req, res) => {
   try {
     const {
       mineName,
-      annualMethaneEmissions, // Methane emissions in tons
-      mineSize,              // Size of the mine (Small, Medium, Large)
-      mcsTechnology,         // Chosen methane capture technology
-      installationCostPerTon, // Optional installation cost
-      annualMaintenanceCost   // Optional maintenance cost
-    } = req.body;
-
-    // **Default Values**
-    const defaultInstallationCostPerTon = 3000; // ₹3000 per ton
-    const defaultAnnualMaintenanceCost = 10000000; // ₹10 million/year
-    const methaneMarketPrice = 500; // ₹500 per ton of captured methane (sale of methane as gas)
-    const carbonCreditPrice = 1500; // ₹1500 per ton (converted to CO₂ equivalent)
-
-    // **Helper Function for Numeric Conversion**
-    const convertToNumber = (value, defaultValue) => {
-      const num = Number(value);
-      return isNaN(num) ? defaultValue : num;
-    };
-
-    // **Methane Capture Efficiency by Technology**
-    const captureEfficiencyMap = {
-      Flaring: 0.9,           // 90% efficiency
-      CatalyticOxidation: 0.85, // 85% efficiency
-      MembraneSeparation: 0.92 // 92% efficiency
-    };
-    const captureEfficiency = captureEfficiencyMap[mcsTechnology] || 0.85; // Default 85%
-
-    // **Numeric Conversions**
-    const annualMethaneEmissionsNum = convertToNumber(annualMethaneEmissions, 0); // Methane emitted annually
-    const costPerTon = convertToNumber(installationCostPerTon, defaultInstallationCostPerTon);
-    const maintenanceCost = convertToNumber(annualMaintenanceCost, defaultAnnualMaintenanceCost);
-
-    // **Calculations**
-    const capturedMethane = annualMethaneEmissionsNum * captureEfficiency; // Methane captured annually (tons)
-    const co2Equivalent = capturedMethane * 25; // Methane to CO₂ equivalent using GWP (tons)
-
-    // **Financial Calculations**
-    const installationCost = capturedMethane * costPerTon; // Installation cost based on captured methane
-    const carbonCreditRevenue = co2Equivalent * carbonCreditPrice; // Revenue from carbon credits
-    const methaneRevenue = capturedMethane * methaneMarketPrice; // Revenue from selling captured methane
-    const totalRevenue = carbonCreditRevenue + methaneRevenue; // Total revenue from credits and methane sales
-
-    const totalCostForFirstYear = installationCost + maintenanceCost; // First-year total cost
-    const netProfitForFirstYear = totalRevenue - totalCostForFirstYear; // Net profit/loss for the first year
-
-    const annualNetProfit = totalRevenue - maintenanceCost; // Annual net profit (after year 1)
-    const totalProfitForTenYears = netProfitForFirstYear + (annualNetProfit * 9); // Total profit over 10 years
-
-    // **Save Data to Database**
-    const mcsData = new MCS({
-      mineName,
-      annualMethaneEmissions: annualMethaneEmissionsNum,
+      annualMethaneEmissions,
       mineSize,
       mcsTechnology,
-      captureEfficiency,
-      capturedMethane,
-      co2Equivalent,
-      installationCostPerTon: costPerTon,
-      annualMaintenanceCost: maintenanceCost,
-      methaneMarketPrice,
-      carbonCreditPrice,
-      installationCost,
-      maintenanceCost,
-      carbonCreditRevenue,
-      methaneRevenue,
-      totalCostForFirstYear,
-      totalRevenue,
-      netProfitForFirstYear,
-      annualNetProfit,
-      totalProfitForTenYears
-    });
+      utilization = 'energy' // New parameter for methane utilization strategy
+    } = req.body;
 
-    await mcsData.save();
+    // Enhanced Methane Utilization Strategies
+    const utilizationStrategies = {
+      'energy': {
+        efficiencyRate: 0.85,
+        revenueModel: {
+          type: 'electricity',
+          pricePerMWh: 3500, // ₹3,500 per MWh
+          conversionFactor: 0.055 // 1 ton of methane ≈ 55 MWh
+        }
+      },
+      'hydrogen': {
+        efficiencyRate: 0.75,
+        revenueModel: {
+          type: 'hydrogen',
+          pricePerKg: 250, // ₹250 per kg of hydrogen
+          conversionFactor: 0.18 // 1 ton of methane ≈ 180 kg hydrogen
+        }
+      },
+      'liquefied': {
+        efficiencyRate: 0.90,
+        revenueModel: {
+          type: 'LNG',
+          pricePerTon: 35000, // ₹35,000 per ton of LNG
+          conversionFactor: 0.95 // 1 ton of methane ≈ 0.95 ton LNG
+        }
+      }
+    };
 
-    // **Response to Client**
+    // Capture Technologies Efficiency
+    const captureEfficiencyMap = {
+      Flaring: 0.9,
+      CatalyticOxidation: 0.85,
+      MembraneSeparation: 0.92
+    };
+
+    // Validate and get utilization strategy
+    if (!utilizationStrategies[utilization]) {
+      return res.status(400).json({
+        message: 'Invalid methane utilization strategy',
+        availableStrategies: Object.keys(utilizationStrategies)
+      });
+    }
+
+    // Get selected strategy details
+    const selectedStrategy = utilizationStrategies[utilization];
+    const captureEfficiency = captureEfficiencyMap[mcsTechnology] || 0.85;
+
+    // Calculations
+    const capturedMethane = annualMethaneEmissions * captureEfficiency;
+    const utilisationEfficiency = selectedStrategy.efficiencyRate;
+    const utilizedMethane = capturedMethane * utilisationEfficiency;
+
+    // Revenue Calculation Based on Utilization Strategy
+    const revenueModel = selectedStrategy.revenueModel;
+    const convertedOutput = utilizedMethane * revenueModel.conversionFactor;
+    const strategicRevenue = convertedOutput * revenueModel.pricePerKg || 
+                             convertedOutput * revenueModel.pricePerMWh ||
+                             convertedOutput * revenueModel.pricePerTon;
+
+    // Carbon Credit Calculation
+    const carbonCreditPrice = 1500; // ₹1500 per ton of CO₂ equivalent
+    const co2Equivalent = capturedMethane * 25; // Methane Global Warming Potential
+    const carbonCreditRevenue = co2Equivalent * carbonCreditPrice;
+
+    // Total Revenue
+    const totalRevenue = strategicRevenue + carbonCreditRevenue;
+
+    // Advanced Risk and Efficiency Analysis
+    const performanceAnalysis = {
+      captureEfficiencyTechnology: `${(captureEfficiency * 100).toFixed(2)}%`,
+      utilisationEfficiency: `${(utilisationEfficiency * 100).toFixed(2)}%`,
+      utilizationType: revenueModel.type,
+      potentialOutputType: `${revenueModel.type.toUpperCase()} Generation`
+    };
+
+    // Comprehensive Response
     res.status(200).json({
-      message: "MCS calculation successful for 1 year and 10 years",
-      data: {
+      message: "Advanced Methane Utilization Analysis",
+      projectDetails: {
         mineName,
-        annualMethaneEmissions: annualMethaneEmissionsNum,
         mineSize,
         mcsTechnology,
-        captureEfficiency: `${(captureEfficiency * 100).toFixed(2)}%`,
+        utilizationStrategy: utilization
+      },
+      quantitativeResults: {
+        annualMethaneEmissions: `${annualMethaneEmissions} tons`,
         capturedMethane: `${capturedMethane.toFixed(2)} tons`,
-        co2Equivalent: `${co2Equivalent.toFixed(2)} tons`,
-        installationCost: `₹${installationCost.toFixed(2)}`,
-        maintenanceCost: `₹${maintenanceCost.toFixed(2)}`,
+        utilisedMethane: `${utilizedMethane.toFixed(2)} tons`,
+        convertedOutput: `${convertedOutput.toFixed(2)} ${revenueModel.type === 'hydrogen' ? 'kg' : 'ton'}`,
+        co2Equivalent: `${co2Equivalent.toFixed(2)} tons`
+      },
+      financialSummary: {
+        strategicRevenue: `₹${strategicRevenue.toFixed(2)}`,
         carbonCreditRevenue: `₹${carbonCreditRevenue.toFixed(2)}`,
-        methaneRevenue: `₹${methaneRevenue.toFixed(2)}`,
-        totalCostForFirstYear: `₹${totalCostForFirstYear.toFixed(2)}`,
-        totalRevenue: `₹${totalRevenue.toFixed(2)}`,
-        netProfitForFirstYear: `₹${netProfitForFirstYear.toFixed(2)}`,
-        annualNetProfit: `₹${annualNetProfit.toFixed(2)}`,
-        totalProfitForTenYears: `₹${totalProfitForTenYears.toFixed(2)}`
-      }
+        totalRevenue: `₹${totalRevenue.toFixed(2)}`
+      },
+      performanceAnalysis
     });
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error", error: error.toString() });
+    res.status(500).json({ 
+      message: "Advanced Methane Utilization Error", 
+      error: error.toString() 
+    });
   }
 };
