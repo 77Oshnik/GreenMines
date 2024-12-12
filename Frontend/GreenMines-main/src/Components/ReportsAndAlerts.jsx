@@ -76,6 +76,15 @@ export default function ReportsAndAlerts() {
                 Generate
               </button>
             </li>
+            <li className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 lg:p-4 bg-gray-900 rounded-lg shadow-sm">
+              <span className="text-base lg:text-lg font-medium text-gray-300 mb-2 sm:mb-0">Generate Yearly Report</span>
+              <button 
+                onClick={() => handleReportNavigation('yearly')}
+                className="w-full sm:w-auto px-4 py-2 text-sm lg:text-base font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+              >
+                Generate
+              </button>
+            </li>
           </ul>
         </div>
       </div>

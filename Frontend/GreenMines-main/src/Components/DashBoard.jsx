@@ -165,7 +165,7 @@ if (!data) {
       {/* Dashboard Grid Layout */}
       <div className="px-10">
         <OverviewSection />
-      <div className="px-10 mt-10 xl:col-span-3">  
+      <div className="px-10 mt-10 w-full ">  
         <EmissionsPerTon />
       </div>
       </div>

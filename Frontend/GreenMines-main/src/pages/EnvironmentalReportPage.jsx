@@ -42,7 +42,7 @@ const EnvironmentalReportPage = () => {
     // Create refs for charts and stats
     const donutChartRef = useRef(null);
     const barGraphRef = useRef(null);
-    const lineGraphRef = useRef(null);
+    const sinkGraphRef = useRef(null);
     const statsRef = useRef(null);
 
     useEffect(() => {
@@ -116,52 +116,64 @@ const EnvironmentalReportPage = () => {
         <span>Go Back</span>
     </button>
                     <Tabs
-                        value={currentReportType}
-                        onChange={(e, newValue) => handleGenerateReport(newValue)}
-                        textColor="inherit"
-                        indicatorColor="secondary"
-                        sx={{ 
-                            backgroundColor: 'rgba(255,255,255,0.2)', 
-                            borderRadius: 2 
-                        }}
-                    >
-                        <Tab 
-                            value="daily" 
-                            label="Daily" 
-                            icon={<CalendarTodayIcon />} 
-                            sx={{ 
-                                color: 'white', 
-                                fontWeight: 'bold',
-                                '&.Mui-selected': {
-                                    backgroundColor: 'rgba(255,255,255,0.1)'
-                                }
-                            }} 
-                        />
-                        <Tab 
-                            value="weekly" 
-                            label="Weekly" 
-                            icon={<TimelineIcon />} 
-                            sx={{ 
-                                color: 'white', 
-                                fontWeight: 'bold',
-                                '&.Mui-selected': {
-                                    backgroundColor: 'rgba(255,255,255,0.1)'
-                                }
-                            }} 
-                        />
-                        <Tab 
-                            value="monthly" 
-                            label="Monthly" 
-                            icon={<AssessmentIcon />} 
-                            sx={{ 
-                                color: 'white', 
-                                fontWeight: 'bold',
-                                '&.Mui-selected': {
-                                    backgroundColor: 'rgba(255,255,255,0.1)'
-                                }
-                            }} 
-                        />
-                    </Tabs>
+    value={currentReportType}
+    onChange={(e, newValue) => handleGenerateReport(newValue)}
+    textColor="inherit"
+    indicatorColor="secondary"
+    sx={{ 
+        backgroundColor: 'rgba(255,255,255,0.2)', 
+        borderRadius: 2 
+    }}
+>
+    <Tab 
+        value="daily" 
+        label="Daily" 
+        icon={<CalendarTodayIcon />} 
+        sx={{ 
+            color: 'white', 
+            fontWeight: 'bold',
+            '&.Mui-selected': {
+                backgroundColor: 'rgba(255,255,255,0.1)'
+            }
+        }} 
+    />
+    <Tab 
+        value="weekly" 
+        label="Weekly" 
+        icon={<TimelineIcon />} 
+        sx={{ 
+            color: 'white', 
+            fontWeight: 'bold',
+            '&.Mui-selected': {
+                backgroundColor: 'rgba(255,255,255,0.1)'
+            }
+        }} 
+    />
+    <Tab 
+        value="monthly" 
+        label="Monthly" 
+        icon={<AssessmentIcon />} 
+        sx={{ 
+            color: 'white', 
+            fontWeight: 'bold',
+            '&.Mui-selected': {
+                backgroundColor: 'rgba(255,255,255,0.1)'
+            }
+        }} 
+    />
+    <Tab 
+        value="yearly"  // New tab for yearly report
+        label="Yearly"
+        icon={<AssessmentIcon />}
+        sx={{ 
+            color: 'white', 
+            fontWeight: 'bold',
+            '&.Mui-selected': {
+                backgroundColor: 'rgba(255,255,255,0.1)'
+            }
+        }} 
+    />
+</Tabs>
                 </Paper>
 
                 {loading && (
@@ -232,7 +244,7 @@ const EnvironmentalReportPage = () => {
                                                 chartRefs={[
                                                     donutChartRef, 
                                                     barGraphRef, 
-                                                    lineGraphRef
+                                                    sinkGraphRef
                                                 ]}
                                                 statsRef={statsRef}
                                                 emissions={reportData.data?.emissions || {
@@ -252,8 +264,8 @@ const EnvironmentalReportPage = () => {
                                                         ref: barGraphRef,
                                                         title: 'Emissions by Source'
                                                     },
-                                                    lineGraph: {
-                                                        ref: lineGraphRef,
+                                                    sinkGraph: {
+                                                        ref: sinkGraphRef,
                                                         title: 'Emissions Trend'
                                                     }
                                                 }}
@@ -270,7 +282,7 @@ const EnvironmentalReportPage = () => {
                                     chartRefs={{
                                         donutChartRef,
                                         barGraphRef,
-                                        lineGraphRef
+                                        sinkGraphRef
                                     }}
                                 />
                             </div>

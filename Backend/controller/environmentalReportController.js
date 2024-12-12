@@ -5,6 +5,8 @@ const Shipping = require("../models/Shipping");
 const Explosion = require("../models/Explosion");
 const Sink = require("../models/ExistingSink");
 const ExistingSink = require("../models/ExistingSink");
+const coalEmission = require('../models/coalEmission');
+
 
 const calculateDateRange = (days) => {
     const now = new Date();
@@ -15,11 +17,12 @@ const calculateDateRange = (days) => {
 
 const fetchDataForRange = async (startDate, endDate) => {
     const query = { createdAt: { $gte: startDate, $lte: endDate } };
-    const [electricity, fuelCombustion, shipping, explosion, sinks] = await Promise.all([
+    const [electricity, fuelCombustion, shipping, explosion, coal, sinks] = await Promise.all([
         Electricity.find(query).sort({ createdAt: 1 }),
         FuelCombustion.find(query).sort({ createdAt: 1 }),
         Shipping.find(query).sort({ createdAt: 1 }),
         Explosion.find(query).sort({ createdAt: 1 }),
+        coalEmission.find(query).sort({ createdAt: 1 }),
         ExistingSink.find(query).sort({ createdAt: 1 })
     ]);
 
@@ -33,6 +36,7 @@ const fetchDataForRange = async (startDate, endDate) => {
         explosion: calculateTotal(explosion),
         fuelCombustion: calculateTotal(fuelCombustion),
         shipping: calculateTotal(shipping),
+        coal: calculateTotal(coal),
         total: 0
     };
 // Calculate total emissions
@@ -45,6 +49,7 @@ return {
     explosion,
     fuelCombustion,
     shipping,
+    coal,
     sinks,
     summary: {
         totalEmissions,
@@ -116,6 +121,34 @@ exports.generateMonthlyEnvironmentalReport = async (req, res) => {
         res.status(500).json({
             success: false,
             error: "Failed to generate monthly environmental report"
+        });
+    }
+};
+
+exports.generateYearlyEnvironmentalReport = async (req, res) => {
+    try {
+        const now = new Date();
+        const pastDate = new Date();
+        pastDate.setFullYear(now.getFullYear() - 1); // Set to one year ago
+
+        const startDate = pastDate;
+        const endDate = now;
+
+        const data = await fetchDataForRange(startDate, endDate);
+        const report = await generateEnvironmentalReportContent(data);
+        
+        res.status(200).json({
+            success: true,
+            range: "Yearly",
+            report,
+            data,
+            timestamp: new Date()
+        });
+    } catch (error) {
+        console.error("Error generating yearly environmental report:", error);
+        res.status(500).json({
+            success: false,
+            error: "Failed to generate yearly environmental report"
         });
     }
 };

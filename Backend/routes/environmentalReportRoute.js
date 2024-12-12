@@ -5,5 +5,6 @@ const environmentalReportController = require("../controller/environmentalReport
 router.get("/daily", environmentalReportController.generateDailyEnvironmentalReport);
 router.get("/weekly", environmentalReportController.generateWeeklyEnvironmentalReport);
 router.get("/monthly", environmentalReportController.generateMonthlyEnvironmentalReport);
+router.get("/yearly", environmentalReportController.generateYearlyEnvironmentalReport);
 
 module.exports = router;
