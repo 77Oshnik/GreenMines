@@ -3,7 +3,8 @@ const FuelCombustion = require("../models/FuelCombustion");
 const Shipping = require("../models/Shipping");
 const Explosion = require("../models/Explosion");
 const User = require('../models/User');
-const CoalBurn = require('../models/coalEmission')
+const CoalBurn = require('../models/coalEmission');
+const methaneemission=require('../models/Methane')
 // Helper function to validate date format (YYYY-MM-DD)
 const isValidDate = (dateString) => {
     const regex = /^\d{4}-\d{2}-\d{2}$/; // Regex for YYYY-MM-DD format
@@ -45,12 +46,14 @@ exports.fetchDateData = async (req, res) => {
         const endDate = new Date(date);
         endDate.setHours(23, 59, 59, 999);
 
-        const [electricityData, fuelData, shippingData, explosionData , coalBurnData] = await Promise.all([
+        const [electricityData, fuelData, shippingData, explosionData , coalBurnData,methaneData] = await Promise.all([
             fetchModelData(Electricity, startDate, endDate),
             fetchModelData(FuelCombustion, startDate, endDate),
             fetchModelData(Shipping, startDate, endDate),
             fetchModelData(Explosion, startDate, endDate),
-            fetchModelData(CoalBurn, startDate, endDate)
+            fetchModelData(CoalBurn, startDate, endDate),
+            fetchModelData(methaneemission, startDate, endDate)
+
 
         ]);
         
@@ -64,6 +67,7 @@ exports.fetchDateData = async (req, res) => {
             shipping: shippingData,
             explosion: explosionData,
             coalBurn:coalBurnData,
+            methane:methaneData
         });
 
     } catch (error) {
@@ -93,12 +97,14 @@ exports.fetchDateRangeData = async (req, res) => {
         }
 
         // Fetch data across all models for the given date range
-        const [electricityData, fuelData, shippingData, explosionData ,coalburnData] = await Promise.all([
+        const [electricityData, fuelData, shippingData, explosionData ,coalburnData , methaneData] = await Promise.all([
             Electricity.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
             FuelCombustion.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
             Shipping.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
             Explosion.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
             CoalBurn.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
+            methaneemission.find({ createdAt: { $gte: start, $lte: end } }).sort({ createdAt: 1 }),
+
         ]);
 
 
@@ -108,6 +114,7 @@ exports.fetchDateRangeData = async (req, res) => {
             shipping: shippingData,
             explosion: explosionData,
             coalBurn : coalburnData,
+            methane:methaneData
         }); // Return the response object
     } catch (error) {
         console.error("Error fetching data:", error.message);
