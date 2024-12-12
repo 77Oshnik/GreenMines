@@ -4,7 +4,7 @@ from flask_cors import CORS, cross_origin
 from Transport.transport import predict_emissions_and_risk as predict_transport_emissions_trans
 from Transport.transport import calculate_monthly_summary_and_format as calculate_monthly_summary_and_format_trans
 from Fuel.fuel import predict_emissions_and_risk as predict_fuel_emissions  # Import the fuel model's prediction function
-from Fuel.fuel import calculate_monthly_summary_and_format as calculate_monthly_summary_and_format
+from Fuel.fuel import calculate_monthly_summary_and_format as calculate_monthly_summary_and_format_fuel
 from Electricity.electricity import predict_emissions_and_risk as predict_emissions_and_risk  # Import the appropriate function
 from Electricity.electricity import calculate_monthly_summary_and_format as calculate_monthly_summary_and_format  # Import the appropriate function
 from Explosives.explosive import predict_7_days_multiple_explosives as predict_7_days_multiple_explosives  # Import the appropriate function
@@ -96,7 +96,7 @@ def ml_fuel():
         daily_predictions = predict_fuel_emissions(daily_fuel_data)
 
         # Calculate monthly summary
-        monthly_summary = calculate_monthly_summary_and_format(daily_predictions)
+        monthly_summary = calculate_monthly_summary_and_format_fuel(daily_predictions)
 
         # Return the monthly summary as a JSON response
         response = {

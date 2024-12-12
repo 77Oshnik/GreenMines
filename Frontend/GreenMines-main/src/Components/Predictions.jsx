@@ -11,6 +11,12 @@ function EmissionPredictionPage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()-1); // Default to current year
   const [selectedCategory, setSelectedCategory] = useState("fuel");
 
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+    setPredictions(null); // Clear predictions when category changes
+    setError(null); // Clear any existing error
+  };
+
   const handleYearChange = (e) => {
     const inputYear = parseInt(e.target.value, 10);
     const currentYear = new Date().getFullYear();
@@ -55,7 +61,7 @@ function EmissionPredictionPage() {
       const flaskRoute = getFlaskRoute(selectedCategory);
       const apiResponse = await axios.post(flaskRoute, formattedData);
 
-      
+      console.log(apiResponse);
       setPredictions(apiResponse.data);
     } catch (err) {
       console.error("Error:", err);
@@ -260,7 +266,7 @@ function EmissionPredictionPage() {
                     type="radio"
                     value={category}
                     checked={selectedCategory === category}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    onChange={handleCategoryChange}
                     className="mr-3 w-6 h-6"
                   />
                   <span className="text-white capitalize">{category}</span>
@@ -286,68 +292,77 @@ function EmissionPredictionPage() {
           {/* Display Predictions */}
           {predictions && !loading && (
   <div className="mt-6 bg-[#1d1d1f] p-6 rounded-lg text-[#66C5CC]">
+    <h3 className="text-2xl mb-4"><b>{selectedYear+1}</b></h3>
     <h3 className="text-2xl mb-4">Predictions for {selectedCategory}</h3>
-    {selectedCategory === 'fuelCombustion' && predictions.predictions && (
-      <div className="space-y-4">
-        {predictions.predictions.predictions.map((prediction, index) => (
-          <div key={index} className="border-b border-[#66C5CC] pb-4">
-            <h4 className="text-xl font-semibold mb-2">Day {prediction.day}</h4>
-            <p className="mb-2">
-              <strong>Fuel Type:</strong> {prediction.fuel_data.fuel_type}
-            </p>
-            <p className="mb-2">
-              <strong>Quantity Consumed:</strong>{" "}
-              {prediction.fuel_data.quantity_fuel_consumed_liters} liters
-            </p>
-            <div className="mb-2">
-              <h5 className="font-medium">Emissions:</h5>
-              <ul className="ml-4 list-disc">
-                {Object.entries(prediction.fuel_data.emissions).map(
-                  ([key, value]) => (
-                    <li key={key}>
-                      <strong>{key}:</strong> {value}
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
-            <div>
-              <h5 className="font-medium">Risk Levels:</h5>
-              <ul className="ml-4 list-disc">
-                {Object.entries(prediction.fuel_data.risk_levels).map(
-                  ([key, value]) => (
-                    <li key={key}>
-                      <strong>{key}:</strong> {value}
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
-          </div>
-        ))}
+    {selectedCategory === 'fuelCombustion' && predictions.monthly_summary && (
+  <div className="space-y-4">
+    {predictions.monthly_summary.map((summary, index) => (
+      <div key={index} className="border-b border-[#66C5CC] pb-4">
+        <h4 className="text-xl font-semibold mb-2">{summary.Month}</h4>
+        <p className="mb-2">
+          <strong>Fuel Types:</strong> {summary["Fuel Types"].join(', ') || 'None'}
+        </p>
+        <div className="mb-2">
+          <h5 className="font-medium">Emissions:</h5>
+          <ul className="ml-4 list-disc">
+            {Object.entries(summary.Emissions).map(([key, value]) => (
+              <li key={key}>
+                <strong>{key}:</strong> {value}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h5 className="font-medium">Risk Levels:</h5>
+          <ul className="ml-4 list-disc">
+            {Object.entries(summary["Risk Levels"]).map(([emissionType, risks]) => (
+              <li key={emissionType}>
+                <strong>{emissionType}:</strong>
+                <ul className="ml-4 list-disc">
+                  {Object.entries(risks).map(([riskLevel, description]) => (
+                    <li key={riskLevel}>{description}</li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-    )}
+    ))}
+  </div>
+)}
+
+
 
 {selectedCategory === 'electricity' && (
   <div className="space-y-4">
-    {predictions && predictions.predictions ? (
+    {predictions && predictions.monthly_summary ? (
       <>
         <p className="text-lg"><strong>State:</strong> {predictions.state}</p>
-        {Array.isArray(predictions.predictions) ? (
-          predictions.predictions.map((prediction, index) => (
+        {Array.isArray(predictions.monthly_summary) && predictions.monthly_summary.length > 0 ? (
+          predictions.monthly_summary.map((monthData, index) => (
             <div key={index} className="border-b border-[#66C5CC] pb-4">
-              <h4 className="text-xl font-semibold mb-2">Entry No. {prediction['Entry No ']}</h4>
+              <h4 className="text-xl font-semibold mb-2">Month: {monthData.Month}</h4>
               <p className="mb-2">
-                <strong>Predicted CO2:</strong> {prediction.predicted_co2}
+                <strong>Average Emissions:</strong> {monthData["Average Emissions"]} gCO2
               </p>
               <p>
-                <strong>Risk Level:</strong> {prediction.risk_level}
+                <strong>Risk Levels:</strong>
               </p>
+              {Object.entries(monthData["Risk Levels"]).length > 0 ? (
+                Object.entries(monthData["Risk Levels"]).map(([riskLevel, percentage], idx) => (
+                  <p key={idx}>
+                    {riskLevel}: {percentage}
+                  </p>
+                ))
+              ) : (
+                <p>No risk data available</p>
+              )}
             </div>
           ))
         ) : (
           <div className="text-center text-red-500">
-            No predictions available for electricity
+            No monthly summary available for electricity
           </div>
         )}
       </>
@@ -362,58 +377,49 @@ function EmissionPredictionPage() {
 {selectedCategory === 'explosion' && (
   <div className="space-y-4">
     {predictions ? (
-      Object.entries(predictions).map(([day, dayPredictions]) => (
-        <div key={day} className="mb-6">
-          <h3 className="text-2xl font-semibold mb-4">{day}</h3>
-          {Array.isArray(dayPredictions) ? (
-            dayPredictions.map((predictionGroup, groupIndex) => (
-              <div key={groupIndex} className="border-b border-[#66C5CC] pb-4 mb-4">
-                {Array.isArray(predictionGroup) ? (
-                  predictionGroup.map((prediction, predIndex) => (
-                    <div key={predIndex}>
-                      <p className="mb-2">
-                        <strong>Explosive Type:</strong> {prediction['Explosive Type']}
-                      </p>
-                      <div className="mb-2">
-                        <h5 className="font-medium">Emissions:</h5>
-                        <ul className="ml-4 list-disc">
-                          {Object.entries(prediction)
-                            .filter(([key]) => ['CO', 'CO2', 'H2S', 'HCN', 'NH3', 'NOx', 'SO2'].includes(key))
-                            .map(([key, value]) => (
-                              <li key={key}>
-                                <strong>{key}:</strong> {value}
-                              </li>
-                            ))}
-                        </ul>
-                      </div>
-                      {prediction['Risk Evaluation'] && (
-                        <div>
-                          <h5 className="font-medium">Risk Levels:</h5>
-                          <ul className="ml-4 list-disc">
-                            {Array.isArray(prediction['Risk Evaluation']) ? (
-                              prediction['Risk Evaluation'].map((risk, riskIndex) => (
-                                <li key={riskIndex}>{risk}</li>
-                              ))
-                            ) : (
-                              <li>{prediction['Risk Evaluation']}</li>
-                            )}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center text-red-500">
-                    Unexpected prediction group format
-                  </div>
-                )}
+      predictions.map((prediction, index) => (
+        <div key={index} className="mb-6">
+          <h3 className="text-2xl font-semibold mb-4">{prediction.Month}</h3>
+          <div className="border-b border-[#66C5CC] pb-4 mb-4">
+            {/* Explosive Types */}
+            {Array.isArray(prediction['Explosive Type']) && prediction['Explosive Type'].length > 0 ? (
+              <div>
+                <p className="mb-2">
+                  <strong>Explosive Type:</strong> {prediction['Explosive Type'].join(', ')}
+                </p>
               </div>
-            ))
-          ) : (
-            <div className="text-center text-red-500">
-              No predictions available for explosion
+            ) : (
+              <p className="mb-2 text-red-500">No explosive types available</p>
+            )}
+
+            {/* Emissions */}
+            <div className="mb-2">
+              <h5 className="font-medium">Emissions:</h5>
+              <ul className="ml-4 list-disc">
+                {Object.entries(prediction.Emissions).map(([key, value]) => (
+                  <li key={key}>
+                    <strong>{key}:</strong> {value}
+                  </li>
+                ))}
+              </ul>
             </div>
-          )}
+
+            {/* Risk Evaluation */}
+            {Object.keys(prediction['Risk Evaluation']).length > 0 ? (
+              <div>
+                <h5 className="font-medium">Risk Levels:</h5>
+                <ul className="ml-4 list-disc">
+                  {Object.entries(prediction['Risk Evaluation']).map(([key, value]) => (
+                    <li key={key}>
+                      <strong>{key}:</strong> {value}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <p className="mb-2 text-red-500">No risk evaluation available</p>
+            )}
+          </div>
         </div>
       ))
     ) : (
@@ -426,24 +432,38 @@ function EmissionPredictionPage() {
 
 {selectedCategory === 'shipping' && (
   <div className="space-y-4">
-    {/* Check if predictions is an array */}
-    {Array.isArray(predictions) ? (
-      predictions.map((dayPrediction, dayIndex) => (
-        <div key={dayIndex}>
-          <h3 className="text-2xl font-semibold mb-4">Day {dayPrediction.Day}</h3>
-          {dayPrediction.Results.map((result, resultIndex) => (
-            <div key={resultIndex} className="border-b border-[#66C5CC] pb-4 mb-4">
-              <p className="mb-2">
-                <strong>Transport Method:</strong> {result["Trasport Method"]}
-              </p>
-              <p className="mb-2">
-                <strong>Predicted Emission:</strong> {result["Predicted Emission"]}
-              </p>
-              <p>
-                <strong>Risk Level:</strong> {result["Risk Level"]}
-              </p>
+    {/* Check if monthly_summary is an array */}
+    {Array.isArray(predictions.monthly_summary) ? (
+      predictions.monthly_summary.map((monthData, monthIndex) => (
+        <div key={monthIndex}>
+          <h3 className="text-2xl font-semibold mb-4">{monthData.Month}</h3>
+          <p className="mb-2">
+            <strong>Average Emissions:</strong> {monthData["Average Emissions"]}
+          </p>
+          {Object.keys(monthData["Risk Levels"]).length > 0 ? (
+            <div>
+              <strong>Risk Levels:</strong>
+              {Object.entries(monthData["Risk Levels"]).map(([riskLevel, percentage], riskIndex) => (
+                <p key={riskIndex} className="mb-2">
+                  {riskLevel}: {percentage}
+                </p>
+              ))}
             </div>
-          ))}
+          ) : (
+            <p>No risk levels available for this month.</p>
+          )}
+          {monthData["Transport Methods"].length > 0 ? (
+            <div>
+              <strong>Transport Methods:</strong>
+              <ul>
+                {monthData["Transport Methods"].map((method, methodIndex) => (
+                  <li key={methodIndex}>{method}</li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p>No transport methods available for this month.</p>
+          )}
         </div>
       ))
     ) : (
