@@ -236,62 +236,63 @@ exports.analyzeEmissionsWithGenAI = async (req, res) => {
 
     // Prepare the prompt for Cohere AI to generate a "blame-based" response
     const prompt = `
-   You are an AI environmental forensics expert analyzing emissions data from ${startDate} to ${endDate}.
-
-    Emission Impact Summary:
-    - Impact Level: ${emissionImpact.impactLevel}
-    - Total Emissions:
-      * CO2: ${emissionImpact.totalEmissions.CO2.toFixed(2)} kg
-      * CO: ${emissionImpact.totalEmissions.CO.toFixed(2)} kg
-      * H2S: ${emissionImpact.totalEmissions.H2S.toFixed(2)} kg
-      * NOx: ${emissionImpact.totalEmissions.NOx.toFixed(2)} kg
-
-    Emission Source Breakdown:
-    - Electricity Emissions: ${emissionImpact.categories.electricity.count} events
-      * CO2: ${(emissionImpact.categories.electricity.emissions.CO2 || 0).toFixed(2)} kg
-    - Fuel Combustion Emissions: ${emissionImpact.categories.fuelCombustion.count} events
-      * CO2: ${(emissionImpact.categories.fuelCombustion.emissions.CO2 || 0).toFixed(2)} kg
-    - Shipping Emissions: ${emissionImpact.categories.shipping.count} events
-      * CO2: ${(emissionImpact.categories.shipping.emissions.CO2 || 0).toFixed(2)} kg
-    - Explosion Emissions: ${emissionImpact.categories.explosion.count} events
-      * CO2: ${(emissionImpact.categories.explosion.emissions.CO2 || 0).toFixed(2)} kg
-
-    Generate a comprehensive environmental impact report following this format:
-    - Animals Death: [Calculated number based on emission levels] animals
-    - Birds Affected: [Calculated number based on emission levels] birds
-    - Biodiversity Hazard: [Specific impact based on emission types and levels]
-    - Ozone Layer Depletion: [Direct correlation with NOx and CO2 emissions]
-    - Soil and Water Contamination: [Impact based on H2S and other emission levels]
-    - Heat Island Effect: [Correlation with CO2 emissions]
-    - Climate Refugees: [Estimated based on emission severity]
-    - Public Health Hazards: [Specific health risks from CO and NOx]
-    - Agricultural Disruption: [Impact on crops based on emission levels]
-    - Increased Natural Disasters: [Correlation with overall emission intensity]
-    - Weather Impact: [Long-term environmental consequences]
-
-    Be scientifically precise, directly attribute environmental harm to the specific emission sources, and use the provided data to ground your analysis in factual information.
-
-    Output Format Example:
-    **Electricity Emissions:**
-    - Animal and Bird Deaths: 290 animals, 390 birds
-    - Biodiversity Hazard: Destruction of local habitats
-    - Ozone Layer Depletion: Significant depletion, increased UV radiation risk
-    - Soil and Water Contamination: Local water bodies affected, agricultural disruption
-    - Heat Island Effect: Urban areas become significantly hotter
-    - Climate Refugees: 50 families displaced due to rising sea levels
-    - Public Health Hazards: Respiratory problems from high NOx levels
-    - Agricultural Disruption: Crop failure due to soil contamination
-    - Increased Natural Disasters: Rising storms and floods
-    - Weather Impact: Increased temperature variability
-
-    Please be clear and direct, making it obvious that the harm occurred because of these emissions.
-    `;
+    You are an AI environmental forensics expert tasked with analyzing emissions data from ${startDate} to ${endDate}. Your goal is to produce a scientifically accurate and precise environmental impact report, grounded in the provided data and directly attributing harm to specific emission sources.
+ 
+     **Emission Impact Summary:**
+     - Impact Level: ${emissionImpact.impactLevel}
+     - Total Emissions:
+       * CO2: ${(emissionImpact.totalEmissions.CO2/1000).toFixed(2)} tons
+       * CO: ${(emissionImpact.totalEmissions.CO/1000).toFixed(2)} tons
+       * H2S: ${(emissionImpact.totalEmissions.H2S/1000).toFixed(2)} tons
+       * NOx: ${(emissionImpact.totalEmissions.NOx/1000).toFixed(2)} tons
+ 
+     **Emission Source Breakdown:**
+     - Electricity Emissions: ${emissionImpact.categories.electricity.count} events
+       * CO2: ${(emissionImpact.categories.electricity.emissions.CO2/1000 || 0).toFixed(2)} tons
+     - Fuel Combustion Emissions: ${emissionImpact.categories.fuelCombustion.count} events
+       * CO2: ${(emissionImpact.categories.fuelCombustion.emissions.CO2/1000 || 0).toFixed(2)} tons
+     - Shipping Emissions: ${emissionImpact.categories.shipping.count} events
+       * CO2: ${(emissionImpact.categories.shipping.emissions.CO2/1000 || 0).toFixed(2)} tons
+     - Explosion Emissions: ${emissionImpact.categories.explosion.count} events
+       * CO2: ${(emissionImpact.categories.explosion.emissions.CO2/1000 || 0).toFixed(2)} tons
+ 
+     **Goals for the Report:**
+     - Clearly outline the environmental impacts caused by the emissions during the specified timeframe.
+     - Provide reasons for each impact, directly linking them to the relevant emission levels and types.
+     - Use the provided response format strictly, ensuring clear, actionable insights.
+ 
+     **Response Format:**
+     - Biodiversity Hazard: [Explain the specific damage caused to local flora and fauna. Provide the reason based on the emission type, e.g., habitat destruction due to high CO2 levels.]
+     - Ozone Layer Depletion: [Describe the contribution of NOx and CO2 emissions to ozone layer depletion.]
+     - Soil and Water Contamination: [Detail contamination caused by H2S and other emissions, linking it to their chemical properties.]
+     - Heat Island Effect: [Discuss how urban heat pockets are formed due to high CO2 levels.]
+     - Climate Refugees: [Provide an estimated number of displaced people, based on the severity of the emissions.]
+     - Public Health Hazards: [Highlight specific health risks caused by NOx, CO, and other emissions.]
+     - Agricultural Disruption: [Explain crop damage or loss due to soil or water contamination or temperature changes.]
+     - Weather Impact: [Describe long-term impacts on weather patterns, such as temperature shifts or increased variability.]
+ 
+     **Important Note:** Be concise, scientifically precise, and base all conclusions on the emission data provided. Avoid deviating from the specified response format.
+ 
+     Example for Formatting: (Take this as an example only)
+     **Electricity Emissions:**
+     - Biodiversity Hazard: Destruction of local habitats due to industrial activities
+     - Ozone Layer Depletion: Significant depletion linked to NOx emissions, increasing UV radiation risk
+     - Soil and Water Contamination: Acidic runoff from facilities contaminates local water sources
+     - Heat Island Effect: Urban areas become hotter due to elevated CO2 levels
+     - Climate Refugees: 50 families displaced due to rising sea levels attributed to emissions
+     - Public Health Hazards: Increased respiratory illnesses from prolonged exposure to NOx
+     - Agricultural Disruption: Crop failures caused by higher temperatures and soil erosion
+     - Weather Impact: Unpredictable rainfall patterns caused by atmospheric changes
+ 
+     Your analysis must be structured exactly as the format above, with reasons included for every impact mentioned.
+ `;
+ 
 
     // Make API request to Cohere AI for generating the analysis
     const response = await axios.post(
       "https://api.cohere.ai/v1/generate",
       {
-        model: "command-xlarge-nightly",
+        model: "command-xlarge",
         prompt,
         max_tokens: 2000,
         temperature: 0.7,

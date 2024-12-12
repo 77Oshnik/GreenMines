@@ -90,7 +90,7 @@ function CombinedCode() {
     try {
       const response = await axios.post('http://localhost:5000/api/explosion-emissions', {
         explosiveType: explosionData.explosiveType,
-        amount: explosionData.amount
+        amount: explosionData.amount * 1000
       });
       setExplosionResult(response.data);
       setError(null);
@@ -213,7 +213,10 @@ function CombinedCode() {
           <h2 className="text-xl sm:text-2xl font-semibold text-[#66C5CC] mb-4">Electricity Consumption Results</h2>
       <ul className="text-lg text-white">
         {Object.entries(electricityResult).map(([type, { value, unit }]) => (
+          <>
           <li key={type}>{type}: {value} {unit}</li>
+          <li key={type}>{type}: {value/1000} tonnes/day</li>
+          </>
         ))}
       </ul>
     </div>
@@ -245,7 +248,7 @@ function CombinedCode() {
       </select>
     </div>
     <div>
-      <label className="block mb-2 text-base sm:text-lg font-medium text-[#cad9ed]">Amount of Explosive Used (kg):</label>
+      <label className="block mb-2 text-base sm:text-lg font-medium text-[#cad9ed]">Amount of Explosive Used (tons):</label>
       <input
         type="number"
         name="amount"
@@ -269,8 +272,6 @@ function CombinedCode() {
   {explosionResult && (
     <div className="mt-6 sm:mt-10 p-4 sm:p-6 bg-[#342F49] rounded-lg shadow-lg border border-[#66C5CC]">
       <h2 className="text-xl sm:text-2xl font-semibold text-[#66C5CC] mb-4">Explosion Emissions Results</h2>
-      <p className="text-base sm:text-lg text-[#cad9ed]">Explosive Type: {explosionResult.explosiveType}</p>
-      <p className="text-base sm:text-lg text-[#cad9ed]">Amount: {explosionResult.amount} kg</p>
       <p className="text-base sm:text-lg text-[#cad9ed]">CO2: {explosionResult.emissions.CO2}</p>
       <p className="text-base sm:text-lg text-[#cad9ed]">CO: {explosionResult.emissions.CO}</p>
       <p className="text-base sm:text-lg text-[#cad9ed]">NOx: {explosionResult.emissions.NOx}</p>
@@ -334,8 +335,10 @@ function CombinedCode() {
             <h2 className="text-2xl font-semibold text-[#66C5CC] mb-4">Fuel Combustion Emissions Results</h2>
             <ul className="text-lg text-white">
               {Object.entries(fuelResult).map(([type, {value, unit}]) => (
+                <>
                 <li key={type}>
-                  {type}: {value} {unit}</li>
+                {type}: {value/1000} tons</li>  
+                </>
               ))}
             </ul>
           </div>
