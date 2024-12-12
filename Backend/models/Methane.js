@@ -15,6 +15,10 @@ const MethaneSchema = new mongoose.Schema({
         pressure: { type: Number, required: true },
     },
     totalMethane: { type: Number, required: true }, // Common to both
+    createdAt: {
+        type: Date,
+        default: Date.now
+      }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Methane', MethaneSchema);

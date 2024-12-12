@@ -5,6 +5,74 @@ import RequiredLand from './RequiredLand';
 
 function NeutralityForm() {
 
+  const MOCK_LOCATIONS = [
+    { 
+      id: 1,
+      region: 'Western Ghats, Maharashtra', 
+      coordinates: [19.0760, 72.8777], 
+      soilType: 'laterite', 
+      vegetationType: 'tropical_rainforest', 
+      treeSpecies: ['Teak', 'Sal', 'Banyan'], 
+      seedingTime: { 
+        startDate: '2024-06-15', 
+        expectedMaturityPeriod: 25,
+        carbonSequestrationRateAtMaturity: 8.5
+      }
+    },
+    { 
+      id: 2,
+      region: 'Kerala Forests', 
+      coordinates: [10.8505, 76.2711], 
+      soilType: 'alluvial', 
+      vegetationType: 'tropical_rainforest', 
+      treeSpecies: ['Rosewood', 'Kerala Pine', 'Wild Mango'], 
+      seedingTime: { 
+        startDate: '2024-07-01', 
+        expectedMaturityPeriod: 30,
+        carbonSequestrationRateAtMaturity: 9.2
+      }
+    },
+    { 
+      id: 3,
+      region: 'Himalayan Foothills, Uttarakhand', 
+      coordinates: [30.0668, 79.0193], 
+      soilType: 'mountain_podozolic', 
+      vegetationType: 'temperate_forest', 
+      treeSpecies: ['Himalayan Oak', 'Cedar', 'Rhododendron'], 
+      seedingTime: { 
+        startDate: '2024-05-20', 
+        expectedMaturityPeriod: 40,
+        carbonSequestrationRateAtMaturity: 5.5
+      }
+    },
+    { 
+      id: 4,
+      region: 'Sundarbans, West Bengal', 
+      coordinates: [21.9497, 88.9068], 
+      soilType: 'deltaic', 
+      vegetationType: 'mangrove', 
+      treeSpecies: ['Sundari', 'Gewa', 'Keora'], 
+      seedingTime: { 
+        startDate: '2024-08-10', 
+        expectedMaturityPeriod: 20,
+        carbonSequestrationRateAtMaturity: 6.8
+      }
+    },
+    { 
+      id: 5,
+      region: 'Deccan Plateau, Karnataka', 
+      coordinates: [15.3173, 75.7139], 
+      soilType: 'black_cotton', 
+      vegetationType: 'savanna', 
+      treeSpecies: ['Neem', 'Tamarind', 'Acacia'], 
+      seedingTime: { 
+        startDate: '2024-06-30', 
+        expectedMaturityPeriod: 15,
+        carbonSequestrationRateAtMaturity: 3.5
+      }
+    }
+  ];
+
   const VEGETATION_RATES = {
     forest: 5.0,
     grassland: 1.5,
@@ -20,12 +88,13 @@ function NeutralityForm() {
   };
 
   const [formType, setFormType] = useState('existing');
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [sinkData, setSinkData] = useState({
     name: '',
     vegetationType: 'forest',
     otherVegetationType: '',
     areaCovered: '',
-    carbonSequestrationRate: VEGETATION_RATES.forest, // Ensure this is always set
+    carbonSequestrationRate: VEGETATION_RATES.forest,
     additionalDetails: '',
   });
 
@@ -62,6 +131,12 @@ function NeutralityForm() {
     }
   };
 
+  const handleLocationChange = (e) => {
+    const locationId = parseInt(e.target.value);
+    const location = MOCK_LOCATIONS.find(loc => loc.id === locationId);
+    setSelectedLocation(location);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -88,7 +163,10 @@ function NeutralityForm() {
       if (response.ok) {
         const data = await response.json();
         console.log('Response:', data);
-        setResult(data.data);
+        setResult({
+          ...data.data,
+          mockLocation: selectedLocation
+        });
         
         // Reset form with default values
         setSinkData({
@@ -96,14 +174,14 @@ function NeutralityForm() {
           vegetationType: 'forest',
           otherVegetationType: '',
           areaCovered: '',
-          carbonSequestrationRate: VEGETATION_RATES.forest, // Reset to default
+          carbonSequestrationRate: VEGETATION_RATES.forest,
           additionalDetails: '',
         });
+        setSelectedLocation(null);
       } else {
         // Handle error response
         const errorData = await response.json();
         console.error('Failed to submit form', errorData);
-        // Optionally show error to user
       }
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -120,10 +198,11 @@ function NeutralityForm() {
       vegetationType: 'forest',
       otherVegetationType: '',
       areaCovered: '',
-      carbonSequestrationRate: VEGETATION_RATES.forest, // Always set a default
+      carbonSequestrationRate: VEGETATION_RATES.forest,
       additionalDetails: '',
     });
     setResult(null);
+    setSelectedLocation(null);
   };
 
   const sectionStyle = "bg-[#342F49] p-6 rounded-lg shadow-lg border border-[#66C5CC]";
@@ -165,6 +244,22 @@ function NeutralityForm() {
         />
         Existing Sink
       </label>
+    </div>
+
+    <div className="mb-6 w-full max-w-4xl">
+      <h2 className="text-2xl text-[#cad9ed] font-semibold mb-2">Select Location</h2>
+      <select
+        onChange={handleLocationChange}
+        value={selectedLocation ? selectedLocation.id : ''}
+        className="w-full p-3 rounded-md bg-[#342F49] text-[#cad9ed] border border-[#66C5CC] focus:ring focus:ring-[#66C5CC]"
+      >
+        <option value="">Select a Location</option>
+        {MOCK_LOCATIONS.map((location) => (
+          <option key={location.id} value={location.id}>
+            {location.region}
+          </option>
+        ))}
+      </select>
     </div>
   
     <form className="space-y-8 w-full max-w-4xl bg-[#2B263F] p-8 rounded-lg shadow-lg" onSubmit={handleSubmit}>
@@ -291,17 +386,43 @@ function NeutralityForm() {
     </form>
   
     {/* Display Result */}
-    {result && (
-      <div className="mt-10 p-8 bg-[#342F49] text-[#cad9ed] rounded-lg shadow-lg border border-[#66C5CC] text-center w-full max-w-4xl mx-auto">
-      <h2 className="text-4xl font-semibold text-[#66C5CC] mb-6">Result</h2>
-      <p className="text-2xl mb-2"><strong>Daily Sequestration Rate:</strong> {result.dailySequestrationRate}</p>
-      <p className="text-2xl"><strong>Total Sequestration:</strong> {result.totalSequestration}</p>
+ {result && (
+  <div className="mt-10 p-8 bg-[#342F49] text-[#cad9ed] rounded-lg shadow-lg border border-[#66C5CC] w-full max-w-4xl mx-auto">
+    <h2 className="text-4xl font-semibold text-[#66C5CC] mb-6 text-center">Carbon Sink Analysis Result</h2>
+    
+    <div className="grid md:grid-cols-2 gap-6">
+      {/* Sequestration Details */}
+      <div className="bg-[#2B263F] p-6 rounded-lg">
+        <h3 className="text-2xl text-[#66C5CC] mb-4">Sequestration Metrics</h3>
+        <p className="mb-2"><strong>Daily Sequestration Rate:</strong> {result.dailySequestrationRate} tons CO2</p>
+        <p><strong>Total Sequestration:</strong> {result.totalSequestration} tons CO2</p>
+      </div>
+
+      {/* Location Details */}
+      {result.mockLocation && (
+        <div className="bg-[#2B263F] p-6 rounded-lg">
+          <h3 className="text-2xl text-[#66C5CC] mb-4">Location Information</h3>
+          <p><strong>Region:</strong> {result.mockLocation.region}</p>
+          <p><strong>Coordinates:</strong> {result.mockLocation.coordinates.join(', ')}</p>
+          <p><strong>Soil Type:</strong> {result.mockLocation.soilType}</p>
+          <p><strong>Vegetation Type:</strong> {result.mockLocation.vegetationType}</p>
+          <p><strong>Tree Species:</strong> {result.mockLocation.treeSpecies.join(', ')}</p>
+        </div>
+      )}
     </div>
-    
-    
-    
+
+    {/* Seeding Time Details */}
+    {result.mockLocation?.seedingTime && (
+      <div className="mt-6 bg-[#2B263F] p-6 rounded-lg">
+        <h3 className="text-2xl text-[#66C5CC] mb-4">Seeding and Growth Information</h3>
+        <p><strong>Seeding Start Date:</strong> {result.mockLocation.seedingTime.startDate}</p>
+        <p><strong>Expected Maturity Period:</strong> {result.mockLocation.seedingTime.expectedMaturityPeriod} years</p>
+        <p><strong>Carbon Sequestration Rate at Maturity:</strong> {result.mockLocation.seedingTime.carbonSequestrationRateAtMaturity} tons CO2/ha/year</p>
+      </div>
     )}
   </div>
+)}
+</div>
   <div>
   <RequiredLand/>
   </div>
