@@ -344,7 +344,7 @@ function EmissionPredictionPage() {
             <div key={index} className="border-b border-[#66C5CC] pb-4">
               <h4 className="text-xl font-semibold mb-2">Month: {monthData.Month}</h4>
               <p className="mb-2">
-                <strong>Average Emissions:</strong> {monthData["Average Emissions"]} gCO2
+                <strong>Average Emissions:</strong> {monthData["Average Emissions"]} 
               </p>
               <p>
                 <strong>Risk Levels:</strong>
@@ -438,7 +438,7 @@ function EmissionPredictionPage() {
         <div key={monthIndex}>
           <h3 className="text-2xl font-semibold mb-4">{monthData.Month}</h3>
           <p className="mb-2">
-            <strong>Average Emissions:</strong> {monthData["Average Emissions"]}
+            <strong>Average Emissions CO2:</strong> {monthData["Average Emissions"]}
           </p>
           {Object.keys(monthData["Risk Levels"]).length > 0 ? (
             <div>
