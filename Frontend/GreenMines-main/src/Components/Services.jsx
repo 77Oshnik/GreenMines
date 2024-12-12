@@ -16,7 +16,7 @@ export default function LandingPage() {
       title: "ML Model Integration",
       description:
         "Our advanced machine learning algorithms analyze vast amounts of data to predict carbon emissions with unprecedented accuracy. By integrating cutting-edge ML models, we provide you with insights that go beyond traditional analytics, helping you make informed decisions to reduce your carbon footprint effectively.",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "ml.jpg",
       gap: "8rem", // Custom gap for this feature
     },
     {
@@ -24,7 +24,7 @@ export default function LandingPage() {
       title: "Chat Bot & Gen AI",
       description:
         "Experience the power of conversational AI with our intelligent chatbot. Powered by state-of-the-art generative AI, our chatbot assists you in real-time with emission calculations, provides tailored recommendations, and answers your complex questions about carbon management. It's like having a carbon expert at your fingertips 24/7.",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "ai.jpg",
       gap: "6rem", // Custom gap for this feature
     },
     {
@@ -40,7 +40,7 @@ export default function LandingPage() {
       title: "Report Generation",
       description:
         "Transform complex data into clear, actionable insights with our automated report generation. Our system compiles comprehensive reports that not only show your current emission status but also provide detailed recommendations for reduction. These reports are invaluable for internal decision-making, stakeholder communication, and regulatory compliance.",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "report.jpg",
       gap: "7rem", // Custom gap for this feature
     },
     {
@@ -48,7 +48,7 @@ export default function LandingPage() {
       title: "Neutrality Increment Points",
       description:
         "Gamify your journey to carbon neutrality with our unique point-based system. As you implement emission-reducing measures, you earn Neutrality Increment Points. These points provide a tangible metric of your progress, motivating your team and showcasing your commitment to sustainability to clients and partners alike.",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "net.jpg",
       gap: "5rem", // Custom gap for this feature
     },
   ];

@@ -62,14 +62,14 @@ const PDFDownloadButton = ({
             pdf.rect(0, 0, pageWidth, 150, 'F');
 
             pdf.setTextColor(255, 255, 255);
-            pdf.setFontSize(24);
-            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(30);
+            pdf.setFont('Poppins', 'bold');
             pdf.text('Environmental Impact Report', pageWidth/2, 70, {align: 'center'});
 
-            pdf.setFontSize(16);
+            pdf.setFontSize(20);
             pdf.text(`${reportType} Analysis`, pageWidth/2, 100, {align: 'center'});
 
-            pdf.setFontSize(12);
+            pdf.setFontSize(16);
             pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth/2, 130, {align: 'center'});
 
             pdf.setTextColor(0, 0, 0);
@@ -238,7 +238,7 @@ const PDFDownloadButton = ({
                 switch (item.type) {
                     case 'mainHeading':
                         // Main Heading Style
-                        pdf.setFontSize(20);
+                        pdf.setFontSize(22);
                         pdf.setFont('helvetica', 'bold');
                         pdf.setTextColor(26, 35, 126); // Deep blue
                         
@@ -250,7 +250,7 @@ const PDFDownloadButton = ({
 
                     case 'list':
                         // List Style
-                        pdf.setFontSize(16);
+                        pdf.setFontSize(18);
                         pdf.setFont('helvetica', 'normal');
                         pdf.setTextColor(0, 0, 0); // Black
                         
@@ -265,7 +265,7 @@ const PDFDownloadButton = ({
 
                     case 'paragraph':
                         // Paragraph Style
-                        pdf.setFontSize(16);
+                        pdf.setFontSize(18);
                         pdf.setFont('helvetica', 'normal');
                         pdf.setTextColor(50, 50, 50); // Dark gray
                         

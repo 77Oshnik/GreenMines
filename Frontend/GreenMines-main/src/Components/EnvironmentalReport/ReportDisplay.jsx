@@ -58,7 +58,7 @@ const ReportDisplay = ({ report }) => {
 
     return (
         <StyledPaper>
-            <MainHeading>Environmental Impact Report</MainHeading>
+            <MainHeading>Emission Impact Report</MainHeading>
 
             {/* Emissions Summary Section */}
             <Box mb={4}>
@@ -66,20 +66,20 @@ const ReportDisplay = ({ report }) => {
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
                         <MetricsCard>
-                            <Typography variant="h6" color="primary" gutterBottom>
+                            <Typography variant="h6" sx={{ fontWeight: 'bold' }} color="primary" gutterBottom>
                                 Total Emissions
                             </Typography>
-                            <Typography variant="h4" color="error">
+                            <Typography variant="h4" sx={{ fontWeight: 'bold' }} color="error">
                                 {emissions.totalEmissions} metric tons CO₂e
                             </Typography>
                         </MetricsCard>
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <MetricsCard>
-                            <Typography variant="h6" color="primary" gutterBottom>
+                            <Typography variant="h6" sx={{ fontWeight: 'bold' }} color="primary" gutterBottom>
                                 Carbon Sequestration
                             </Typography>
-                            <Typography variant="h4" color="success.main">
+                            <Typography variant="h4" sx={{ fontWeight: 'bold' }} color="success.main">
                                 {emissions.carbonSequestration.toFixed(2)} tonnes CO₂e/day
                             </Typography>
                         </MetricsCard>
@@ -95,10 +95,10 @@ const ReportDisplay = ({ report }) => {
                             .map(([source, value]) => (
                                 <Grid item xs={12} sm={6} md={3} key={source}>
                                     <MetricsCard>
-                                        <Typography variant="subtitle1" color="textSecondary">
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} color="textSecondary">
                                             {source.charAt(0).toUpperCase() + source.slice(1)}
                                         </Typography>
-                                        <Typography variant="h6" color="primary">
+                                        <Typography variant="h6" sx={{ fontWeight: 'bold' }} color="primary">
                                             {value.toFixed(2)} metric tons CO₂e
                                         </Typography>
                                     </MetricsCard>
@@ -123,7 +123,7 @@ const ReportDisplay = ({ report }) => {
                             marginBottom: 2,
                         },
                         '& p': {
-                            fontSize: '1.4rem',
+                            fontSize: '1.5rem',
                             fontWeight: 'bold',
                             lineHeight: 1.7,
                             color: '#424242',
@@ -134,7 +134,7 @@ const ReportDisplay = ({ report }) => {
                             paddingLeft: 3,
                         },
                         '& li': {
-                            fontSize: '1.4rem',
+                            fontSize: '1.5rem',
                             fontWeight: 'bold',
                             lineHeight: 1.7,
                             color: '#424242',

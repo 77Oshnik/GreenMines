@@ -57,6 +57,14 @@ export default function CarbonNeutralityOptions() {
       impact: 1800,
       detailsUrl: "/ev",
     },
+    {
+      icon: <Cloud className="w-12 h-12 text-[#66C5CC]" />,
+      title: "MCS",
+      description: "The MCS (Methane Conversion and Sequestration) Calculator estimates the conversion and sequestration of methane emissions to minimize their environmental impact and achieve sustainability goals.",
+      effectiveness: 48,
+      impact: 1800,
+      detailsUrl: "/MCS",
+    },
   ];
 
   return (
