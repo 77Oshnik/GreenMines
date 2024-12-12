@@ -42,7 +42,7 @@ const EmissionBarGraph = ({ data }) => {
     const barData = {
         labels: ['Electricity', 'Explosion', 'Fuel Combustion', 'Shipping', 'Coal'],
         datasets: [{
-            label: 'Emissions (kg CO2)',
+            label: 'Emissions',
             data: [
                 calculateTotalEmissions(data.electricity),
                 calculateTotalEmissions(data.explosion),
@@ -68,20 +68,22 @@ const EmissionBarGraph = ({ data }) => {
                 position: 'top',
                 labels: {
                     font: {
-                        size: 14
-                    }
-                }
+                        size: 16, // Increase legend text size
+                        weight: 'bold', // Make legend text bold
+                    },
+                },
             },
             title: {
                 display: true,
                 text: 'Emissions Comparison',
                 font: {
-                    size: 16
-                }
-            }
-        }
+                    size: 20, // Increase title text size
+                    weight: 'bold', // Make title text bold
+                },
+            },
+        },
     };
-
+    
     return (
         <div style={{ 
             width: '100%', 

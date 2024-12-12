@@ -18,6 +18,8 @@ const reportRoute = require("./routes/reportRoute");
 const environmentalReportRoute = require("./routes/environmentalReportRoute");
 const optimizedRouting = require ("./routes/optimizeRoute")
 const userRoute = require("./routes/userRoutes");
+const zoneRoutes = require('./routes/zoneRoutes');
+
 // Add other routes similarly
 
 dotenv.config();
@@ -57,7 +59,7 @@ app.use("/api/reports", reportRoute);
 app.use("/api/environmental-reports", environmentalReportRoute);
 app.use("/api",optimizedRouting);
 app.use("/api",userRoute);
-
+app.use('/api/zones',zoneRoutes); 
 // Add other routes similarly
 
 const PORT = process.env.PORT || 5000;

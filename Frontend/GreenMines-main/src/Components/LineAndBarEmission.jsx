@@ -68,13 +68,13 @@ const LineAndBarEmission = ({data}) => {
   const calculateEmissionsByDay = (data) => {
     // Initialize emissionsByDay with all the days of the week
     const emissionsByDay = {
-      Sunday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0 },
-      Monday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
-      Tuesday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
-      Wednesday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
-      Thursday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
-      Friday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
-      Saturday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0},
+      Sunday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0 ,methane:0 },
+      Monday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0,methane:0},
+      Tuesday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0,methane:0},
+      Wednesday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0,methane:0},
+      Thursday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0,methane:0},
+      Friday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0,methane:0},
+      Saturday: { electricity: 0, fuelCombustion: 0, shipping: 0, explosion: 0 ,coalBurn:0,methane:0},
     };
   
     const addEmissionToDay = (date, emission, category) => {
@@ -111,6 +111,11 @@ const LineAndBarEmission = ({data}) => {
     data.coalBurn.forEach(entry => {
       const co2Emission = parseFloat(entry.co2Emissions);
       addEmissionToDay(entry.createdAt, co2Emission, 'coalBurn');
+    });
+
+    data.methane.forEach(entry => {
+      const methaneEmission = parseFloat(entry.totalMethane);
+      addEmissionToDay(entry.createdAt, methaneEmission, 'coalBurn');
     });
   
     return emissionsByDay;
@@ -206,6 +211,21 @@ const LineAndBarEmission = ({data}) => {
         backgroundColor: "#FFFFFF",
         tension: 0.4,
       },
+      {
+        label: "coalBurn",
+        data: [
+          (totalEmissionsByDay && totalEmissionsByDay.Monday ? totalEmissionsByDay.Monday.methane : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Tuesday ? totalEmissionsByDay.Tuesday.methane : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Wednesday ? totalEmissionsByDay.Wednesday.methane : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Thursday ? totalEmissionsByDay.Thursday.methane : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Friday ? totalEmissionsByDay.Friday.methane : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Saturday ? totalEmissionsByDay.Saturday.methane : 0),
+          (totalEmissionsByDay && totalEmissionsByDay.Sunday ? totalEmissionsByDay.Sunday.methane : 0),
+        ],
+        borderColor: "#FF0000",
+        backgroundColor: "#FF0000",
+        tension: 0.4,
+      },
     ],
   };
   
@@ -281,6 +301,13 @@ const LineAndBarEmission = ({data}) => {
             data: [0, 0, 0, 0],
             borderColor: "#FFFFFF",
             backgroundColor: "#FFFFFF",
+            tension: 0.4,
+          },
+          {
+            label: "methane",
+            data: [0, 0, 0, 0],
+            borderColor: "#FF0000",
+            backgroundColor: "#FF0000",
             tension: 0.4,
           },
         ],
@@ -390,6 +417,13 @@ const LineAndBarEmission = ({data}) => {
           data: getWeekSums(data.coalBurn, "createdAt", "co2Emissions"),
           borderColor: "#FFFFFF",
           backgroundColor: "#FFFFFF",
+          tension: 0.4,
+        },
+        {
+          label: "methane",
+          data: getWeekSums(data.methane, "createdAt", "co2Emissions"),
+          borderColor: "#FF0000",
+          backgroundColor: "#FF0000",
           tension: 0.4,
         },
       ],
@@ -518,12 +552,19 @@ const formatDataForChart = (rawData) => {
         tension: 0.4,
       },
       {
-        label: "Shipping",
+        label: "coalBurn",
         data: calculateMonthlyCO2Sums(rawData.coalBurn),
         borderColor: "#FFFFFF",
         backgroundColor: "#FFFFFF",
         tension: 0.4,
-      }
+      },
+      {
+        label: "methane",
+        data: calculateMonthlyCO2Sums(rawData.methane),
+        borderColor: "#FF0000",
+        backgroundColor: "#FF0000",
+        tension: 0.4,
+      },
     ]
   };
 };
@@ -562,13 +603,15 @@ console.log("one day",data);
   const shippingCO2 = data.shipping.reduce((total, item) => total + parseFloat(item.result.carbonEmissions.kilograms), 0);
   const explosionCO2 = data.explosion.reduce((total, item) => total + parseFloat(item.emissions.CO2), 0);
   const coalCO2 = data.coalBurn.reduce((total, item) => total + parseFloat(item.co2Emissions), 0);
+  const methane= data.methane.reduce((total, item) => total + parseFloat(item.totalMethane), 0);
+
 
   const barData={
-    labels: ['Electricity', 'Explosion', 'Fuel', 'Shipping','colaBurn'],
+    labels: ['Electricity', 'Explosion', 'Fuel', 'Shipping','colaBurn','methane'],
     datasets: [
       {
         label: 'Emission (tons CO2)',
-        data: [electricityCO2, explosionCO2, fuelCO2,shippingCO2,coalCO2], // Example data
+        data: [electricityCO2, explosionCO2, fuelCO2,shippingCO2,coalCO2,methane], // Example data
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)',
           'rgba(54, 162, 235, 0.6)',

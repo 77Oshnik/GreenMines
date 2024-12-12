@@ -58,13 +58,24 @@ const EmissionDonutChart = ({ data }) => {
         plugins: {
             legend: {
                 position: 'top',
+                labels: {
+                    font: {
+                        size: 14, // Increase legend text size
+                        weight: 'bold', // Make legend text bold
+                    },
+                },
             },
             title: {
                 display: true,
-                text: 'Emissions Distribution'
-            }
-        }
+                text: 'Emissions Distribution',
+                font: {
+                    size: 16, // Increase title text size
+                    weight: 'bold', // Make title text bold
+                },
+            },
+        },
     };
+    
 
     return <Doughnut data={donutData} options={options} />;
 };
