@@ -65,7 +65,7 @@ exports.createSink = async (req, res) => {
       } = req.body;
   
       // Calculate daily sequestration rate
-      const dailySequestrationRate = carbonSequestrationRate / 365; // CSR per day
+      const dailySequestrationRate = areaCovered * carbonSequestrationRate / 365; // CSR per day
   
       // Calculate total sequestration based on the provided timeframe
       const totalSequestration = 
