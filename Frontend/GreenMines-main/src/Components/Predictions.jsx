@@ -9,11 +9,20 @@ function EmissionPredictionPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()-1); // Default to current year
-  const [selectedCategory, setSelectedCategory] = useState("fuel");
+  const [selectedCategory, setSelectedCategory] = useState(" ");
+  const [selectedOption, setSelectedOption] = useState("Separate Data"); 
+
+  const [aggregatedData, setAggregatedData] = useState(null);
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
     setPredictions(null); // Clear predictions when category changes
+    setError(null); // Clear any existing error
+  };
+
+  const handleOptionChange = (e) => {
+    setSelectedOption(e.target.value);
+    setPredictions(null); // Clear predictions when option changes
     setError(null); // Clear any existing error
   };
 
@@ -60,8 +69,6 @@ function EmissionPredictionPage() {
       // Send the formatted data to Flask
       const flaskRoute = getFlaskRoute(selectedCategory);
       const apiResponse = await axios.post(flaskRoute, formattedData);
-
-      console.log(apiResponse);
       setPredictions(apiResponse.data);
     } catch (err) {
       console.error("Error:", err);
@@ -231,6 +238,209 @@ function EmissionPredictionPage() {
     }
   };
 
+  const handleCombineEmission = async () => {
+    const startDate = `${selectedYear}-01-01`;
+    const endDate = `${selectedYear}-12-31`;
+  
+    setLoading(true);
+    setError(null);
+  
+    try {
+      // Step 1: Fetch all data from MongoDB API
+      const mongoResponse = await axios.get(`http://localhost:5000/api/data/${startDate}/${endDate}`);
+      const { fuelCombustion, electricity, explosion, shipping } = mongoResponse.data;
+  
+      // Step 2: Format data for each category
+      const formattedFuelData = formatFuelData(fuelCombustion);
+      const formattedElectricityData = formatElectricityData(electricity);
+      const formattedExplosionData = formatExplosionData(explosion);
+      const formattedTransportData = formatTransportData(shipping);
+  
+      // Helper function to get Flask route
+      const getFlaskRoute = (category) => {
+        switch (category) {
+          case "fuelCombustion":
+            return "http://127.0.0.1:8800/ml/fuel";
+          case "electricity":
+            return "http://127.0.0.1:8800/ml/electricity";
+          case "explosion":
+            return "http://127.0.0.1:8800/ml/explosive";
+          case "shipping":
+            return "http://127.0.0.1:8800/ml/transport";
+          default:
+            throw new Error("Invalid category selected.");
+        }
+      };
+  
+      // Step 3: Send formatted data to respective Flask routes
+      const flaskRequests = [
+        { category: "fuelCombustion", data: formattedFuelData },
+        { category: "electricity", data: formattedElectricityData },
+        { category: "explosion", data: formattedExplosionData },
+        { category: "shipping", data: formattedTransportData },
+      ];
+  
+      const flaskResponses = await Promise.all(
+        flaskRequests.map(({ category, data }) =>
+          axios.post(getFlaskRoute(category), data).then((res) => ({
+            category,
+            response: res.data,
+          }))
+        )
+      );
+  
+      // Step 4: Create a JSON combining the responses
+      const finalJson = {};
+      flaskResponses.forEach(({ category, response }) => {
+        finalJson[category] = response;
+      });
+  
+       // Aggregate monthly data and return it
+    const aggregatedData = aggregateMonthlyData(finalJson);
+
+       // Set the aggregated data into state for React rendering
+       //setAggregatedData(aggregatedData);
+
+    return aggregatedData;
+    } catch (err) {
+      console.error("Error:", err);
+      setError("An unexpected error occurred. Please check the console for details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleCombineEmissionSet = async () => {
+    const aggregateFetched = await handleCombineEmission();
+    setAggregatedData(aggregateFetched);
+  }
+
+  const aggregateMonthlyData = (finalJson) => {
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const aggregatedData = {};
+
+    months.forEach((month) => {
+        let totalCO2 = 0; // To hold the total CO2 emissions for the month
+        let riskAggregations = {}; // To aggregate risk levels
+
+        // Iterate over each category in finalJson
+        Object.keys(finalJson).forEach((category) => {
+            const categoryData = finalJson[category]?.monthly_summary;
+
+            if (!categoryData) return;
+
+            // Find data for the current month
+            const monthData = categoryData.find((entry) => entry.Month === month);
+
+            if (!monthData) return;
+
+            // Add CO2 Emissions from the category (handle multiple possible fields)
+            if (monthData.Emissions?.["CO2 (kg)"]) {
+                totalCO2 += monthData.Emissions["CO2 (kg)"];
+            }
+            if (monthData["Average Emissions"]) {
+                totalCO2 += monthData["Average Emissions"];
+            }
+            if (monthData.Emissions?.CO) {
+                totalCO2 += monthData.Emissions.CO;
+            }
+
+            // Aggregate Risk Levels
+            const riskData = monthData["Risk Levels"] || monthData["Risk Evaluation"];
+
+            if (riskData) {
+                Object.entries(riskData).forEach(([riskLevel, value]) => {
+                    // Check if value is a string before using split
+                    if (typeof value === 'string') {
+                        const percentage = parseFloat(value.split("-")[1]?.trim().replace("%", "") || value.replace("%", ""));
+                        riskAggregations[riskLevel] = (riskAggregations[riskLevel] || 0) + percentage;
+                    } else {
+                        // If it's not a string, fallback behavior (skip or handle differently)
+                        console.warn(`Unexpected value for risk level ${riskLevel}: ${value}`);
+                    }
+                });
+            }
+        });
+
+        // Normalize risk levels by dividing by the number of categories
+        const totalCategories = Object.keys(finalJson).length;
+        const normalizedRiskLevels = {};
+        Object.entries(riskAggregations).forEach(([riskLevel, totalPercentage]) => {
+            normalizedRiskLevels[riskLevel] = (totalPercentage / totalCategories).toFixed(2) + "%";
+        });
+
+        // Convert totalCO2 to tonnes (1 tonne = 1000 kg) and round to 2 decimal places
+        const totalCO2InTonnes = (totalCO2 / 1000).toFixed(2);
+
+        // Store aggregated data for the month
+        aggregatedData[month] = {
+            totalCO2: totalCO2InTonnes, // Rounded to 2 decimal places
+            riskLevels: normalizedRiskLevels
+        };
+    });
+  // setAggregatedData(aggregatedData);
+  return aggregatedData;
+};
+
+
+const handleTotalyear = async () => {
+  // Set loading to true when starting the data aggregation process
+  setLoading(true);
+  setError(null);  // Clear any previous error messages
+
+  try {
+    // First, ensure we have the aggregated monthly data from handleCombineEmission
+    const aggregatedData = await handleCombineEmission();
+
+    if (!aggregatedData) {
+      throw new Error("No aggregated data available.");
+    }
+
+    let totalCO2 = 0; // To store the total CO2 emissions for the year
+    let riskAggregations = {}; // To aggregate risk levels for the year
+
+    // Iterate through each month in the aggregatedData
+    Object.values(aggregatedData).forEach((monthData) => {
+      // Add CO2 Emissions from each month
+      totalCO2 += parseFloat(monthData.totalCO2);
+
+      // Aggregate risk levels for each month
+      const monthRiskLevels = monthData.riskLevels;
+      Object.entries(monthRiskLevels).forEach(([riskLevel, percentage]) => {
+        const riskPercentage = parseFloat(percentage.replace('%', ''));
+        riskAggregations[riskLevel] = (riskAggregations[riskLevel] || 0) + riskPercentage;
+      });
+    });
+
+    // Normalize risk levels by dividing by the number of months
+    const totalMonths = Object.keys(aggregatedData).length;
+    const normalizedRiskLevels = {};
+    Object.entries(riskAggregations).forEach(([riskLevel, totalPercentage]) => {
+      normalizedRiskLevels[riskLevel] = (totalPercentage / totalMonths).toFixed(2) + "%";
+    });
+
+    // Convert totalCO2 to tonnes and round to 2 decimal places
+    const totalCO2InTonnes = totalCO2.toFixed(2);
+
+    // Update the frontend with the calculated data
+    setPredictions({
+      totalCO2: totalCO2InTonnes,
+      riskLevels: normalizedRiskLevels
+    });
+  } catch (err) {
+    // Handle errors and set the error state to display in the UI
+    console.error("Error in handleTotalyear:", err);
+    setError("An unexpected error occurred. Please check the console for details.");
+  } finally {
+    // Set loading to false once the operation is completed (either success or failure)
+    setLoading(false);
+  }
+};
+  
   return (
     <div className="min-h-screen bg-[#342F49] px-4 sm:px-6 lg:px-8 flex flex-col items-center">
       <div className="w-full">
@@ -256,41 +466,116 @@ function EmissionPredictionPage() {
             />
           </div>
 
-          {/* Radio Button Section */}
-          <div className="mb-8">
-            <label className="block text-[#4da5aa] mb-4">Predict Emission Category</label>
+          {/* Top-level Radio Buttons */}
+          <div className="mb-6">
+            <label className="block text-[#4da5aa] mb-4">Data View Option</label>
             <div className="flex justify-between gap-6">
-              {["fuelCombustion", "electricity", "explosion", "shipping"].map((category) => (
-                <label key={category} className="flex items-center text-lg">
-                  <input
-                    type="radio"
-                    value={category}
-                    checked={selectedCategory === category}
-                    onChange={handleCategoryChange}
-                    className="mr-3 w-6 h-6"
-                  />
-                  <span className="text-white capitalize">{category}</span>
-                </label>
-              ))}
+              {["Separate Data", "Combine Emission", "Total Year Data"].map(
+                (option) => (
+                  <label key={option} className="flex items-center text-lg">
+                    <input
+                      type="radio"
+                      value={option}
+                      checked={selectedOption === option}
+                      onChange={handleOptionChange}
+                      className="mr-3 w-6 h-6"
+                    />
+                    <span className="text-white">{option}</span>
+                  </label>
+                )
+              )}
             </div>
           </div>
 
+          {/* Show category radio buttons only if Separate Data is selected */}
+          {selectedOption === "Separate Data" && (
+            <div className="mb-8">
+              <label className="block text-[#4da5aa] mb-4">
+                Predict Emission Category
+              </label>
+              <div className="flex justify-between gap-6">
+                {["fuelCombustion", "electricity", "explosion", "shipping"].map(
+                  (category) => (
+                    <label key={category} className="flex items-center text-lg">
+                      <input
+                        type="radio"
+                        value={category}
+                        checked={selectedCategory === category}
+                        onChange={handleCategoryChange}
+                        className="mr-3 w-6 h-6"
+                      />
+                      <span className="text-white capitalize">{category}</span>
+                    </label>
+                  )
+                )}
+              </div>
+            </div>
+          )}
+        
           {/* Predict Risk Button */}
           <div className="text-center">
             <button
-              onClick={fetchData}
+              onClick={() => {
+                if (selectedOption === "Separate Data") {
+                  fetchData();
+                } else if (selectedOption === "Combine Emission") {
+                  handleCombineEmissionSet();
+                } else if (selectedOption === "Total Year Data") {
+                   handleTotalyear();
+                }
+              }}
               className="px-6 py-3 bg-[#66C5CC] text-white text-lg font-bold rounded-lg hover:bg-[#4da5aa] transition"
             >
               Fetch and Predict Risk
             </button>
           </div>
+          {selectedOption === "Combine Emission" && aggregatedData && (
+  <div className="mt-6 bg-[#1d1d1f] p-6 rounded-lg text-[#66C5CC]">
+    <h3 className="text-2xl mb-4">Combined Emissions for {selectedYear + 1}</h3>
+    {Object.entries(aggregatedData).map(([month, data], index) => (
+      <div key={index} className="border-b border-[#66C5CC] pb-4">
+        <h4 className="text-xl font-semibold mb-2">{month}</h4>
+        <p>
+          <strong>Total CO2e Emissions:</strong> {data.totalCO2} tonnes
+        </p>
+        <p>
+          <strong>Risk Levels:</strong>
+        </p>
+        <ul className="ml-4 list-disc">
+          {Object.entries(data.riskLevels).map(([riskLevel, percentage], idx) => (
+            <li key={idx}>
+              <strong>{riskLevel}:</strong> {percentage}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+)}
 
+{selectedOption === "Total Year Data" && predictions && (
+          <div className="mt-6 bg-[#1d1d1f] p-6 rounded-lg text-[#66C5CC]">
+            <h3 className="text-2xl mb-4">Total Year Data for {selectedYear + 1}</h3>
+            <p><strong>Total CO2 Emissions for {selectedYear + 1}:</strong> {predictions.totalCO2} tonnes</p>
+            <div>
+              <strong>Risk Levels:</strong>
+              <ul>
+                {Object.entries(predictions.riskLevels).map(([riskLevel, percentage]) => (
+                  <li key={riskLevel}>
+                    {riskLevel}: {percentage}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
           {/* Loading or Error Message */}
           {loading && <div className="text-center mt-6 text-[#66C5CC]">Loading...</div>}
           {error && <div className="text-center mt-6 text-red-500">{error}</div>}
 
           {/* Display Predictions */}
-          {predictions && !loading && (
+          
+          {selectedOption === "Separate Data" && predictions && !loading && (
   <div className="mt-6 bg-[#1d1d1f] p-6 rounded-lg text-[#66C5CC]">
     <h3 className="text-2xl mb-4"><b>{selectedYear+1}</b></h3>
     <h3 className="text-2xl mb-4">Predictions for {selectedCategory}</h3>
