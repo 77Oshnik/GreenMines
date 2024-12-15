@@ -180,25 +180,25 @@ if (!data) {
           <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
             <h2 className="text-lg font-bold mb-2">Electricity</h2>
             <p className="text-3xl font-semibold mb-2">{totalEmissions.electricity} MWh</p>
-            <p className="text-red-500">+15% from last week</p>
+            <p className="text-red-500">+17.0% from last week</p>
           </div>
 
           <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
             <h2 className="text-lg font-bold mb-2">Explosion</h2>
             <p className="text-3xl font-semibold mb-2">{totalEmissions.explosion}  tCO2e</p>
-            <p className="text-green-500">-5% from last week</p>
+            <p className="text-green-500">-5.8% from last week</p>
           </div>
 
           <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
             <h2 className="text-lg font-bold mb-2">Fuel</h2>
             <p className="text-3xl font-semibold mb-2">{totalEmissions.fuelCombustion} tCO2e</p>
-            <p className="text-red-500">+10% from last week</p>
+            <p className="text-red-500">+11.4% from last week</p>
           </div>
 
           <div className="flex flex-col bg-gray-800 rounded-lg shadow-md p-6 text-center flex-1">
             <h2 className="text-lg font-bold mb-2">Shipping</h2>
             <p className="text-3xl font-semibold mb-2">{totalEmissions.shipping} tCO2e</p>
-            <p className="text-green-500">-8% from last week</p>
+            <p className="text-green-500">-8.7% from last week</p>
           </div>
         </div>
 

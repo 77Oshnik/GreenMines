@@ -104,67 +104,67 @@ export default function ChatBot() {
   };
 
   return (
-    <div className="h-screen bg-[#342F49] flex items-center justify-center p-8">
+    <div className="h-screen bg-[#342F49] flex items-center justify-center p-4 md:p-8">
+    <div className="w-full h-full md:w-3/4 md:h-screen flex flex-col md:flex-row">
       <button
-  onClick={handleBack}
-  className="bg-[#2b8d94] text-black font-bold px-8 py-3 text-xl rounded-lg mt-4 self-start flex items-center space-x-2"
->
-  <FaArrowLeft className="w-6 h-6" /> {/* Left arrow icon */}
-  <span>Go Back</span>
-</button>
-      <div className="flex flex-col h-screen w-3/4 mx-auto bg-[#231E3D] border-[#66C5CC] rounded-lg pt-2">
-        
-
+        onClick={handleBack}
+        className="bg-[#2b8d94] text-black font-bold px-4 md:px-8 py-2 md:py-3 text-base md:text-xl rounded-lg mb-4 md:mb-0 md:mt-4 md:self-start flex items-center space-x-2 md:absolute md:top-8 md:left-8"
+      >
+        <FaArrowLeft className="w-4 h-4 md:w-6 md:h-6" />
+        <span>Go Back</span>
+      </button>
+      <div className="flex flex-col flex-grow md:h-screen w-full bg-[#231E3D] border-[#66C5CC] rounded-lg pt-2">
         {/* Messages Display */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 ml-2">
+        <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-4 ml-2">
           {messages.map((message, index) => (
             <div
               key={index}
               className={`flex items-center space-x-2 ${message.isUser ? 'justify-end' : 'justify-start'}`}
             >
               {/* Bot Icon */}
-              {!message.isUser && <FaRobot className="text-[#66C5CC] w-6 h-6" />}
+              {!message.isUser && <FaRobot className="text-[#66C5CC] w-4 h-4 md:w-6 md:h-6" />}
               
               <div
-                className={`w-auto max-w-full rounded-lg p-3 ${
+                className={`w-auto max-w-full rounded-lg p-2 md:p-3 ${
                   message.isUser
                     ? 'bg-[#66C5CC] text-[#342F49] font-bold'
                     : 'bg-[#342F49] text-white font-bold'
                 } shadow-md`}
               >
-                <p className="text-base sm:text-lg md:text-xl">
+                <p className="text-sm md:text-base lg:text-xl">
                   {message.isHTML ? renderHTMLContent(message.text) : message.text}
                 </p>
               </div>
             
               {/* User Icon */}
-              {message.isUser && <FaUserCircle className="text-[#66C5CC] w-6 h-6" />}
+              {message.isUser && <FaUserCircle className="text-[#66C5CC] w-4 h-4 md:w-6 md:h-6" />}
             </div>
           ))}
           <div ref={messagesEndRef} />
         </div>
 
         {/* Input Section */}
-        <div className="bg-[#3e3177] border-t border-[#66C5CC] px-6 py-6 sm:px-8">
-          <div className="flex space-x-4">
+        <div className="bg-[#3e3177] border-t border-[#66C5CC] px-4 py-4 md:px-6 md:py-6">
+          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
             <input
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="flex-1 focus:ring-[#66C5CC] focus:border-[#66C5CC] block w-full rounded-md sm:text-lg border-[#4da5aa] py-3 px-4 bg-[#231E3D] text-white"
+              className="flex-1 focus:ring-[#66C5CC] focus:border-[#66C5CC] block w-full rounded-md text-base md:text-lg border-[#4da5aa] py-2 md:py-3 px-3 md:px-4 bg-[#231E3D] text-white"
               placeholder="Type a message..."
             />
             <button
               onClick={handleSendMessage}
-              className="inline-flex font-bold items-center px-6 py-3 border border-transparent text-lg rounded-md shadow-sm text-[#342F49] bg-[#66C5CC] hover:bg-[#4da5aa] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#66C5CC]"
+              className="inline-flex font-bold items-center px-4 md:px-6 py-2 md:py-3 border border-transparent text-base md:text-lg rounded-md shadow-sm text-[#342F49] bg-[#66C5CC] hover:bg-[#4da5aa] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#66C5CC]"
             >
-              <FaPaperPlane className="w-6 h-6 mr-2" />
+              <FaPaperPlane className="w-4 h-4 md:w-6 md:h-6 mr-2" />
               Send
             </button>
           </div>
         </div>
       </div>
     </div>
+  </div>
   );
 }
