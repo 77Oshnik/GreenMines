@@ -106,7 +106,7 @@ const EnvironmentalReportPage = () => {
                             textShadow: '0 2px 4px rgba(0,0,0,0.2)' 
                         }}
                     >
-                        Environmental Impact Report
+                        Emission Impact Report
                     </Typography>
                     <button
         onClick={handleBack}

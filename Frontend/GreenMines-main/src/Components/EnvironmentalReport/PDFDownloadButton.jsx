@@ -64,7 +64,7 @@ const PDFDownloadButton = ({
             pdf.setTextColor(255, 255, 255);
             pdf.setFontSize(30);
             pdf.setFont('Poppins', 'bold');
-            pdf.text('Environmental Impact Report', pageWidth/2, 70, {align: 'center'});
+            pdf.text('Emission Impact Report', pageWidth/2, 70, {align: 'center'});
 
             pdf.setFontSize(20);
             pdf.text(`${reportType} Analysis`, pageWidth/2, 100, {align: 'center'});

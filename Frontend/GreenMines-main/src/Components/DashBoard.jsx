@@ -23,6 +23,7 @@ import EmissionsPerTon from "./EmissionsPerTon";
 import { useEffect,useState } from "react";
 import axios from "axios";
 import ChatAssistant from "./ChatAssistant";
+import NeutralityGraph from "./NeutralityGraph";
 
 ChartJS.register(
   CategoryScale,
@@ -206,6 +207,9 @@ if (!data) {
 
 <LineAndBarEmission data={data}/>
 <SinkGraphs />
+<div className="flex justify-center w-screen ">
+<NeutralityGraph />
+</div>
 
         <div className="flex flex-col xl:flex-row gap-8 xl:col-span-3 p-4">
     <FinancialAnalysis />

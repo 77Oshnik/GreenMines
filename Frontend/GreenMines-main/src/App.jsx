@@ -42,6 +42,7 @@ import MCS from './Components/MCS';
 import MCSCalculator from './Components/MCS';
 import RequiredLand from "./Components/RequiredLand"
 import RegenerativeZoneMap from './Components/RegenerativeZoneMap';
+import NeutralityGraph from './Components/NeutralityGraph';
 function App() {
   return (
     <div className="App font-link">
@@ -102,6 +103,7 @@ function App() {
         <Route path='/ev' element={<EvSavingsCalculator/>}/>
         <Route path='/requiredland' element={<RequiredLand/>}/>
         <Route path='/zone' element={<RegenerativeZoneMap />} />
+        <Route path='/neutralitygraph' element={<NeutralityGraph />} />
       </Routes>
       
     </div>
