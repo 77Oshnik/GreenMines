@@ -198,14 +198,15 @@ exports.calculateExplosionEmissions = async (req, res) => {
 
     const factors = emissionFactors[explosiveType];
     const emissions = {
-      CO: (amount * factors.CO / 1000).toFixed(2) + " kg",
-      NOx: (amount * (factors.NOx || 0) / 1000).toFixed(2) + " kg",
-      NH3: (amount * (factors.NH3 || 0) / 1000).toFixed(2) + " kg",
-      HCN: (amount * (factors.HCN || 0) / 1000).toFixed(2) + " kg",
-      H2S: (amount * (factors.H2S || 0) / 1000).toFixed(2) + " kg",
-      SO2: (amount * (factors.SO2 || 0) / 1000).toFixed(2) + " kg",
-      CO2: (amount * factors.CO2 / 1000).toFixed(2) + " kg",
+      CO: (amount * factors.CO / 1e6).toFixed(4) + " tons",
+      NOx: (amount * (factors.NOx || 0) / 1e6).toFixed(4) + " tons",
+      NH3: (amount * (factors.NH3 || 0) / 1e6).toFixed(4) + " tons",
+      HCN: (amount * (factors.HCN || 0) / 1e6).toFixed(4) + " tons",
+      H2S: (amount * (factors.H2S || 0) / 1e6).toFixed(4) + " tons",
+      SO2: (amount * (factors.SO2 || 0) / 1e6).toFixed(4) + " tons",
+      CO2: (amount * factors.CO2 / 1e6).toFixed(4) + " tons",
     };
+
 
     const explosionData = new Explosion({
       explosiveType,

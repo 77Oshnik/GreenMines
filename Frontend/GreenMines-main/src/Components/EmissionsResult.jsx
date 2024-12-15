@@ -80,7 +80,7 @@ function EmissionsResult({ result }) {
                   {point.boldParts.map((boldText, boldIndex) => (
                     <span
                       key={boldIndex}
-                      className="bg-[#FFD700] inline-block py-1 px-2 rounded text-[#39FF14] font-bold text-xl mr-1 mb-1"
+                      className="inline-block py-1 px-2 rounded text-[#39FF14] font-bold text-xl mr-1 mb-1"
                     >
                       {boldText}
                     </span>
