@@ -45,6 +45,13 @@ GreenMines is a web platform designed to help the Indian coal sector achieve car
 <img src="https://github.com/user-attachments/assets/d9f8935d-61aa-40f1-9a71-a8b8de97cf01" alt="ML Model Screenshot 2"><br>
 <img src="https://github.com/user-attachments/assets/5bad6803-87e3-4e65-a3ab-ff6acc7e50ca" alt="ML Model Screenshot 3"><br>
 <br><br><br><br>
+
+<h2>• <span style="font-size: 20px;">Emission Impact Analyzer (GenAI with Google Gemini)</span></h2>
+<p>The <strong>Emission Impact Analyzer</strong> is powered by <strong>Generative AI (GenAI)</strong>, designed to process and analyze user input regarding emissions from the past week. By understanding the input data, the tool predicts potential environmental harm caused by these emissions on surrounding ecosystems. It uses historical and real-time emission data to provide actionable insights on how emissions affect local air quality, water sources, and biodiversity. This tool goes beyond simple calculations, offering a deep environmental impact assessment and suggesting mitigation strategies based on the AI's analysis of past trends and predictive models.</p>
+<img src="https://github.com/user-attachments/assets/7c86d4a7-93f6-416b-8f2d-be8c6f2a3525" alt="Emission Impact Analyzer">
+<img src="https://github.com/user-attachments/assets/45dcac89-4a1e-410a-9768-ef71c6540d0a"><br>
+<br><br>
+
 <h2>• <span style="font-size: 20px;">Carbon Neutrality Pathways</span></h2>
 <p>Several pathways to achieving carbon neutrality in coal mines, including:</p>
 <ul>
@@ -83,12 +90,4 @@ GreenMines is a web platform designed to help the Indian coal sector achieve car
 <p>A feature for optimizing vehicle routes used by coal mines, reducing transportation-related emissions.</p>
 <img src="https://github.com/user-attachments/assets/35f48fe0-dee4-4727-b148-36d9eb58512d" alt="Route Optimization"><br>
 <br><br>
-
-<h2>• <span style="font-size: 20px;">Emission Impact Analyzer (GenAI)</span></h2>
-<p>The <strong>Emission Impact Analyzer</strong> is powered by <strong>Generative AI (GenAI)</strong>, designed to process and analyze user input regarding emissions from the past week. By understanding the input data, the tool predicts potential environmental harm caused by these emissions on surrounding ecosystems. It uses historical and real-time emission data to provide actionable insights on how emissions affect local air quality, water sources, and biodiversity. This tool goes beyond simple calculations, offering a deep environmental impact assessment and suggesting mitigation strategies based on the AI's analysis of past trends and predictive models.</p>
-<img src="https://github.com/user-attachments/assets/facdce7d-7d08-4de8-84ad-249005567c0f" alt="Emission Impact Analyzer"><br>
-<br><br>
-
-
-
 ---
